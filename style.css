@@ -1,0 +1,135 @@
+/*
+Template: Gopang IT Solution
+Author: Modina Theme
+Author URI: https://themeforest.net/user/modinatheme/
+Description: IT Solution & Technology HTML  Template
+Version: 1.2.0
+*/
+
+/*
+=================================
+|***    Table of contents:   ***|
+=================================
+
+Main Style file-> assets/css/style.css 
+
+All the SCSS File in SCSS Folder of Assets Folder. You can read the doc file also for better understand.
+
+// BASIC
+@import 'basic';
+
+// MIXIN
+@import 'variables';
+
+// TYPOGRAPHY
+@import 'typography';
+
+// MIX
+@import 'mix';
+
+// HELPER
+@import 'helper';
+
+// ICON FONTS
+@import 'icon';
+
+// ANIMATION
+@import 'animation';
+
+// Button 
+@import 'btn';
+
+// Colors 
+@import 'colors';
+
+// Preloader 
+@import 'preloader';
+
+/* ----------------------------------
+    Dropdown Menu - Vertical Display
+ ------------------------------------*/
+
+/* Make all dropdown submenus display vertically */
+header.header-1 .main-menu ul li > ul li {
+    display: block !important;
+    width: 100%;
+}
+
+header.header-1 .main-menu ul li > ul {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+header.header-1 .main-menu ul li > ul li a {
+    width: 100%;
+    padding: 10px 24px;
+}
+
+/* Ensure nested submenus also display vertically */
+header.header-1 .main-menu ul li > ul li > ul {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    min-width: 200px;
+}
+
+/* ----------------------------------
+    Template Section Styles
+ ------------------------------------*/
+
+ /* // Menu - Header Section 
+ @import 'header';
+ 
+ // Hero Slide - Section 
+ @import 'hero';
+ 
+ // Section Title - Heading 
+ @import 'section';
+ 
+ // About - Section 
+ @import 'about';
+ 
+ // Features - Section 
+ @import 'features';
+ 
+ // services - Section 
+ @import 'services';
+ 
+ // testimonial - Section 
+ @import 'testimonial';
+ 
+ // Portfolio - Cases - Section 
+ @import 'project';
+ 
+ // Price Table - Section 
+ @import 'price';
+ 
+ // Call To Action - Section 
+ @import 'cta';
+ 
+ // Content Block - Section 
+ @import 'contentblock';
+ 
+ // team - Section 
+ @import 'team';
+ 
+ // funfact - Section 
+ @import 'funfact';
+ 
+ // FAQ - Section 
+ @import 'faq';
+ 
+ // Blog - Section 
+ @import 'blog';
+ 
+ // Contact Us - Section 
+ @import 'contact';
+ 
+ // footer - Section 
+ @import 'footer';n facts */
+
+
+
