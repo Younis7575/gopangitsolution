@@ -66,6 +66,35 @@ header.header-1 .main-menu ul li > ul li a {
     padding: 10px 24px;
 }
 
+/* Premium theme integration */
+.theme-btn,
+a.theme-btn {
+    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%) !important;
+    border-radius: 999px !important;
+}
+
+header.header-1.gis-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.single-project-card {
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 280px;
+    transition: transform 0.3s ease;
+}
+
+.single-project-card:hover {
+    transform: translateY(-6px);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Ensure nested submenus also display vertically */
 header.header-1 .main-menu ul li > ul li > ul {
     display: flex;

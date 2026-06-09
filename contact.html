@@ -6,9 +6,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="modinatheme">
-    <!-- ======== Page title ============ -->
-    <title>Gopang IT Solution - IT & Technology HTML Template</title>
+    <meta name="author" content="Gopang IT Solution">
+    <meta name="description" content="Contact Gopang IT Solution for custom software development, web & mobile apps, Flutter, UI/UX, SEO, ERP & CRM. Free consultation in Islamabad, Pakistan.">
+    <meta name="keywords" content="Contact IT Solutions Company, Software Development Company, Web Development Services, Mobile App Development">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gopangitsolution.com/contact.html">
+    <title>Contact Us | Gopang IT Solution - IT Solutions Company</title>
+    <meta property="og:title" content="Contact Gopang IT Solution">
+    <meta property="og:description" content="Get a free consultation for your next software, web, or mobile project.">
+    <meta property="og:url" content="https://gopangitsolution.com/contact.html">
+    <meta property="og:type" content="website">
     <!-- ========== Favicon Icon ========== -->
     <link rel="shortcut icon" href="assets/img/favicon.png">
     <!-- ===========  All Stylesheet ================= -->
@@ -30,6 +37,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- template main style css file -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/premium.css">
     
 </head>
 
@@ -226,7 +234,7 @@
     <div class="page-banner-wrap text-center bg-cover" style="background-image: url('assets/img/page-banner.jpg')">
         <div class="container">
             <div class="page-heading text-white">
-                <h1>Contact Us</h1>
+                <h1>Contact Our IT Solutions Team</h1>
             </div>
             <nav>
                 <ol class="breadcrumb">
@@ -311,47 +319,48 @@
             <div class="row pt-5">
                 <div class="col-12 col-xl-8 offset-xl-2 text-center">
                     <div class="section-title">
-                        <span>fil the form</span>
-                        <h2>get in touch</h2>
+                        <span>Get In Touch</span>
+                        <h2>Request Your Free Consultation</h2>
+                        <p>Share your project details and our team will respond within 24 business hours.</p>
                     </div>
                 </div>
     
                 <div class="col-12 col-lg-12">
-                    <div class="contact-form">                                                        
-                        <form action="mail.php" class="row" id="contact-form">
+                    <div class="gis-contact-form-wrap">
+                        <form action="#" class="gis-contact-form row g-3" id="contact-form" novalidate>
                             <div class="col-md-6 col-12">
-                                <div class="single-personal-info">
-                                    <label for="fname">Full Name</label>
-                                    <input type="text" id="fname" placeholder="Enter Name" >                                         
-                                </div>
-                            </div>                            
-                            <div class="col-md-6 col-12">
-                                <div class="single-personal-info">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" id="email" placeholder="Enter Email Address" >                                         
-                                </div>
+                                <label for="fname" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="fname" name="name" required placeholder="Your name" autocomplete="name">
                             </div>
                             <div class="col-md-6 col-12">
-                                <div class="single-personal-info">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="text" id="phone" placeholder="Enter Number">                                         
-                                </div>
-                            </div>                                      
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="you@company.com" autocomplete="email">
+                            </div>
                             <div class="col-md-6 col-12">
-                                <div class="single-personal-info">
-                                    <label for="subject">Subject</label>
-                                    <input type="text" id="subject" placeholder="Enter Subject">                                         
-                                </div>
-                            </div>                                      
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="+92 334 2322324" autocomplete="tel">
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label for="service" class="form-label">Service</label>
+                                <select class="form-select" id="service" name="service">
+                                    <option value="">Select a service</option>
+                                    <option value="Web Development">Web Development Services</option>
+                                    <option value="Mobile App">Mobile App Development</option>
+                                    <option value="Flutter">Flutter Development</option>
+                                    <option value="UI UX">UI UX Design</option>
+                                    <option value="SEO">SEO Services</option>
+                                    <option value="ERP CRM">ERP & CRM Solutions</option>
+                                </select>
+                            </div>
                             <div class="col-md-12 col-12">
-                                <div class="single-personal-info">
-                                    <label for="message">Enter Message</label>
-                                    <textarea id="message" placeholder="Enter message"></textarea>                                        
-                                </div>
-                            </div>                                      
+                                <label for="message" class="form-label">Project Details *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Tell us about your goals and timeline"></textarea>
+                            </div>
                             <div class="col-md-12 col-12 text-center">
-                                <input class="submit-btn" type="submit" value="Get A Quote">
-                            </div>                                      
+                                <button type="submit" class="theme-btn">Send Message</button>
+                                <div class="gis-form-feedback" hidden role="status"></div>
+                                <p class="mt-3"><a href="https://wa.me/923342322324?text=Hello%2C%20I%20am%20interested%20in%20your%20IT%20services%20and%20would%20like%20a%20free%20consultation." class="gis-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> Or chat on WhatsApp instantly</a></p>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -510,6 +519,7 @@
     <script src="assets/js/metismenu.js"></script>
     <script src="assets/js/nice-select2.js"></script>
     <script src="assets/js/active.js"></script>
+    <script src="assets/js/premium.js" defer></script>
 </body>
 
 </html>
