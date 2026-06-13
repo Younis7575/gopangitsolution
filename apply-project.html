@@ -12,9 +12,10 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/premium.css">
+    <link rel="stylesheet" href="apply-pages.css">
 </head>
 
-<body class="body-wrapper">
+<body class="body-wrapper apply-premium-page">
     <div class="top-bar-wrapper d-none d-sm-block">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="top-left">
@@ -99,61 +100,97 @@
         </div>
     </header>
 
-    <section class="section-padding">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="section-title text-center">
-                        <span>Apply</span>
-                        <h2>Submit Your Project</h2>
-                        <p>Share your project idea or requirements and we'll get back with an initial assessment.</p>
+    <main>
+        <section class="apply-premium-hero apply-project-hero">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <span class="apply-eyebrow">Project Intake</span>
+                        <h1>Submit Your Project Proposal</h1>
+                        <p>Bring your app, website, automation, ERP, CRM, or SaaS idea to our delivery team. We review scope, timeline, and budget before moving to discovery.</p>
+                        <div class="apply-hero-actions">
+                            <a href="#project-proposal-form" class="theme-btn">Submit Proposal</a>
+                            <a href="submission-status.html" class="apply-outline-btn">Track Proposal</a>
+                        </div>
                     </div>
-
-                    <div id="project-form-message" class="alert d-none" role="alert"></div>
-
-                    <form id="project-proposal-form" action="#" method="post" enctype="multipart/form-data" class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Project Title</label>
-                            <input type="text" name="title" class="form-control" required>
+                    <div class="col-lg-5">
+                        <div class="apply-visual-card" style="background-image: url('assets/img/project/5.jpg')">
+                            <div>
+                                <strong>Delivery Review</strong>
+                                <span>Scope · Budget · Timeline · Approval</span>
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Short Description</label>
-                            <textarea name="description" class="form-control" rows="4" required></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Estimated Budget (optional)</label>
-                            <input type="text" name="budget" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Preferred Timeline</label>
-                            <input type="text" name="timeline" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Contact Name</label>
-                            <input type="text" name="contact_name" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Phone</label>
-                            <input type="tel" name="phone" class="form-control">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Attachments (specs, mockups)</label>
-                            <input type="file" name="attachments[]" multiple class="form-control">
-                        </div>
-                        <div class="col-12 text-center">
-                            <button type="submit" id="project-submit-btn" class="theme-btn">Submit Project</button>
-                            <a href="submission-status.html" class="btn btn-secondary ms-2">Check Status</a>
-                        </div>
-                    </form>
-
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <section class="apply-premium-content">
+            <div class="container">
+                <div class="apply-layout">
+                    <aside class="apply-side-panel">
+                        <span class="apply-eyebrow">What happens next</span>
+                        <h2>From idea to execution</h2>
+                        <p>Submit your requirements and our team will evaluate feasibility, effort, and next steps. You can track the status after submission.</p>
+                        <div class="apply-benefit-list">
+                            <div><i class="fal fa-check-circle" aria-hidden="true"></i><span>Fast initial assessment</span></div>
+                            <div><i class="fal fa-check-circle" aria-hidden="true"></i><span>Budget and timeline review</span></div>
+                            <div><i class="fal fa-check-circle" aria-hidden="true"></i><span>Admin-managed approval status</span></div>
+                        </div>
+                    </aside>
+
+                    <section class="apply-form-panel" aria-labelledby="project-form-title">
+                        <div class="apply-form-heading">
+                            <span class="apply-eyebrow">Proposal</span>
+                            <h2 id="project-form-title">Project Details</h2>
+                            <p>Share enough context for a meaningful first review.</p>
+                        </div>
+
+                        <div id="project-form-message" class="alert d-none" role="alert"></div>
+
+                        <form id="project-proposal-form" action="#" method="post" enctype="multipart/form-data" class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Project Title</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Short Description</label>
+                                <textarea name="description" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Estimated Budget (optional)</label>
+                                <input type="text" name="budget" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Preferred Timeline</label>
+                                <input type="text" name="timeline" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Name</label>
+                                <input type="text" name="contact_name" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" name="phone" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Attachments (specs, mockups)</label>
+                                <input type="file" name="attachments[]" multiple class="form-control">
+                            </div>
+                            <div class="col-12 apply-button-row">
+                                <button type="submit" id="project-submit-btn" class="theme-btn">Submit Project</button>
+                                <a href="submission-status.html" class="apply-outline-btn">Check Status</a>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
     <script src="project-proposal.js" defer></script>
     <script src="assets/js/premium.js" defer></script>
 
