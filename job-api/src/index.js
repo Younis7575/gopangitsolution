@@ -1,6 +1,6 @@
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 	"Access-Control-Allow-Headers": "Content-Type",
 };
 
@@ -30,6 +30,41 @@ async function readJsonBody(request) {
 	} catch (error) {
 		return null;
 	}
+}
+
+function getJobPayload(body) {
+	return {
+		title: String(body.title || "").trim(),
+		company: String(body.company || "").trim(),
+		location: String(body.location || "").trim(),
+		type: String(body.type || "").trim(),
+		salary: body.salary ? String(body.salary).trim() : null,
+		description: String(body.description || "").trim(),
+	};
+}
+
+function validateJobPayload(job) {
+	if (!job.title) {
+		return "title is required";
+	}
+
+	if (!job.company) {
+		return "company is required";
+	}
+
+	if (!job.location) {
+		return "location is required";
+	}
+
+	if (!job.type) {
+		return "type is required";
+	}
+
+	if (!job.description) {
+		return "description is required";
+	}
+
+	return null;
 }
 
 export default {
@@ -64,6 +99,47 @@ export default {
 				});
 			}
 
+			if (request.method === "POST" && path === "/api/jobs") {
+				const body = await readJsonBody(request);
+
+				if (!body) {
+					return errorResponse("Invalid JSON body", 400);
+				}
+
+				const jobPayload = getJobPayload(body);
+				const validationError = validateJobPayload(jobPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
+				}
+
+				const result = await env.DB.prepare(
+					"INSERT INTO jobs (title, company, location, type, salary, description) VALUES (?, ?, ?, ?, ?, ?)",
+				)
+					.bind(
+						jobPayload.title,
+						jobPayload.company,
+						jobPayload.location,
+						jobPayload.type,
+						jobPayload.salary,
+						jobPayload.description,
+					)
+					.run();
+
+				const createdJob = await env.DB.prepare("SELECT * FROM jobs WHERE id = ?")
+					.bind(result.meta.last_row_id)
+					.first();
+
+				return jsonResponse(
+					{
+						success: true,
+						message: "Job created successfully",
+						data: createdJob,
+					},
+					201,
+				);
+			}
+
 			const jobMatch = path.match(/^\/api\/jobs\/(\d+)$/);
 			if (request.method === "GET" && jobMatch) {
 				const jobId = Number(jobMatch[1]);
@@ -79,6 +155,88 @@ export default {
 					success: true,
 					message: "Job fetched successfully",
 					data: job,
+				});
+			}
+
+			if (request.method === "PUT" && jobMatch) {
+				const jobId = Number(jobMatch[1]);
+				const body = await readJsonBody(request);
+
+				if (!body) {
+					return errorResponse("Invalid JSON body", 400);
+				}
+
+				const existingJob = await env.DB.prepare("SELECT id FROM jobs WHERE id = ?")
+					.bind(jobId)
+					.first();
+
+				if (!existingJob) {
+					return errorResponse("Job not found", 404);
+				}
+
+				const jobPayload = getJobPayload(body);
+				const validationError = validateJobPayload(jobPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
+				}
+
+				await env.DB.prepare(
+					"UPDATE jobs SET title = ?, company = ?, location = ?, type = ?, salary = ?, description = ? WHERE id = ?",
+				)
+					.bind(
+						jobPayload.title,
+						jobPayload.company,
+						jobPayload.location,
+						jobPayload.type,
+						jobPayload.salary,
+						jobPayload.description,
+						jobId,
+					)
+					.run();
+
+				const updatedJob = await env.DB.prepare("SELECT * FROM jobs WHERE id = ?")
+					.bind(jobId)
+					.first();
+
+				return jsonResponse({
+					success: true,
+					message: "Job updated successfully",
+					data: updatedJob,
+				});
+			}
+
+			if (request.method === "DELETE" && jobMatch) {
+				const jobId = Number(jobMatch[1]);
+				const existingJob = await env.DB.prepare("SELECT id FROM jobs WHERE id = ?")
+					.bind(jobId)
+					.first();
+
+				if (!existingJob) {
+					return errorResponse("Job not found", 404);
+				}
+
+				const applicationCount = await env.DB.prepare(
+					"SELECT COUNT(*) AS count FROM applications WHERE job_id = ?",
+				)
+					.bind(jobId)
+					.first();
+
+				if (applicationCount && applicationCount.count > 0) {
+					return errorResponse(
+						"Cannot delete this job because it has submitted applications",
+						409,
+					);
+				}
+
+				await env.DB.prepare("DELETE FROM jobs WHERE id = ?").bind(jobId).run();
+
+				return jsonResponse({
+					success: true,
+					message: "Job deleted successfully",
+					data: {
+						id: jobId,
+					},
 				});
 			}
 
