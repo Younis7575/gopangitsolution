@@ -1,0 +1,336 @@
+body.body-wrapper {
+    background: #f6f8fc;
+}
+
+body.body-wrapper h1,
+body.body-wrapper h2,
+body.body-wrapper h3,
+body.body-wrapper h4,
+body.body-wrapper h5,
+body.body-wrapper h6 {
+    letter-spacing: 0;
+}
+
+.gis-hero-premium {
+    background:
+        linear-gradient(135deg, rgba(8, 26, 58, 0.96), rgba(15, 98, 254, 0.72)),
+        url("assets/img/home1/slide1.jpg") center/cover;
+    min-height: 760px;
+}
+
+.gis-hero-premium::before {
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.3;
+}
+
+.gis-hero-content {
+    padding: 132px 0 118px;
+}
+
+.gis-hero-badge,
+.section-title span,
+.gis-case-tag,
+.gis-pricing-badge {
+    letter-spacing: 0;
+}
+
+.gis-hero-premium h1 {
+    font-size: 58px;
+    letter-spacing: 0;
+    max-width: 840px;
+}
+
+.gis-hero-premium .lead {
+    font-size: 18px;
+    max-width: 690px;
+}
+
+.gis-hero-card {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+    padding: 28px;
+}
+
+.gis-hero-card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+}
+
+.gis-hero-card-header span {
+    color: #67e8f9;
+    display: block;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.gis-hero-card-header strong {
+    color: #fff;
+    display: block;
+    font-size: 25px;
+    line-height: 1.18;
+    margin-top: 6px;
+}
+
+.gis-hero-dashboard {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 24px;
+}
+
+.gis-hero-dashboard div {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.gis-hero-dashboard strong {
+    color: #fff;
+    display: block;
+    font-size: 30px;
+    line-height: 1;
+}
+
+.gis-hero-dashboard span {
+    color: rgba(255, 255, 255, 0.74);
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+.gis-hero-tags span {
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.gis-trust-strip {
+    margin-top: -44px;
+    position: relative;
+    z-index: 4;
+}
+
+.gis-trust-grid {
+    background: #fff;
+    border: 1px solid rgba(15, 98, 254, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 24px 70px rgba(16, 24, 40, 0.12);
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: hidden;
+}
+
+.gis-trust-grid div {
+    align-items: center;
+    border-right: 1px solid #e6eaf0;
+    display: flex;
+    gap: 12px;
+    min-height: 92px;
+    padding: 24px;
+}
+
+.gis-trust-grid div:last-child {
+    border-right: 0;
+}
+
+.gis-trust-grid i {
+    align-items: center;
+    background: #eef4ff;
+    border-radius: 8px;
+    color: #0f62fe;
+    display: inline-flex;
+    flex: 0 0 44px;
+    height: 44px;
+    justify-content: center;
+    width: 44px;
+}
+
+.gis-trust-grid span {
+    color: #101828;
+    font-weight: 900;
+    line-height: 1.35;
+}
+
+.gis-section {
+    padding: 100px 0;
+}
+
+.gis-section-alt {
+    background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+}
+
+.section-title h2 {
+    font-size: 44px;
+    letter-spacing: 0;
+}
+
+.gis-card,
+.gis-case-card,
+.gis-pricing-card,
+.gis-review-card,
+.gis-contact-form-wrap,
+.gis-contact-info-card,
+.gis-reviews-wrap {
+    border-radius: 8px;
+}
+
+.gis-card {
+    border-color: rgba(15, 98, 254, 0.12);
+    box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+}
+
+.gis-card:hover {
+    box-shadow: 0 26px 70px rgba(16, 24, 40, 0.13);
+}
+
+.gis-card-icon,
+.gis-why-num,
+.gis-process-num,
+.gis-tech-item,
+.gis-industry-card,
+.gis-case-thumb,
+.gis-pricing-list li i,
+.gis-contact-item i {
+    border-radius: 8px;
+}
+
+.about-images-video-popup {
+    background: #fff;
+    border: 1px solid rgba(15, 98, 254, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 24px 70px rgba(16, 24, 40, 0.12);
+    overflow: hidden;
+    padding: 12px;
+}
+
+.about-images-video-popup img {
+    border-radius: 8px;
+    width: 100%;
+}
+
+.gis-tech-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.gis-process {
+    background: #fff;
+    border: 1px solid rgba(15, 98, 254, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+    padding: 20px;
+}
+
+.gis-stats-bar {
+    background:
+        linear-gradient(135deg, rgba(8, 26, 58, 0.96), rgba(15, 98, 254, 0.72)),
+        url("assets/img/funfact-bg.jpg") center/cover;
+}
+
+.gis-stat-item .num {
+    font-size: 46px;
+}
+
+.gis-google-header {
+    justify-content: space-between;
+}
+
+.cta-banner-box {
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cta-banner-box::before {
+    background: linear-gradient(135deg, rgba(8, 26, 58, 0.78), rgba(15, 98, 254, 0.7));
+    content: "";
+    inset: 0;
+    position: absolute;
+}
+
+.cta-banner-box .row {
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 1199px) {
+    .gis-tech-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991px) {
+    .gis-hero-premium {
+        min-height: auto;
+    }
+
+    .gis-hero-premium h1 {
+        font-size: 42px;
+    }
+
+    .gis-hero-content {
+        padding: 94px 0 72px;
+    }
+
+    .gis-trust-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gis-trust-grid div:nth-child(2) {
+        border-right: 0;
+    }
+
+    .gis-tech-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .section-title h2 {
+        font-size: 36px;
+    }
+
+    .gis-stat-item .num {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 575px) {
+    .gis-hero-premium h1 {
+        font-size: 34px;
+    }
+
+    .gis-hero-dashboard,
+    .gis-trust-grid,
+    .gis-tech-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gis-trust-grid div {
+        border-right: 0;
+        border-bottom: 1px solid #e6eaf0;
+    }
+
+    .gis-trust-grid div:last-child {
+        border-bottom: 0;
+    }
+
+    .section-title h2 {
+        font-size: 30px;
+    }
+
+    .gis-section {
+        padding: 72px 0;
+    }
+
+    .gis-stat-item .num {
+        font-size: 34px;
+    }
+}
