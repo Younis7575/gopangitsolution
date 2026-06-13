@@ -37,6 +37,47 @@
 
 .admin-main {
     min-height: calc(100vh - 82px);
+    margin-left: 250px;
+}
+
+.admin-sidebar {
+    background: #081a3a;
+    bottom: 0;
+    box-shadow: 14px 0 35px rgba(16, 24, 40, 0.12);
+    left: 0;
+    padding: 112px 18px 24px;
+    position: fixed;
+    top: 0;
+    width: 250px;
+    z-index: 10;
+}
+
+.admin-sidebar nav {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-sidebar a {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.78);
+    display: flex;
+    font-weight: 800;
+    gap: 10px;
+    padding: 13px 14px;
+}
+
+.admin-sidebar a:hover,
+.admin-sidebar a.active {
+    background: rgba(15, 98, 254, 0.2);
+    border-color: rgba(185, 212, 255, 0.28);
+    color: #fff;
+}
+
+.admin-sidebar i {
+    color: #67e8f9;
+    width: 18px;
 }
 
 .admin-hero {
@@ -171,6 +212,39 @@
     color: #d92d20;
 }
 
+.admin-status-select {
+    background: #fff;
+    border: 1px solid #d0d5dd;
+    border-radius: 999px;
+    color: #101828;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 9px 12px;
+}
+
+.admin-status-pill {
+    border-radius: 999px;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 7px 10px;
+}
+
+.admin-status-pill.pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.admin-status-pill.approved {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+.admin-status-pill.reject {
+    background: #fff1f3;
+    color: #b42318;
+}
+
 .admin-card-list {
     display: grid;
     gap: 16px;
@@ -270,6 +344,20 @@
 }
 
 @media (max-width: 991px) {
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .admin-sidebar {
+        padding: 12px;
+        position: static;
+        width: auto;
+    }
+
+    .admin-sidebar nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .admin-grid {
         grid-template-columns: 1fr;
     }
@@ -293,5 +381,9 @@
 
     .admin-panel {
         padding: 20px;
+    }
+
+    .admin-sidebar nav {
+        grid-template-columns: 1fr;
     }
 }

@@ -109,7 +109,9 @@
                         <p>Share your project idea or requirements and we'll get back with an initial assessment.</p>
                     </div>
 
-                    <form action="#" method="post" enctype="multipart/form-data" class="row g-3">
+                    <div id="project-form-message" class="alert d-none" role="alert"></div>
+
+                    <form id="project-proposal-form" action="#" method="post" enctype="multipart/form-data" class="row g-3">
                         <div class="col-12">
                             <label class="form-label">Project Title</label>
                             <input type="text" name="title" class="form-control" required>
@@ -126,12 +128,25 @@
                             <label class="form-label">Preferred Timeline</label>
                             <input type="text" name="timeline" class="form-control">
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Name</label>
+                            <input type="text" name="contact_name" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control">
+                        </div>
                         <div class="col-12">
                             <label class="form-label">Attachments (specs, mockups)</label>
                             <input type="file" name="attachments[]" multiple class="form-control">
                         </div>
                         <div class="col-12 text-center">
-                            <button type="submit" class="theme-btn">Submit Project</button>
+                            <button type="submit" id="project-submit-btn" class="theme-btn">Submit Project</button>
+                            <a href="submission-status.html" class="btn btn-secondary ms-2">Check Status</a>
                         </div>
                     </form>
 
@@ -139,6 +154,7 @@
             </div>
         </div>
     </section>
+    <script src="project-proposal.js" defer></script>
     <script src="assets/js/premium.js" defer></script>
 
 </body>

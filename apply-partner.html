@@ -109,7 +109,9 @@
                         <p>Interested in partnering with Gopang IT Solution? Fill the form and our partnerships team will reach out.</p>
                     </div>
 
-                    <form action="#" method="post" class="row g-3">
+                    <div id="partner-form-message" class="alert d-none" role="alert"></div>
+
+                    <form id="partner-application-form" action="#" method="post" class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Company / Organization</label>
                             <input type="text" name="company" class="form-control" required>
@@ -135,7 +137,8 @@
                             <textarea name="message" class="form-control" rows="6"></textarea>
                         </div>
                         <div class="col-12 text-center">
-                            <button type="submit" class="theme-btn">Send Proposal</button>
+                            <button type="submit" id="partner-submit-btn" class="theme-btn">Send Proposal</button>
+                            <a href="submission-status.html" class="btn btn-secondary ms-2">Check Status</a>
                         </div>
                     </form>
 
@@ -143,6 +146,7 @@
             </div>
         </div>
     </section>
+    <script src="partner-application.js" defer></script>
     <script src="assets/js/premium.js" defer></script>
 
 </body>

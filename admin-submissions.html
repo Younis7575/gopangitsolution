@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Submissions | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/icons.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/premium.css">
+    <link rel="stylesheet" href="admin-jobs.css">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("admin-login.html");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="index.html" class="admin-logo">
+                    <img src="assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="index.html" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="admin-jobs.html"><i class="fal fa-briefcase" aria-hidden="true"></i> Jobs</a>
+            <a href="admin-news.html"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="#partners" class="active"><i class="fal fa-handshake" aria-hidden="true"></i> Apply as Partner</a>
+            <a href="#proposals"><i class="fal fa-file-alt" aria-hidden="true"></i> Proposals</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Submission Management</span>
+                <h1>Partner & Proposal Requests</h1>
+                <p>Review incoming partner applications and project proposals, then mark each request as Pending, Approved, or Rejected.</p>
+                <div id="global-message" class="admin-alert d-none" role="alert"></div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <section id="partners" class="admin-panel admin-applications-panel" aria-labelledby="partners-title">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span class="admin-kicker">Apply as Partner</span>
+                            <h2 id="partners-title">Partner Applications</h2>
+                        </div>
+                        <button type="button" id="refresh-partners" class="admin-ghost-btn">Refresh</button>
+                    </div>
+                    <div id="partners-loading" class="admin-loading">Loading partner applications...</div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Website</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="partners-table"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="proposals" class="admin-panel admin-applications-panel" aria-labelledby="proposals-title">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span class="admin-kicker">Project Proposals</span>
+                            <h2 id="proposals-title">Submitted Proposals</h2>
+                        </div>
+                        <button type="button" id="refresh-proposals" class="admin-ghost-btn">Refresh</button>
+                    </div>
+                    <div id="proposals-loading" class="admin-loading">Loading proposals...</div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Description</th>
+                                    <th>Budget</th>
+                                    <th>Timeline</th>
+                                    <th>Contact</th>
+                                    <th>Attachments</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="proposals-table"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-submissions.js"></script>
+</body>
+
+</html>

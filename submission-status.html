@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Status | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/icons.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/premium.css">
+    <link rel="stylesheet" href="submission-status.css">
+</head>
+
+<body class="body-wrapper submission-status-page">
+    <header class="header-1 gis-main-header">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-2 col-sm-5 col-md-4 col-6">
+                    <div class="logo">
+                        <a href="index.html" aria-label="Gopang IT Solution Home"><img src="assets/img/logo.svg" alt="Gopang IT Solution"></a>
+                    </div>
+                </div>
+                <div class="col-lg-10 text-end p-lg-0 d-none d-lg-flex justify-content-end align-items-center">
+                    <nav class="menu-wrap" aria-label="Main navigation">
+                        <div class="main-menu gis-main-menu">
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="services.html">Services</a></li>
+                                <li><a href="projects.html">Projects</a></li>
+                                <li><a href="news.html">News</a></li>
+                                <li><a href="#">Apply <i class="fas fa-angle-down" aria-hidden="true"></i></a>
+                                    <ul class="sub-menu">
+                                        <li><a href="apply-job.html">Apply for Job</a></li>
+                                        <li><a href="apply-partner.html">Apply as Partner</a></li>
+                                        <li><a href="apply-project.html">Submit Project</a></li>
+                                        <li><a href="submission-status.html">Submission Status</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="admin-login.html" class="gis-admin-nav-link">Admin Login</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="submission-hero">
+            <div class="container">
+                <span>Track Request</span>
+                <h1>Partner & Project Status</h1>
+                <p>Enter the email used in your partner application or project proposal to see the latest status.</p>
+            </div>
+        </section>
+
+        <section class="submission-content">
+            <div class="container">
+                <div class="submission-panel">
+                    <form id="status-form" class="submission-form">
+                        <label for="status-email">Email Address</label>
+                        <div class="submission-form-row">
+                            <input type="email" id="status-email" placeholder="you@example.com" required>
+                            <button type="submit" id="status-submit" class="theme-btn">Check Status</button>
+                        </div>
+                    </form>
+                    <div id="status-message" class="alert d-none" role="alert"></div>
+                </div>
+
+                <div class="submission-grid">
+                    <section class="submission-panel">
+                        <div class="submission-heading">
+                            <span>Apply as Partner</span>
+                            <h2>Partner Applications</h2>
+                        </div>
+                        <div id="partner-status-list" class="submission-list">
+                            <div class="submission-empty">Enter your email to load partner applications.</div>
+                        </div>
+                    </section>
+
+                    <section class="submission-panel">
+                        <div class="submission-heading">
+                            <span>Project Proposal</span>
+                            <h2>Submitted Proposals</h2>
+                        </div>
+                        <div id="proposal-status-list" class="submission-list">
+                            <div class="submission-empty">Enter your email to load project proposals.</div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="submission-status.js" defer></script>
+    <script src="assets/js/premium.js" defer></script>
+</body>
+
+</html>
