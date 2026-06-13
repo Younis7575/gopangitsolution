@@ -71,6 +71,36 @@
                         <a href="contact.html" class="theme-btn">get a quote</a> 
                     </div>
                 </div>
+                <div class="d-block d-lg-none col-sm-1 col-md-8 col-6">
+                    <div class="mobile-nav-wrap">
+                        <div id="hamburger" role="button" tabindex="0" aria-label="Open menu"><i class="fal fa-bars" aria-hidden="true"></i></div>
+                        <div class="mobile-nav">
+                            <button type="button" class="close-nav" aria-label="Close menu">
+                                <i class="fal fa-times-circle" aria-hidden="true"></i>
+                            </button>
+                            <nav class="sidebar-nav" aria-label="Mobile navigation">
+                                <ul class="metismenu" id="mobile-menu">
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="services.html">Services</a></li>
+                                    <li><a href="projects.html">Projects</a></li>
+                                    <li><a href="faq.html">FAQ</a></li>
+                                    <li><a href="team.html">Team</a></li>
+                                    <li><a href="pricing.html">Pricing</a></li>
+                                    <li><a href="news.html">News</a></li>
+                                    <li><a href="apply-job.html">Apply for Job</a></li>
+                                    <li><a href="apply-partner.html">Apply as Partner</a></li>
+                                    <li><a href="apply-project.html">Submit Project</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </nav>
+                            <div class="action-bar text-white">
+                                <a href="contact.html" class="theme-btn mt-4">get a quote</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay"></div>
+                </div>
             </div>
         </div>
     </header>
@@ -154,6 +184,48 @@
             const formMessage = document.getElementById('form-message');
             const cancelBtn = document.getElementById('cancel-apply');
             const submitBtn = document.getElementById('submit-application');
+            const hamburger = document.getElementById('hamburger');
+            const mobileNav = document.querySelector('.mobile-nav');
+            const closeNav = document.querySelector('.close-nav');
+            const overlay = document.querySelector('.overlay');
+
+            function openMobileMenu() {
+                if (mobileNav) {
+                    mobileNav.classList.add('show');
+                }
+
+                if (overlay) {
+                    overlay.classList.add('active');
+                }
+            }
+
+            function closeMobileMenu() {
+                if (mobileNav) {
+                    mobileNav.classList.remove('show');
+                }
+
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
+            }
+
+            if (hamburger) {
+                hamburger.addEventListener('click', openMobileMenu);
+                hamburger.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openMobileMenu();
+                    }
+                });
+            }
+
+            if (closeNav) {
+                closeNav.addEventListener('click', closeMobileMenu);
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', closeMobileMenu);
+            }
 
             function escapeHtml(value) {
                 return String(value || '').replace(/[&<>"']/g, function (char) {
