@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS news (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  short_description TEXT NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  author TEXT,
+  status TEXT DEFAULT 'published',
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+);

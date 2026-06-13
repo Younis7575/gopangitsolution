@@ -167,9 +167,40 @@
     });
   }
 
+  function initMobileNavigation() {
+    var hamburger = document.getElementById('hamburger');
+    var mobileNav = document.querySelector('.mobile-nav');
+    var closeNav = document.querySelector('.close-nav');
+    var overlay = document.querySelector('.overlay');
+
+    if (!hamburger || !mobileNav) return;
+
+    function openMenu() {
+      mobileNav.classList.add('show');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeMenu() {
+      mobileNav.classList.remove('show');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    hamburger.addEventListener('click', openMenu);
+    hamburger.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openMenu();
+      }
+    });
+
+    if (closeNav) closeNav.addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
+  }
+
   function init() {
     initPreloader();
     initStickyHeader();
+    initMobileNavigation();
     initScrollReveal();
     initCounters();
     initContactForms();

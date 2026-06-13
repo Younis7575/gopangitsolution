@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin News Panel | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/icons.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/premium.css">
+    <link rel="stylesheet" href="admin-jobs.css">
+    <link rel="stylesheet" href="admin-news.css">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("admin-login.html");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="index.html" class="admin-logo">
+                    <img src="assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="admin-jobs.html" class="admin-link">Manage Jobs</a>
+                    <a href="news.html" class="admin-link">View News</a>
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="index.html" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">News Management</span>
+                <h1>Admin News Panel</h1>
+                <p>Add, edit, publish, and remove website news from one protected dashboard.</p>
+                <div id="global-message" class="admin-alert d-none" role="alert"></div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <div class="admin-grid">
+                    <section class="admin-panel admin-form-panel" aria-labelledby="news-form-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Editor</span>
+                                <h2 id="news-form-title">Add News</h2>
+                            </div>
+                            <button type="button" id="reset-news-form" class="admin-ghost-btn">Clear</button>
+                        </div>
+
+                        <form id="news-form" class="admin-form">
+                            <input type="hidden" id="news-id">
+
+                            <div class="admin-field">
+                                <label for="news-title">Title</label>
+                                <input type="text" id="news-title" required>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="news-slug">Slug</label>
+                                <input type="text" id="news-slug" required>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="news-short-description">Short Description</label>
+                                <textarea id="news-short-description" rows="3" required></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="news-content">Content</label>
+                                <textarea id="news-content" rows="8" required></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="news-image-url">Image URL</label>
+                                <input type="url" id="news-image-url" placeholder="https://example.com/image.jpg">
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="news-author">Author</label>
+                                    <input type="text" id="news-author" value="Admin">
+                                </div>
+
+                                <div class="admin-field">
+                                    <label for="news-status">Status</label>
+                                    <select id="news-status">
+                                        <option value="published">Published</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="save-news-btn" class="theme-btn admin-submit-btn">Add News</button>
+                        </form>
+                    </section>
+
+                    <section class="admin-panel" aria-labelledby="news-list-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Published Content</span>
+                                <h2 id="news-list-title">News List</h2>
+                            </div>
+                            <button type="button" id="refresh-news" class="admin-ghost-btn">Refresh</button>
+                        </div>
+                        <div id="news-loading" class="admin-loading">Loading news...</div>
+                        <div id="news-list" class="admin-card-list"></div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-news.js"></script>
+</body>
+
+</html>

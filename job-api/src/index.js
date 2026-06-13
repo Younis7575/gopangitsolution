@@ -67,6 +67,38 @@ function validateJobPayload(job) {
 	return null;
 }
 
+function getNewsPayload(body) {
+	return {
+		title: String(body.title || "").trim(),
+		slug: String(body.slug || "").trim(),
+		short_description: String(body.short_description || "").trim(),
+		content: String(body.content || "").trim(),
+		image_url: body.image_url ? String(body.image_url).trim() : null,
+		author: body.author ? String(body.author).trim() : null,
+		status: body.status ? String(body.status).trim() : "published",
+	};
+}
+
+function validateNewsPayload(news) {
+	if (!news.title) {
+		return "title is required";
+	}
+
+	if (!news.slug) {
+		return "slug is required";
+	}
+
+	if (!news.short_description) {
+		return "short_description is required";
+	}
+
+	if (!news.content) {
+		return "content is required";
+	}
+
+	return null;
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		if (request.method === "OPTIONS") {
@@ -96,6 +128,166 @@ export default {
 					success: true,
 					message: "Jobs fetched successfully",
 					data: results,
+				});
+			}
+
+			if (request.method === "GET" && path === "/api/news") {
+				const { results } = await env.DB.prepare(
+					"SELECT * FROM news ORDER BY created_at DESC, id DESC",
+				).all();
+
+				return jsonResponse({
+					success: true,
+					message: "News fetched successfully",
+					data: results,
+				});
+			}
+
+			if (request.method === "POST" && path === "/api/news") {
+				const body = await readJsonBody(request);
+
+				if (!body) {
+					return errorResponse("Invalid JSON body", 400);
+				}
+
+				const newsPayload = getNewsPayload(body);
+				const validationError = validateNewsPayload(newsPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
+				}
+
+				const result = await env.DB.prepare(
+					"INSERT INTO news (title, slug, short_description, content, image_url, author, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+				)
+					.bind(
+						newsPayload.title,
+						newsPayload.slug,
+						newsPayload.short_description,
+						newsPayload.content,
+						newsPayload.image_url,
+						newsPayload.author,
+						newsPayload.status,
+					)
+					.run();
+
+				const createdNews = await env.DB.prepare("SELECT * FROM news WHERE id = ?")
+					.bind(result.meta.last_row_id)
+					.first();
+
+				return jsonResponse(
+					{
+						success: true,
+						message: "News created successfully",
+						data: createdNews,
+					},
+					201,
+				);
+			}
+
+			const newsSlugMatch = path.match(/^\/api\/news\/slug\/([^/]+)$/);
+			if (request.method === "GET" && newsSlugMatch) {
+				const slug = decodeURIComponent(newsSlugMatch[1]);
+				const news = await env.DB.prepare("SELECT * FROM news WHERE slug = ?")
+					.bind(slug)
+					.first();
+
+				if (!news) {
+					return errorResponse("News not found", 404);
+				}
+
+				return jsonResponse({
+					success: true,
+					message: "News fetched successfully",
+					data: news,
+				});
+			}
+
+			const newsMatch = path.match(/^\/api\/news\/(\d+)$/);
+			if (request.method === "GET" && newsMatch) {
+				const newsId = Number(newsMatch[1]);
+				const news = await env.DB.prepare("SELECT * FROM news WHERE id = ?")
+					.bind(newsId)
+					.first();
+
+				if (!news) {
+					return errorResponse("News not found", 404);
+				}
+
+				return jsonResponse({
+					success: true,
+					message: "News fetched successfully",
+					data: news,
+				});
+			}
+
+			if (request.method === "PUT" && newsMatch) {
+				const newsId = Number(newsMatch[1]);
+				const body = await readJsonBody(request);
+
+				if (!body) {
+					return errorResponse("Invalid JSON body", 400);
+				}
+
+				const existingNews = await env.DB.prepare("SELECT id FROM news WHERE id = ?")
+					.bind(newsId)
+					.first();
+
+				if (!existingNews) {
+					return errorResponse("News not found", 404);
+				}
+
+				const newsPayload = getNewsPayload(body);
+				const validationError = validateNewsPayload(newsPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
+				}
+
+				await env.DB.prepare(
+					"UPDATE news SET title = ?, slug = ?, short_description = ?, content = ?, image_url = ?, author = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+				)
+					.bind(
+						newsPayload.title,
+						newsPayload.slug,
+						newsPayload.short_description,
+						newsPayload.content,
+						newsPayload.image_url,
+						newsPayload.author,
+						newsPayload.status,
+						newsId,
+					)
+					.run();
+
+				const updatedNews = await env.DB.prepare("SELECT * FROM news WHERE id = ?")
+					.bind(newsId)
+					.first();
+
+				return jsonResponse({
+					success: true,
+					message: "News updated successfully",
+					data: updatedNews,
+				});
+			}
+
+			if (request.method === "DELETE" && newsMatch) {
+				const newsId = Number(newsMatch[1]);
+				const existingNews = await env.DB.prepare("SELECT id FROM news WHERE id = ?")
+					.bind(newsId)
+					.first();
+
+				if (!existingNews) {
+					return errorResponse("News not found", 404);
+				}
+
+				await env.DB.prepare("DELETE FROM news WHERE id = ?").bind(newsId).run();
+
+				return jsonResponse({
+					success: true,
+					message: "News deleted successfully",
+					data: {
+						id: newsId,
+					},
 				});
 			}
 
