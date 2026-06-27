@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Gopang IT Solution — Home page (loads after premium.css)
+   White, minimal hero + section tuning
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero — white, editorial, conversion-focused
+   -------------------------------------------------------------------------- */
+.gis-hero-premium {
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+  border-bottom: 1px solid var(--gis-border);
+}
+
+/* Subtle dot grid, fades out toward edges */
+.gis-hero-premium::before { content: none; }
+.gis-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(11, 13, 18, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 70% 30%, #000 0%, transparent 80%);
+  mask-image: radial-gradient(ellipse 75% 70% at 70% 30%, #000 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.gis-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 96px 0 100px;
+}
+
+.gis-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--gis-border-strong);
+  color: var(--gis-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 26px;
+}
+.gis-hero-badge::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gis-accent);
+}
+
+.gis-hero-premium h1 {
+  color: var(--gis-ink);
+  font-size: clamp(2.3rem, 5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-bottom: 22px;
+  max-width: 720px;
+}
+.gis-hero-premium h1 span { color: var(--gis-accent); }
+
+.gis-hero-premium .lead {
+  color: var(--gis-text);
+  font-size: 1.15rem;
+  line-height: 1.65;
+  max-width: 580px;
+  margin-bottom: 32px;
+}
+
+.gis-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 44px; }
+
+.gis-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--gis-border);
+}
+.gis-hero-stat strong {
+  display: block;
+  color: var(--gis-ink);
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.gis-hero-stat span { color: var(--gis-muted); font-size: 0.88rem; font-weight: 500; }
+
+/* Hero product panel — clean, bordered (no glass) */
+.gis-hero-visual { position: relative; }
+.gis-hero-card {
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r-lg);
+  box-shadow: var(--gis-shadow-lg);
+  padding: 26px;
+}
+.gis-hero-card-header {
+  border-bottom: 1px solid var(--gis-border);
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+}
+.gis-hero-card-header span {
+  color: var(--gis-accent);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.gis-hero-card-header strong { color: var(--gis-ink); display: block; font-size: 1.35rem; line-height: 1.2; margin-top: 8px; }
+
+.gis-hero-dashboard {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+.gis-hero-dashboard div {
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+  border-radius: 12px;
+  padding: 18px;
+}
+.gis-hero-dashboard strong { color: var(--gis-ink); display: block; font-size: 1.9rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+.gis-hero-dashboard span { color: var(--gis-muted); display: block; font-size: 0.82rem; font-weight: 500; margin-top: 8px; }
+
+.gis-hero-card h3 { color: var(--gis-ink); font-size: 1.05rem; margin-bottom: 14px; }
+.gis-hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.gis-hero-tags span {
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+  color: var(--gis-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Trust strip — overlapping bordered card
+   -------------------------------------------------------------------------- */
+.gis-trust-strip { position: relative; z-index: 4; margin-top: -40px; }
+.gis-trust-grid {
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r);
+  box-shadow: var(--gis-shadow);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+}
+.gis-trust-grid div {
+  align-items: center;
+  border-right: 1px solid var(--gis-border);
+  display: flex;
+  gap: 13px;
+  min-height: 92px;
+  padding: 22px 24px;
+}
+.gis-trust-grid div:last-child { border-right: 0; }
+.gis-trust-grid i {
+  align-items: center;
+  background: var(--gis-accent-soft);
+  border-radius: 10px;
+  color: var(--gis-accent);
+  display: inline-flex;
+  flex: 0 0 42px;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+  font-size: 1.05rem;
+}
+.gis-trust-grid span { color: var(--gis-ink); font-weight: 600; line-height: 1.35; font-size: 0.92rem; }
+
+/* --------------------------------------------------------------------------
+   About image frame
+   -------------------------------------------------------------------------- */
+.about-images-video-popup {
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r);
+  box-shadow: var(--gis-shadow);
+  overflow: hidden;
+  padding: 10px;
+}
+.about-images-video-popup img { border-radius: 10px; width: 100%; height: auto; }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+  .gis-hero-content { padding: 72px 0 64px; }
+  .gis-hero-visual { margin-top: 36px; }
+  .gis-trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gis-trust-grid div:nth-child(2) { border-right: 0; }
+  .gis-trust-grid div:nth-child(1), .gis-trust-grid div:nth-child(2) { border-bottom: 1px solid var(--gis-border); }
+}
+
+@media (max-width: 575px) {
+  .gis-hero-content { padding: 56px 0 52px; }
+  .gis-hero-stats { gap: 26px; }
+  .gis-hero-dashboard { grid-template-columns: 1fr; }
+  .gis-trust-grid { grid-template-columns: 1fr; }
+  .gis-trust-grid div { border-right: 0; border-bottom: 1px solid var(--gis-border); }
+  .gis-trust-grid div:last-child { border-bottom: 0; }
+  .gis-hero-actions { flex-direction: column; }
+  .gis-hero-actions .theme-btn,
+  .gis-hero-actions .theme-btn-outline { width: 100%; }
+}

@@ -8,7 +8,7 @@
 
     $(document).ready( function() {
 
-        new WOW().init();        
+        if (typeof WOW !== 'undefined') { new WOW().init(); }
 
         if($('.hero-1 .hero-slider-active').length > 0) {
             $('.hero-1 .hero-slider-active').slick({
