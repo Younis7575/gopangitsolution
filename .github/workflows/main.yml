@@ -1,0 +1,65 @@
+name: Deploy Website via FTP
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install LFTP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Verify Local Files
+        run: |
+          pwd
+          ls -lah
+
+      - name: Deploy Website
+        env:
+          FTP_HOST: ftp.gopangitsolution.com
+          FTP_USERNAME: younas@gopangitsolution.com
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PORT: 21
+
+        run: |
+          lftp -d -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST:$FTP_PORT <<EOF
+
+          # Disable certificate verification if using plain FTP
+          set ssl:verify-certificate no
+          set ftp:passive-mode on
+          set net:max-retries 2
+          set net:timeout 30
+
+          echo "Current Remote Directory:"
+          pwd
+          cls
+
+          # Change this if your website is inside public_html
+          cd /
+
+          mirror --reverse \
+            --delete \
+            --verbose \
+            --parallel=2 \
+            --only-newer \
+            --exclude-glob ".git/**" \
+            --exclude-glob ".github/**" \
+            --exclude-glob "node_modules/**" \
+            ./ .
+
+          echo "Deployment Finished"
+
+          pwd
+          cls
+
+          bye
+          EOF
