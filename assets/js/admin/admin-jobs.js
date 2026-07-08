@@ -1,4 +1,7 @@
-const API_BASE_URL = "https://job-api.gopangit.workers.dev";
+const API_BASE_URL =
+	window.JOB_API_BASE_URL ||
+	localStorage.getItem("JOB_API_BASE_URL") ||
+	"https://job-api.gopangit.workers.dev";
 
 if (localStorage.getItem("isAdminLoggedIn") !== "true") {
 	window.location.replace("/admin-login");
@@ -18,6 +21,15 @@ const elements = {
 	type: document.getElementById("job-type"),
 	salary: document.getElementById("job-salary"),
 	description: document.getElementById("job-description"),
+	experience: document.getElementById("job-experience"),
+	status: document.getElementById("job-status"),
+	workingHours: document.getElementById("job-working-hours"),
+	deadline: document.getElementById("job-deadline"),
+	overview: document.getElementById("job-overview"),
+	responsibilities: document.getElementById("job-responsibilities"),
+	requirements: document.getElementById("job-requirements"),
+	skills: document.getElementById("job-skills"),
+	benefits: document.getElementById("job-benefits"),
 	saveJobBtn: document.getElementById("save-job-btn"),
 	resetJobForm: document.getElementById("reset-job-form"),
 	refreshJobs: document.getElementById("refresh-jobs"),
@@ -74,6 +86,15 @@ function getJobPayload() {
 		type: elements.type.value.trim(),
 		salary: elements.salary.value.trim(),
 		description: elements.description.value.trim(),
+		experience_required: elements.experience.value.trim(),
+		status: elements.status.value,
+		working_hours: elements.workingHours.value.trim(),
+		application_deadline: elements.deadline.value,
+		overview: elements.overview.value.trim(),
+		responsibilities: elements.responsibilities.value.trim(),
+		requirements: elements.requirements.value.trim(),
+		skills: elements.skills.value.trim(),
+		benefits: elements.benefits.value.trim(),
 	};
 }
 
@@ -94,6 +115,15 @@ function fillJobForm(job) {
 	elements.type.value = job.type || "";
 	elements.salary.value = job.salary || "";
 	elements.description.value = job.description || "";
+	elements.experience.value = job.experience_required || "";
+	elements.status.value = job.status || "Open";
+	elements.workingHours.value = job.working_hours || "";
+	elements.deadline.value = job.application_deadline || "";
+	elements.overview.value = job.overview || "";
+	elements.responsibilities.value = job.responsibilities || "";
+	elements.requirements.value = job.requirements || "";
+	elements.skills.value = job.skills || "";
+	elements.benefits.value = job.benefits || "";
 	elements.saveJobBtn.textContent = "Update Job";
 	window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -114,9 +144,16 @@ function renderJobs(jobs) {
 						<span>${escapeHtml(job.location)}</span>
 						<span>${escapeHtml(job.type)}</span>
 						<span>${escapeHtml(job.salary || "Salary not specified")}</span>
+						<span>${escapeHtml(job.experience_required || "Experience not specified")}</span>
+						<span>${escapeHtml(job.status || "Open")}</span>
 						<span>${escapeHtml(job.created_at || "")}</span>
 					</div>
 					<p class="admin-job-description">${escapeHtml(job.description)}</p>
+					<div class="admin-job-detail-list">
+						<div><span>Working Hours:</span> ${escapeHtml(job.working_hours || "Not specified")}</div>
+						<div><span>Deadline:</span> ${escapeHtml(job.application_deadline || "Open until filled")}</div>
+						<div><span>Skills:</span> ${escapeHtml(job.skills || "Not specified")}</div>
+					</div>
 					<div class="admin-job-actions">
 						<button type="button" class="admin-action-btn" data-action="edit" data-id="${escapeHtml(job.id)}">Edit</button>
 						<button type="button" class="admin-action-btn danger" data-action="delete" data-id="${escapeHtml(job.id)}">Delete</button>
@@ -129,19 +166,30 @@ function renderJobs(jobs) {
 
 function renderApplications(applications) {
 	if (!Array.isArray(applications) || applications.length === 0) {
-		elements.applicationsTable.innerHTML = '<tr><td colspan="6" class="admin-empty">No applications found.</td></tr>';
+		elements.applicationsTable.innerHTML = '<tr><td colspan="9" class="admin-empty">No applications found.</td></tr>';
 		return;
 	}
 
 	elements.applicationsTable.innerHTML = applications
 		.map(function (application) {
+			const resumeUrl = application.resume_url
+				? API_BASE_URL + application.resume_url
+				: "";
+
 			return `
 				<tr>
-					<td>${escapeHtml(application.full_name)}</td>
+					<td>
+						${escapeHtml(application.full_name)}
+						<span class="admin-applicant-note">${escapeHtml(application.message || "")}</span>
+					</td>
+					<td>${escapeHtml(application.position || application.job_title || "")}</td>
 					<td>${escapeHtml(application.email)}</td>
 					<td>${escapeHtml(application.phone)}</td>
-					<td>${escapeHtml(application.message || "")}</td>
-					<td>${escapeHtml(application.job_id)}</td>
+					<td>${escapeHtml(application.current_city || "")}</td>
+					<td>${escapeHtml(application.expected_salary || "")}</td>
+					<td>${escapeHtml(application.experience_years || "")}</td>
+					<td>${resumeUrl ? `<a class="admin-cv-link" href="${escapeHtml(resumeUrl)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : "No CV"}</td>
+					<td><span class="admin-status-pill pending">${escapeHtml(application.status || "Pending")}</span></td>
 					<td>${escapeHtml(application.created_at || "")}</td>
 				</tr>
 			`;
@@ -154,7 +202,7 @@ async function loadJobs() {
 	elements.jobsLoading.textContent = "Loading jobs...";
 
 	try {
-		const result = await fetchJson("/api/jobs", {
+		const result = await fetchJson("/api/jobs?admin=1", {
 			method: "GET",
 			headers: {
 				Accept: "application/json",
@@ -182,7 +230,7 @@ async function loadApplications() {
 		});
 		renderApplications(result.data || []);
 	} catch (error) {
-		elements.applicationsTable.innerHTML = '<tr><td colspan="6" class="admin-empty">' + escapeHtml(error.message) + "</td></tr>";
+		elements.applicationsTable.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(error.message) + "</td></tr>";
 	} finally {
 		elements.applicationsLoading.classList.add("d-none");
 	}

@@ -98,9 +98,62 @@
                                 <input type="text" id="job-salary" name="salary">
                             </div>
 
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="job-experience">Experience Required</label>
+                                    <input type="text" id="job-experience" name="experience_required" required placeholder="2-4 years">
+                                </div>
+
+                                <div class="admin-field">
+                                    <label for="job-status">Status</label>
+                                    <select id="job-status" name="status">
+                                        <option value="Open">Open</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="job-working-hours">Working Hours</label>
+                                    <input type="text" id="job-working-hours" name="working_hours" placeholder="Monday to Friday, 9 AM - 6 PM">
+                                </div>
+
+                                <div class="admin-field">
+                                    <label for="job-deadline">Application Deadline</label>
+                                    <input type="date" id="job-deadline" name="application_deadline">
+                                </div>
+                            </div>
+
                             <div class="admin-field">
-                                <label for="job-description">Description</label>
+                                <label for="job-description">Short Description</label>
                                 <textarea id="job-description" name="description" rows="5" required></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="job-overview">Job Overview</label>
+                                <textarea id="job-overview" name="overview" rows="5" required></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="job-responsibilities">Responsibilities</label>
+                                <textarea id="job-responsibilities" name="responsibilities" rows="5" placeholder="One item per line or comma separated"></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="job-requirements">Requirements</label>
+                                <textarea id="job-requirements" name="requirements" rows="5" placeholder="One item per line or comma separated"></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="job-skills">Skills Required</label>
+                                <textarea id="job-skills" name="skills" rows="4" placeholder="Flutter, Firebase, REST APIs"></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="job-benefits">Benefits</label>
+                                <textarea id="job-benefits" name="benefits" rows="4" placeholder="Learning support, flexible collaboration, growth opportunities"></textarea>
                             </div>
 
                             <button type="submit" id="save-job-btn" class="theme-btn admin-submit-btn">Add Job</button>
@@ -135,10 +188,14 @@
                             <thead>
                                 <tr>
                                     <th>Applicant</th>
+                                    <th>Position</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Message</th>
-                                    <th>Job ID</th>
+                                    <th>City</th>
+                                    <th>Expected Salary</th>
+                                    <th>Experience</th>
+                                    <th>CV</th>
+                                    <th>Status</th>
                                     <th>Created At</th>
                                 </tr>
                             </thead>

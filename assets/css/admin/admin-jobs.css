@@ -168,7 +168,8 @@
 }
 
 .admin-field input,
-.admin-field textarea {
+.admin-field textarea,
+.admin-field select {
     background: #fff;
     border: 1px solid #d0d5dd;
     border-radius: 8px;
@@ -184,7 +185,8 @@
 }
 
 .admin-field input:focus,
-.admin-field textarea:focus {
+.admin-field textarea:focus,
+.admin-field select:focus {
     border-color: #0f62fe;
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
@@ -279,6 +281,33 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.admin-job-detail-list {
+    color: #667085;
+    display: grid;
+    gap: 6px;
+    margin: 10px 0 14px;
+}
+
+.admin-job-detail-list span {
+    color: #344054;
+    font-weight: 800;
+}
+
+.admin-cv-link {
+    color: #0f62fe;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.admin-applicant-note {
+    color: #667085;
+    display: block;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 6px;
+    max-width: 260px;
 }
 
 .admin-loading {

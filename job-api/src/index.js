@@ -2,7 +2,17 @@ const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
 	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 	"Access-Control-Allow-Headers": "Content-Type",
+	"Access-Control-Expose-Headers": "Content-Disposition",
 };
+
+const allowedCvExtensions = [".pdf", ".doc", ".docx"];
+const allowedCvMimeTypes = [
+	"application/pdf",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const maxCvSize = 5 * 1024 * 1024;
+const jobStatuses = ["Open", "Closed", "Draft"];
 
 function jsonResponse(body, status = 200) {
 	return new Response(JSON.stringify(body), {
@@ -40,6 +50,21 @@ function getJobPayload(body) {
 		type: String(body.type || "").trim(),
 		salary: body.salary ? String(body.salary).trim() : null,
 		description: String(body.description || "").trim(),
+		experience_required: String(
+			body.experience_required || body.experience || "",
+		).trim(),
+		overview: String(body.overview || "").trim(),
+		responsibilities: String(body.responsibilities || "").trim(),
+		requirements: String(body.requirements || "").trim(),
+		skills: String(body.skills || "").trim(),
+		benefits: String(body.benefits || "").trim(),
+		working_hours: String(body.working_hours || "").trim(),
+		application_deadline: body.application_deadline
+			? String(body.application_deadline).trim()
+			: null,
+		status: jobStatuses.includes(String(body.status || "").trim())
+			? String(body.status).trim()
+			: "Open",
 	};
 }
 
@@ -64,7 +89,260 @@ function validateJobPayload(job) {
 		return "description is required";
 	}
 
+	if (!job.experience_required) {
+		return "experience_required is required";
+	}
+
+	if (!job.overview) {
+		return "overview is required";
+	}
+
 	return null;
+}
+
+function isValidEmail(email) {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone) {
+	return /^[+()\d\s-]{7,20}$/.test(phone);
+}
+
+function parseRequiredNumber(value, fieldName) {
+	const rawValue = String(value || "").trim();
+
+	if (!rawValue) {
+		return {
+			error: `${fieldName} is required`,
+		};
+	}
+
+	const parsedValue = Number(rawValue);
+
+	if (!Number.isFinite(parsedValue) || parsedValue < 0) {
+		return {
+			error: `${fieldName} must be a valid number`,
+		};
+	}
+
+	return {
+		value: parsedValue,
+	};
+}
+
+function parseOptionalNumber(value, fieldName) {
+	const rawValue = String(value || "").trim();
+
+	if (!rawValue) {
+		return {
+			value: null,
+		};
+	}
+
+	const parsedValue = Number(rawValue);
+
+	if (!Number.isFinite(parsedValue) || parsedValue < 0) {
+		return {
+			error: `${fieldName} must be a valid number`,
+		};
+	}
+
+	return {
+		value: parsedValue,
+	};
+}
+
+function normalizeOptionalUrl(value, fieldName) {
+	const rawValue = String(value || "").trim();
+
+	if (!rawValue) {
+		return {
+			value: null,
+		};
+	}
+
+	try {
+		const url = new URL(rawValue);
+
+		if (!["http:", "https:"].includes(url.protocol)) {
+			return {
+				error: `${fieldName} must start with http:// or https://`,
+			};
+		}
+
+		return {
+			value: url.toString(),
+		};
+	} catch (error) {
+		return {
+			error: `${fieldName} must be a valid URL`,
+		};
+	}
+}
+
+function sanitizeFileName(fileName) {
+	const cleanName = String(fileName || "resume")
+		.replace(/[/\\?%*:|"<>]/g, "-")
+		.replace(/\s+/g, "-")
+		.replace(/-+/g, "-")
+		.toLowerCase();
+
+	return cleanName || "resume";
+}
+
+function getFileExtension(fileName) {
+	const cleanName = String(fileName || "").toLowerCase();
+	const lastDot = cleanName.lastIndexOf(".");
+	return lastDot >= 0 ? cleanName.slice(lastDot) : "";
+}
+
+function validateCvFile(file) {
+	if (!file || typeof file.arrayBuffer !== "function") {
+		return "CV / Resume upload is required";
+	}
+
+	const extension = getFileExtension(file.name);
+
+	if (!allowedCvExtensions.includes(extension)) {
+		return "CV must be a PDF, DOC, or DOCX file";
+	}
+
+	if (file.type && !allowedCvMimeTypes.includes(file.type)) {
+		return "CV file type must be PDF, DOC, or DOCX";
+	}
+
+	if (file.size > maxCvSize) {
+		return "CV file must be 5MB or smaller";
+	}
+
+	return null;
+}
+
+function buildApplicationPayload(formData) {
+	const expectedSalary = parseRequiredNumber(
+		formData.get("expected_salary"),
+		"expected_salary",
+	);
+	const currentSalary = parseOptionalNumber(
+		formData.get("current_salary"),
+		"current_salary",
+	);
+	const experienceYears = parseRequiredNumber(
+		formData.get("experience_years"),
+		"experience_years",
+	);
+	const linkedinProfile = normalizeOptionalUrl(
+		formData.get("linkedin_profile"),
+		"linkedin_profile",
+	);
+	const portfolioUrl = normalizeOptionalUrl(
+		formData.get("portfolio_url"),
+		"portfolio_url",
+	);
+
+	const error =
+		expectedSalary.error ||
+		currentSalary.error ||
+		experienceYears.error ||
+		linkedinProfile.error ||
+		portfolioUrl.error;
+
+	if (error) {
+		return {
+			error,
+		};
+	}
+
+	return {
+		value: {
+			job_id: Number(formData.get("job_id")),
+			full_name: String(formData.get("full_name") || "").trim(),
+			email: String(formData.get("email") || "").trim(),
+			phone: String(formData.get("phone") || "").trim(),
+			current_city: String(formData.get("current_city") || "").trim(),
+			position: String(formData.get("position") || "").trim(),
+			expected_salary: expectedSalary.value,
+			current_salary: currentSalary.value,
+			experience_years: experienceYears.value,
+			notice_period: String(formData.get("notice_period") || "").trim() || null,
+			linkedin_profile: linkedinProfile.value,
+			portfolio_url: portfolioUrl.value,
+			message: String(formData.get("message") || "").trim(),
+			cv_file: formData.get("cv_file"),
+		},
+	};
+}
+
+function validateApplicationPayload(application) {
+	if (!application.job_id) {
+		return "job_id is required";
+	}
+
+	if (!application.full_name) {
+		return "full_name is required";
+	}
+
+	if (!application.email) {
+		return "email is required";
+	}
+
+	if (!isValidEmail(application.email)) {
+		return "email must be valid";
+	}
+
+	if (!application.phone) {
+		return "phone is required";
+	}
+
+	if (!isValidPhone(application.phone)) {
+		return "phone must be valid";
+	}
+
+	if (!application.current_city) {
+		return "current_city is required";
+	}
+
+	if (!application.position) {
+		return "position is required";
+	}
+
+	if (!application.message) {
+		return "cover letter / message is required";
+	}
+
+	return validateCvFile(application.cv_file);
+}
+
+async function storeResume(env, application, job) {
+	if (!env.CV_BUCKET) {
+		throw new Error("CV storage is not configured");
+	}
+
+	const safeName = sanitizeFileName(application.cv_file.name);
+	const key = [
+		"job-applications",
+		String(job.id),
+		`${Date.now()}-${crypto.randomUUID()}-${safeName}`,
+	].join("/");
+
+	await env.CV_BUCKET.put(key, application.cv_file, {
+		httpMetadata: {
+			contentType: application.cv_file.type || "application/octet-stream",
+			contentDisposition: `attachment; filename="${safeName}"`,
+		},
+		customMetadata: {
+			job_id: String(job.id),
+			job_title: String(job.title || ""),
+			applicant_email: application.email,
+		},
+	});
+
+	return {
+		key,
+		fileName: safeName,
+		fileType: application.cv_file.type || "application/octet-stream",
+		fileSize: application.cv_file.size || 0,
+	};
 }
 
 function getNewsPayload(body) {
@@ -183,8 +461,11 @@ export default {
 			}
 
 			if (request.method === "GET" && path === "/api/jobs") {
+				const includeAll = url.searchParams.get("admin") === "1";
 				const { results } = await env.DB.prepare(
-					"SELECT * FROM jobs ORDER BY id DESC",
+					includeAll
+						? "SELECT * FROM jobs ORDER BY id DESC"
+						: "SELECT * FROM jobs WHERE COALESCE(status, 'Open') = 'Open' ORDER BY id DESC",
 				).all();
 
 				return jsonResponse({
@@ -581,7 +862,23 @@ export default {
 				}
 
 				const result = await env.DB.prepare(
-					"INSERT INTO jobs (title, company, location, type, salary, description) VALUES (?, ?, ?, ?, ?, ?)",
+					`INSERT INTO jobs (
+						title,
+						company,
+						location,
+						type,
+						salary,
+						description,
+						experience_required,
+						overview,
+						responsibilities,
+						requirements,
+						skills,
+						benefits,
+						working_hours,
+						application_deadline,
+						status
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 				)
 					.bind(
 						jobPayload.title,
@@ -590,6 +887,15 @@ export default {
 						jobPayload.type,
 						jobPayload.salary,
 						jobPayload.description,
+						jobPayload.experience_required,
+						jobPayload.overview,
+						jobPayload.responsibilities,
+						jobPayload.requirements,
+						jobPayload.skills,
+						jobPayload.benefits,
+						jobPayload.working_hours,
+						jobPayload.application_deadline,
+						jobPayload.status,
 					)
 					.run();
 
@@ -649,7 +955,24 @@ export default {
 				}
 
 				await env.DB.prepare(
-					"UPDATE jobs SET title = ?, company = ?, location = ?, type = ?, salary = ?, description = ? WHERE id = ?",
+					`UPDATE jobs SET
+						title = ?,
+						company = ?,
+						location = ?,
+						type = ?,
+						salary = ?,
+						description = ?,
+						experience_required = ?,
+						overview = ?,
+						responsibilities = ?,
+						requirements = ?,
+						skills = ?,
+						benefits = ?,
+						working_hours = ?,
+						application_deadline = ?,
+						status = ?,
+						updated_at = CURRENT_TIMESTAMP
+					WHERE id = ?`,
 				)
 					.bind(
 						jobPayload.title,
@@ -658,6 +981,15 @@ export default {
 						jobPayload.type,
 						jobPayload.salary,
 						jobPayload.description,
+						jobPayload.experience_required,
+						jobPayload.overview,
+						jobPayload.responsibilities,
+						jobPayload.requirements,
+						jobPayload.skills,
+						jobPayload.benefits,
+						jobPayload.working_hours,
+						jobPayload.application_deadline,
+						jobPayload.status,
 						jobId,
 					)
 					.run();
@@ -708,46 +1040,94 @@ export default {
 			}
 
 			if (request.method === "POST" && path === "/api/apply") {
-				const body = await readJsonBody(request);
+				const contentType = request.headers.get("content-type") || "";
 
-				if (!body) {
-					return errorResponse("Invalid JSON body", 400);
+				if (!contentType.includes("multipart/form-data")) {
+					return errorResponse(
+						"Application submission must use multipart/form-data",
+						415,
+					);
 				}
 
-				const jobId = Number(body.job_id);
-				const fullName = String(body.full_name || "").trim();
-				const email = String(body.email || "").trim();
-				const phone = String(body.phone || "").trim();
-				const message = body.message ? String(body.message).trim() : null;
+				const formData = await request.formData();
+				const payloadResult = buildApplicationPayload(formData);
 
-				if (!jobId) {
-					return errorResponse("job_id is required", 400);
+				if (payloadResult.error) {
+					return errorResponse(payloadResult.error, 400);
 				}
 
-				if (!fullName) {
-					return errorResponse("full_name is required", 400);
+				const applicationPayload = payloadResult.value;
+				const validationError = validateApplicationPayload(applicationPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
 				}
 
-				if (!email) {
-					return errorResponse("email is required", 400);
-				}
-
-				if (!phone) {
-					return errorResponse("phone is required", 400);
-				}
-
-				const job = await env.DB.prepare("SELECT id FROM jobs WHERE id = ?")
-					.bind(jobId)
+				const job = await env.DB.prepare("SELECT * FROM jobs WHERE id = ?")
+					.bind(applicationPayload.job_id)
 					.first();
 
 				if (!job) {
 					return errorResponse("Job not found", 404);
 				}
 
+				if ((job.status || "Open") !== "Open") {
+					return errorResponse("This job is not accepting applications", 409);
+				}
+
+				const storedResume = await storeResume(env, applicationPayload, job);
+
 				const result = await env.DB.prepare(
-					"INSERT INTO applications (job_id, full_name, email, phone, message) VALUES (?, ?, ?, ?, ?)",
+					`INSERT INTO applications (
+						job_id,
+						full_name,
+						email,
+						phone,
+						message,
+						current_city,
+						position,
+						expected_salary,
+						current_salary,
+						experience_years,
+						notice_period,
+						linkedin_profile,
+						portfolio_url,
+						resume_file_name,
+						resume_file_type,
+						resume_file_size,
+						resume_key,
+						resume_url,
+						status
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
 				)
-					.bind(jobId, fullName, email, phone, message)
+					.bind(
+						applicationPayload.job_id,
+						applicationPayload.full_name,
+						applicationPayload.email,
+						applicationPayload.phone,
+						applicationPayload.message,
+						applicationPayload.current_city,
+						applicationPayload.position,
+						applicationPayload.expected_salary,
+						applicationPayload.current_salary,
+						applicationPayload.experience_years,
+						applicationPayload.notice_period,
+						applicationPayload.linkedin_profile,
+						applicationPayload.portfolio_url,
+						storedResume.fileName,
+						storedResume.fileType,
+						storedResume.fileSize,
+						storedResume.key,
+						"/api/applications/:id/resume",
+					)
+					.run();
+
+				const resumeUrl = `/api/applications/${result.meta.last_row_id}/resume`;
+
+				await env.DB.prepare(
+					"UPDATE applications SET resume_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+				)
+					.bind(resumeUrl, result.meta.last_row_id)
 					.run();
 
 				return jsonResponse(
@@ -756,11 +1136,13 @@ export default {
 						message: "Application submitted successfully",
 						data: {
 							id: result.meta.last_row_id,
-							job_id: jobId,
-							full_name: fullName,
-							email,
-							phone,
-							message,
+							job_id: applicationPayload.job_id,
+							full_name: applicationPayload.full_name,
+							email: applicationPayload.email,
+							phone: applicationPayload.phone,
+							position: applicationPayload.position,
+							status: "Pending",
+							resume_url: resumeUrl,
 						},
 					},
 					201,
@@ -775,7 +1157,20 @@ export default {
 						applications.full_name,
 						applications.email,
 						applications.phone,
+						applications.current_city,
+						applications.position,
+						applications.expected_salary,
+						applications.current_salary,
+						applications.experience_years,
+						applications.notice_period,
+						applications.linkedin_profile,
+						applications.portfolio_url,
 						applications.message,
+						applications.resume_file_name,
+						applications.resume_file_type,
+						applications.resume_file_size,
+						applications.resume_url,
+						applications.status,
 						applications.created_at,
 						jobs.title AS job_title,
 						jobs.company AS job_company
@@ -788,6 +1183,41 @@ export default {
 					success: true,
 					message: "Applications fetched successfully",
 					data: results,
+				});
+			}
+
+			const applicationResumeMatch = path.match(
+				/^\/api\/applications\/(\d+)\/resume$/,
+			);
+			if (request.method === "GET" && applicationResumeMatch) {
+				const applicationId = Number(applicationResumeMatch[1]);
+				const application = await env.DB.prepare(
+					"SELECT resume_key, resume_file_name, resume_file_type FROM applications WHERE id = ?",
+				)
+					.bind(applicationId)
+					.first();
+
+				if (!application || !application.resume_key) {
+					return errorResponse("Resume not found", 404);
+				}
+
+				if (!env.CV_BUCKET) {
+					return errorResponse("CV storage is not configured", 500);
+				}
+
+				const object = await env.CV_BUCKET.get(application.resume_key);
+
+				if (!object) {
+					return errorResponse("Resume file not found", 404);
+				}
+
+				return new Response(object.body, {
+					headers: {
+						...corsHeaders,
+						"Content-Type":
+							application.resume_file_type || "application/octet-stream",
+						"Content-Disposition": `attachment; filename="${application.resume_file_name || "resume"}"`,
+					},
 				});
 			}
 

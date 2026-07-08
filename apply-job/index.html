@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/pages/careers.css">
     <link rel="stylesheet" href="/assets/css/premium.css?v=4">
 </head>
 
@@ -105,11 +106,11 @@
     <main class="gis-careers-page">
         <section class="gis-careers-hero">
             <div class="container">
-                <div class="row align-items-center">
+                <div class="row align-items-center g-4">
                     <div class="col-lg-8">
                         <span class="gis-careers-eyebrow">Careers at Gopang IT Solution</span>
                         <h1>Build useful digital products with a team that values craft.</h1>
-                        <p>Explore open roles, choose the job that fits your skills, and submit your application directly to our hiring team.</p>
+                        <p>Explore current roles, review complete job details, and submit your application with your resume directly to our hiring team.</p>
                     </div>
                     <div class="col-lg-4">
                         <div class="gis-careers-summary">
@@ -118,12 +119,12 @@
                                 <span>Open Roles</span>
                             </div>
                             <div>
-                                <strong>Remote</strong>
-                                <span>Work Options</span>
+                                <strong>Hybrid</strong>
+                                <span>Remote and On-site</span>
                             </div>
                             <div>
-                                <strong>Fast</strong>
-                                <span>Review Process</span>
+                                <strong>Admin</strong>
+                                <span>Tracked Applications</span>
                             </div>
                         </div>
                     </div>
@@ -133,289 +134,210 @@
 
         <section class="gis-careers-content">
             <div class="container">
-                <div class="gis-careers-section-head">
-                    <span>Open Positions</span>
-                    <h2>Current Job Listings</h2>
-                    <p>Choose a role below and click <strong>Apply Now</strong> to open the application form for that position.</p>
-                </div>
-
-                <div id="jobs-list" class="row g-4 justify-content-center gis-jobs-grid">
-                    <div class="col-12">
-                        <div class="gis-jobs-loading">
-                            <span class="gis-loader"></span>
-                            <p>Loading open roles...</p>
+                <div class="gis-careers-surface">
+                    <div class="gis-careers-section-head">
+                        <div>
+                            <span>Open Positions</span>
+                            <h2>Current Job Listings</h2>
+                            <p>Choose a role below to view the complete job detail and submit your application.</p>
                         </div>
+                        <button type="button" id="retry-jobs" class="gis-retry-btn" hidden>Retry</button>
                     </div>
+
+                    <div id="jobs-status" class="gis-careers-state loading">
+                        <h3>Loading open positions...</h3>
+                        <p>Please wait while we fetch the latest roles.</p>
+                    </div>
+
+                    <div id="jobs-list" class="row g-4 gis-jobs-grid"></div>
                 </div>
 
-                <div class="row mt-5 justify-content-center">
-                    <div class="col-lg-9">
-                        <div id="application-form" class="gis-application-panel d-none">
-                            <div class="gis-application-intro">
-                                <span>Application</span>
-                                <h2 id="form-heading">Job Application</h2>
-                                <p id="form-sub">Fill the form to apply for the selected position.</p>
-                            </div>
+                <section id="job-detail-panel" class="gis-detail-panel d-none" aria-labelledby="job-detail-title">
+                    <span>Job Detail</span>
+                    <div id="job-detail-content"></div>
+                </section>
 
-                            <div id="form-message" class="alert d-none" role="alert"></div>
+                <section id="application-form" class="gis-application-panel d-none" aria-labelledby="form-heading">
+                    <div class="gis-application-intro">
+                        <span>Application</span>
+                        <h2 id="form-heading">Job Application</h2>
+                        <p id="form-sub">Fill the form to apply for the selected position.</p>
+                    </div>
 
-                            <form id="job-application-form" action="#" method="post" class="row g-4">
-                                <input type="hidden" name="job_id" id="job_id" value="">
-                                <div class="col-md-6">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" name="full_name" class="form-control" required aria-required="true">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" name="email" class="form-control" required aria-required="true">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel" name="phone" class="form-control" required aria-required="true">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Job Title / Role</label>
-                                    <input type="text" name="position" id="position" class="form-control" readonly required aria-required="true">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Message</label>
-                                    <textarea name="message" class="form-control" rows="5" placeholder="I want to apply"></textarea>
-                                </div>
+                    <div id="form-message" class="alert d-none" role="alert"></div>
 
-                                <div class="col-12 text-center">
-                                    <button type="submit" id="submit-application" class="theme-btn">Submit Application</button>
-                                    <button type="button" id="cancel-apply" class="gis-cancel-btn ms-2">Cancel</button>
-                                </div>
-                            </form>
+                    <form id="job-application-form" action="#" method="post" enctype="multipart/form-data" class="row g-4" novalidate>
+                        <input type="hidden" name="job_id" id="job_id" value="">
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="full_name">Full Name *</label>
+                            <input type="text" name="full_name" id="full_name" class="form-control" required autocomplete="name">
                         </div>
-                    </div>
-                </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" name="email" id="email" class="form-control" required autocomplete="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="phone">Phone Number *</label>
+                            <input type="tel" name="phone" id="phone" class="form-control" required autocomplete="tel" placeholder="+92 334 2322324">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="current_city">Current City / Location *</label>
+                            <input type="text" name="current_city" id="current_city" class="form-control" required autocomplete="address-level2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="position">Position Applying For *</label>
+                            <input type="text" name="position" id="position" class="form-control" readonly required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="expected_salary">Expected Salary *</label>
+                            <input type="number" name="expected_salary" id="expected_salary" class="form-control" min="0" step="1" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="current_salary">Current Salary</label>
+                            <input type="number" name="current_salary" id="current_salary" class="form-control" min="0" step="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="experience_years">Experience in Years *</label>
+                            <input type="number" name="experience_years" id="experience_years" class="form-control" min="0" step="0.5" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="notice_period">Notice Period</label>
+                            <input type="text" name="notice_period" id="notice_period" class="form-control" placeholder="Immediate, 15 days, 30 days">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="linkedin_profile">LinkedIn Profile</label>
+                            <input type="url" name="linkedin_profile" id="linkedin_profile" class="form-control" placeholder="https://linkedin.com/in/username">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="portfolio_url">Portfolio / GitHub / Website</label>
+                            <input type="url" name="portfolio_url" id="portfolio_url" class="form-control" placeholder="https://github.com/username">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="cv_file">CV / Resume Upload *</label>
+                            <input type="file" name="cv_file" id="cv_file" class="form-control" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+                            <small class="gis-field-hint">Accepted formats: PDF, DOC, DOCX. Maximum file size: 5MB.</small>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="message">Cover Letter / Message *</label>
+                            <textarea name="message" id="message" class="form-control" rows="5" required placeholder="Tell us about your relevant experience and why this role fits you."></textarea>
+                        </div>
+
+                        <div class="col-12 gis-form-actions">
+                            <button type="submit" id="submit-application" class="theme-btn">Submit Application</button>
+                            <button type="button" id="cancel-apply" class="gis-cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </section>
             </div>
         </section>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const API_BASE_URL = "https://job-api.gopangit.workers.dev";
-            const jobsList = document.getElementById('jobs-list');
-            const jobsCount = document.getElementById('jobs-count');
-            const formWrapper = document.getElementById('application-form');
-            const applicationForm = document.getElementById('job-application-form');
-            const positionInput = document.getElementById('position');
-            const jobIdInput = document.getElementById('job_id');
-            const formHeading = document.getElementById('form-heading');
-            const formSub = document.getElementById('form-sub');
-            const formMessage = document.getElementById('form-message');
-            const cancelBtn = document.getElementById('cancel-apply');
-            const submitBtn = document.getElementById('submit-application');
-            const hamburger = document.getElementById('hamburger');
-            const mobileNav = document.querySelector('.mobile-nav');
-            const closeNav = document.querySelector('.close-nav');
-            const overlay = document.querySelector('.overlay');
-
-            function openMobileMenu() {
-                if (mobileNav) {
-                    mobileNav.classList.add('show');
-                }
-
-                if (overlay) {
-                    overlay.classList.add('active');
-                }
-            }
-
-            function closeMobileMenu() {
-                if (mobileNav) {
-                    mobileNav.classList.remove('show');
-                }
-
-                if (overlay) {
-                    overlay.classList.remove('active');
-                }
-            }
-
-            if (hamburger) {
-                hamburger.addEventListener('click', openMobileMenu);
-                hamburger.addEventListener('keydown', function (event) {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        openMobileMenu();
-                    }
-                });
-            }
-
-            if (closeNav) {
-                closeNav.addEventListener('click', closeMobileMenu);
-            }
-
-            if (overlay) {
-                overlay.addEventListener('click', closeMobileMenu);
-            }
-
-            function escapeHtml(value) {
-                return String(value || '').replace(/[&<>"']/g, function (char) {
-                    return {
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '"': '&quot;',
-                        "'": '&#039;'
-                    }[char];
-                });
-            }
-
-            function showFormMessage(type, message) {
-                formMessage.className = 'alert alert-' + type;
-                formMessage.textContent = message;
-            }
-
-            function clearFormMessage() {
-                formMessage.className = 'alert d-none';
-                formMessage.textContent = '';
-            }
-
-            function openApplicationForm(job) {
-                positionInput.value = job.title || 'Selected Position';
-                jobIdInput.value = job.id || '';
-                formHeading.textContent = 'Apply for ' + (job.title || 'Selected Position');
-                formSub.textContent = 'Fill the form to apply for the selected position.';
-                clearFormMessage();
-                formWrapper.classList.remove('d-none');
-                formWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            function renderJobs(jobs) {
-                if (!Array.isArray(jobs) || jobs.length === 0) {
-                    jobsCount.textContent = '0';
-                    jobsList.innerHTML = '<div class="col-12"><div class="gis-jobs-empty"><h3>No jobs available right now.</h3><p>Please check back soon for new openings.</p></div></div>';
-                    return;
-                }
-
-                jobsCount.textContent = jobs.length;
-
-                jobsList.innerHTML = jobs.map(function (job) {
-                    return `
-                        <div class="col-md-6 col-xl-4">
-                            <article class="gis-job-card h-100">
-                                <div class="gis-job-card-top">
-                                    <span>${escapeHtml(job.type)}</span>
-                                    <small>${escapeHtml(job.location)}</small>
-                                </div>
-                                <div class="gis-job-card-body">
-                                    <h5 class="card-title">${escapeHtml(job.title)}</h5>
-                                    <p class="gis-job-company">${escapeHtml(job.company)}</p>
-                                    <p class="gis-job-description">${escapeHtml(job.description)}</p>
-                                </div>
-                                <div class="gis-job-card-footer">
-                                    <div>
-                                        <span>Salary</span>
-                                        <strong>${escapeHtml(job.salary || 'Not specified')}</strong>
-                                    </div>
-                                    <button type="button" class="apply-btn" data-job-id="${escapeHtml(job.id)}">Apply Now</button>
-                                </div>
-                            </article>
+    <footer class="footer-1 footer-wrap">
+        <div class="footer-widgets-wrapper text-white bg-cover" style="background-image: url('/assets/img/footer-widgets-bg.png')">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="about-Gopang IT Solution pe-md-5 pe-xl-0">
+                            <a href="/">
+                                <img src="/assets/img/logo-footer.png" alt="Gopang IT Solution">
+                            </a>
+                            <p>Gopang IT Solution builds practical web, mobile, ERP, CRM, and digital growth solutions for modern businesses.</p>
                         </div>
-                    `;
-                }).join('');
+                    </div>
 
-                jobsList.querySelectorAll('.apply-btn').forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        const jobId = Number(button.getAttribute('data-job-id'));
-                        const selectedJob = jobs.find(function (job) {
-                            return Number(job.id) === jobId;
-                        });
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="single-footer-wid ps-xl-5">
+                            <div class="wid-title">
+                                <h3>Information</h3>
+                            </div>
+                            <ul>
+                                <li><a href="/services">What We Do</a></li>
+                                <li><a href="/about">About Us</a></li>
+                                <li><a href="/projects">Projects</a></li>
+                                <li><a href="/team">Our Team</a></li>
+                                <li><a href="/contact">Contact Us</a></li>
+                                <li><a href="/privacy-policy">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
 
-                        if (selectedJob) {
-                            openApplicationForm(selectedJob);
-                        }
-                    });
-                });
-            }
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="single-footer-wid ps-xl-2">
+                            <div class="wid-title">
+                                <h3>Apply</h3>
+                            </div>
+                            <ul>
+                                <li><a href="/apply-job">Apply for Job</a></li>
+                                <li><a href="/apply-partner">Apply as Partner</a></li>
+                                <li><a href="/apply-project">Submit Project</a></li>
+                                <li><a href="/admin-login">Admin Login</a></li>
+                            </ul>
+                        </div>
+                    </div>
 
-            async function fetchJson(url, options) {
-                const response = await fetch(url, options);
-                const contentType = response.headers.get('content-type') || '';
-                const result = contentType.includes('application/json')
-                    ? await response.json()
-                    : { success: false, message: await response.text() };
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="single-footer-wid site-info-widget">
+                            <div class="wid-title">
+                                <h3>Get In Touch</h3>
+                            </div>
+                            <div class="get-in-touch">
+                                <div class="single-contact-info">
+                                    <div class="icon id1">
+                                        <i class="fal fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <span>Islamabad, Pakistan</span>
+                                    </div>
+                                </div>
+                                <div class="single-contact-info">
+                                    <div class="icon id2">
+                                        <i class="fal fa-phone"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <span>+92 3342322324</span>
+                                    </div>
+                                </div>
+                                <div class="single-contact-info">
+                                    <div class="icon id3">
+                                        <i class="fal fa-envelope"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <span>gopangitsolution@gmail.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                if (!response.ok || result.success === false) {
-                    throw new Error(result.message || 'Request failed. Please try again.');
-                }
+        <div class="footer-bottom">
+            <div class="container align-items-center">
+                <div class="bottom-content-wrapper">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="copy-rights">
+                                <p>&copy;2026 <strong>Gopang IT Solution</strong>, All Rights Reserved</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2 mt-md-0 col-12 text-md-end">
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-youtube"></i></a>
+                                <a href="https://www.linkedin.com/company/gopang-itsolution/"><i class="fab fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-                return result;
-            }
-
-            async function loadJobs() {
-                jobsCount.textContent = '--';
-                jobsList.innerHTML = '<div class="col-12"><div class="gis-jobs-loading"><span class="gis-loader"></span><p>Loading open roles...</p></div></div>';
-
-                try {
-                    const result = await fetchJson(API_BASE_URL + '/api/jobs', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    renderJobs(result.data || []);
-                } catch (error) {
-                    jobsCount.textContent = '--';
-                    jobsList.innerHTML = '<div class="col-12"><div class="gis-jobs-empty error"><h3>Unable to load jobs.</h3><p>' + escapeHtml(error.message || 'Please try again in a moment.') + '</p></div></div>';
-                }
-            }
-
-            applicationForm.addEventListener('submit', async function (event) {
-                event.preventDefault();
-                clearFormMessage();
-
-                const formData = new FormData(applicationForm);
-                const payload = {
-                    job_id: Number(formData.get('job_id')),
-                    full_name: String(formData.get('full_name') || '').trim(),
-                    email: String(formData.get('email') || '').trim(),
-                    phone: String(formData.get('phone') || '').trim(),
-                    message: String(formData.get('message') || '').trim()
-                };
-
-                if (!payload.job_id || !payload.full_name || !payload.email || !payload.phone) {
-                    showFormMessage('danger', 'Please fill all required fields.');
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
-
-                try {
-                    const result = await fetchJson(API_BASE_URL + '/api/apply', {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    applicationForm.reset();
-                    positionInput.value = '';
-                    jobIdInput.value = '';
-                    formHeading.textContent = 'Job Application';
-                    showFormMessage('success', result.message || 'Application submitted successfully.');
-                } catch (error) {
-                    showFormMessage('danger', error.message || 'Application submission failed.');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Application';
-                }
-            });
-
-            cancelBtn.addEventListener('click', () => {
-                formWrapper.classList.add('d-none');
-                applicationForm.reset();
-                clearFormMessage();
-            });
-
-            loadJobs();
-        });
-    </script>
+    <script src="/assets/js/pages/job-application.js"></script>
     <script src="/assets/js/premium.js" defer></script>
 
 </body>
