@@ -1,4 +1,4 @@
-name: Deploy Website via FTP
+name: Deploy Website
 
 on:
   push:
@@ -6,61 +6,25 @@ on:
       - master
 
 jobs:
-  deploy:
+  ftp-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install lftp
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp
-
-      - name: Show Local Files
-        run: |
-          echo "Current Directory:"
-          pwd
-          ls -lah
-
-      - name: Deploy to FTP
-        env:
-          FTP_HOST: ftp.gopangitsolution.com
-          FTP_USERNAME: younas@gopangitsolution.com
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_PORT: 21
-
-        run: |
-          lftp -d -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST:$FTP_PORT <<EOF
-
-          set ssl:verify-certificate no
-          set ftp:passive-mode on
-          set net:max-retries 3
-          set net:timeout 30
-          set cmd:fail-exit yes
-
-          echo "Connected Successfully"
-
-          pwd
-          cls
-
-          # FTP root is already the website root
-          cd /
-
-          mirror --reverse \
-            --delete \
-            --verbose \
-            --parallel=2 \
-            --ignore-time \
-            --size-only \
-            --exclude-glob ".git*" \
-            --exclude-glob ".github/**" \
-            --exclude-glob ".gitignore" \
-            --exclude-glob "README.md" \
-            ./ .
-
-          echo "Deployment completed."
-
-          bye
-          EOF
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.gopangitsolution.com
+          username: younas@gopangitsolution.com
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          server-dir: ./
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/README.md
