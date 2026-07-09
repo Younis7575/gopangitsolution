@@ -1,3 +1,6 @@
+# Real secrets — created once on the server, never committed
+config.local.php
+
 # Never commit uploaded CVs / attachments
 uploads/*
 !uploads/.htaccess

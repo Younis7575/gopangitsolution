@@ -28,21 +28,37 @@ loginForm.addEventListener("submit", async function (event) {
 	loginButton.textContent = "Checking...";
 
 	try {
-		const response = await fetch(API_BASE_URL + "/api/admin/login", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ email: email, password: password }),
-		});
-		const contentType = response.headers.get("content-type") || "";
-		const result = contentType.includes("application/json")
-			? await response.json()
-			: { success: false, message: await response.text() };
+		let response;
+		try {
+			response = await fetch(API_BASE_URL + "/api/admin/login", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email: email, password: password }),
+			});
+		} catch (networkError) {
+			throw new Error(
+				"Cannot reach the API. If you are testing on Live Server / localhost, PHP is not running there — open the deployed site (https://gopangitsolution.com/admin-login).",
+			);
+		}
 
-		if (!response.ok || result.success === false || !result.data || !result.data.token) {
+		const contentType = response.headers.get("content-type") || "";
+		if (!contentType.includes("application/json")) {
+			throw new Error(
+				"API not found at /api (got HTTP " + response.status +
+				"). The api/ folder may not be deployed yet, or PHP/.htaccess is not active on the server.",
+			);
+		}
+
+		const result = await response.json();
+
+		if (response.status === 401) {
 			throw new Error(result.message || "Wrong email or password.");
+		}
+		if (!response.ok || result.success === false || !result.data || !result.data.token) {
+			throw new Error(result.message || "Login failed. Please try again.");
 		}
 
 		localStorage.setItem("isAdminLoggedIn", "true");

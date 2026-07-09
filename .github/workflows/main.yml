@@ -47,7 +47,7 @@ jobs:
             --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
             --exclude "api/uploads/" \
-            --exclude-glob "api/config.php" \
+            --exclude-glob "api/config.local.php" \
             . .
 
           echo "===== AFTER DEPLOY ====="

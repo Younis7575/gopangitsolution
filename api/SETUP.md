@@ -21,8 +21,12 @@ deploys itself — you do **not** upload manually.
 Two paths are **excluded** from the mirror on purpose (so the deploy never
 destroys live data or secrets):
 
-- `api/config.php`  → your real DB password lives here; kept only on the server.
-- `api/uploads/`    → uploaded CVs/resumes; must survive every deploy.
+- `api/config.local.php` → your real DB password lives here; server-only.
+- `api/uploads/`         → uploaded CVs/resumes; must survive every deploy.
+
+`api/config.php` itself **does** deploy every time and ships safe defaults, so the
+API and admin login work immediately after deploy — even before you create the
+database. Real DB credentials come from `config.local.php` (below).
 
 ## 3. One-time server setup (do this ONCE, via cPanel File Manager)
 
@@ -32,11 +36,12 @@ password. So do these once by hand:
 **a) Create the DB** — cPanel → MySQL Databases → create database + user, add user
 to the DB with All Privileges.
 
-**b) Create `api/config.php` on the server** (cPanel File Manager → `public_html/api`
-→ New File → `config.php`). Copy the contents from the repo's `api/config.php`
-and fill in the real values:
+**b) Create `api/config.local.php` on the server** (cPanel File Manager →
+`public_html/api` → New File → `config.local.php`). Copy the contents of
+`api/config.local.sample.php` and fill in real values:
 
 ```php
+<?php
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'yourcp_gopang');
 define('DB_USER', 'yourcp_dbuser');
@@ -46,8 +51,10 @@ define('ADMIN_PASSWORD', '12345678');   // change to a strong password
 define('APP_SECRET', 'a-long-random-string-change-me');
 ```
 
-This file is excluded from the deploy, so it is **never overwritten**. (Edit it on
-the server, not in the repo — that keeps your password out of GitHub.)
+This file is git-ignored and excluded from the deploy, so it is **never
+overwritten and never committed to GitHub**. Admin login already works with the
+built-in defaults before you create it — this step is what connects the real
+database.
 
 **c) Create the uploads folder** — make `public_html/api/uploads/`, set it
 **writable** (`755`), and inside it create a `.htaccess` file containing:

@@ -272,16 +272,12 @@ if ($path === '') {
 }
 
 try {
-    /* Ensure schema exists (idempotent). */
-    init_schema();
-    $pdo = db();
-
-    /* ---- Health check ---- */
+    /* ---- Health check (no DB needed) ---- */
     if ($method === 'GET' && $path === '/api/test') {
         json_response(['success' => true, 'message' => 'Gopang PHP API is working']);
     }
 
-    /* ---- Admin login ---- */
+    /* ---- Admin login (stateless token — no DB needed) ---- */
     if ($method === 'POST' && $path === '/api/admin/login') {
         $body = read_json_body();
         if (!$body) {
@@ -302,6 +298,10 @@ try {
             'data'    => ['token' => make_admin_token($email), 'email' => $email],
         ]);
     }
+
+    /* Everything below needs the database — create/seed it on first use. */
+    init_schema();
+    $pdo = db();
 
     /* ---- Jobs ---- */
     if ($method === 'GET' && $path === '/api/jobs') {
