@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://job-api.gopangit.workers.dev";
+const API_BASE_URL = "";
 
 const detailRoot = document.getElementById("news-detail");
 const params = new URLSearchParams(window.location.search);

@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://job-api.gopangit.workers.dev";
+const API_BASE_URL = "";
 
 const statusForm = document.getElementById("status-form");
 const statusEmail = document.getElementById("status-email");

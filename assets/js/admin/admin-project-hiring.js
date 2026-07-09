@@ -1,7 +1,7 @@
 const API_BASE_URL =
 	window.JOB_API_BASE_URL ||
 	localStorage.getItem("JOB_API_BASE_URL") ||
-	"https://job-api.gopangit.workers.dev";
+	"";
 const STATUSES = ["pending", "reviewed", "contacted", "proposal_sent", "approved", "rejected"];
 const STATUS_LABELS = {
 	pending: "Pending",
@@ -73,7 +73,7 @@ function clearMessage() {
 }
 
 function getAdminToken() {
-	return localStorage.getItem("adminApiToken") || "";
+	return localStorage.getItem("adminToken") || "";
 }
 
 function ensureAdminToken() {
@@ -81,15 +81,9 @@ function ensureAdminToken() {
 		return true;
 	}
 
-	const token = window.prompt("Enter Cloudflare Worker ADMIN_API_TOKEN");
-
-	if (!token) {
-		showMessage("error", "Admin API token is required to load protected project hiring APIs.");
-		return false;
-	}
-
-	localStorage.setItem("adminApiToken", token.trim());
-	return true;
+	localStorage.removeItem("isAdminLoggedIn");
+	window.location.replace("/admin-login");
+	return false;
 }
 
 function authHeaders(extraHeaders) {
@@ -109,6 +103,14 @@ async function fetchJson(path, options) {
 		...(options || {}),
 		headers: authHeaders(options && options.headers),
 	});
+
+	if (response.status === 401) {
+		localStorage.removeItem("isAdminLoggedIn");
+		localStorage.removeItem("adminToken");
+		window.location.replace("/admin-login");
+		throw new Error("Session expired. Please log in again.");
+	}
+
 	const contentType = response.headers.get("content-type") || "";
 	const result = contentType.includes("application/json")
 		? await response.json()
@@ -425,13 +427,11 @@ document.addEventListener("click", function (event) {
 		closeConfirmModal();
 	}
 });
-elements.tokenBtn.addEventListener("click", function () {
-	const token = window.prompt("Enter Cloudflare Worker ADMIN_API_TOKEN", getAdminToken());
-	if (token !== null) {
-		localStorage.setItem("adminApiToken", token.trim());
+if (elements.tokenBtn) {
+	elements.tokenBtn.addEventListener("click", function () {
 		void loadRequests();
-	}
-});
+	});
+}
 elements.logout.addEventListener("click", function () {
 	localStorage.clear();
 	window.location.href = "/admin-login";

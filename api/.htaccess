@@ -1,0 +1,24 @@
+# Gopang API — front controller routing for cPanel/Apache
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Make the Authorization header visible to PHP (some hosts strip it),
+    # so admin Bearer tokens work.
+    RewriteCond %{HTTP:Authorization} ^(.*)$
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
+    # Route any path that is not a real file/dir to index.php (keeps query string).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Fallback for PHP-FPM setups that need this to receive Authorization.
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Allow larger CV / attachment uploads.
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+</IfModule>

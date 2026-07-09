@@ -2,9 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	const API_BASE_URL =
 		window.JOB_API_BASE_URL ||
 		localStorage.getItem("JOB_API_BASE_URL") ||
-		"https://job-api.gopangit.workers.dev";
+		"";
 	const state = {
 		jobs: [],
+		filtered: [],
 		selectedJob: null,
 	};
 
@@ -13,6 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		jobsCount: document.getElementById("jobs-count"),
 		jobsStatus: document.getElementById("jobs-status"),
 		retryJobs: document.getElementById("retry-jobs"),
+		filterSearch: document.getElementById("filter-search"),
+		filterDepartment: document.getElementById("filter-department"),
+		filterType: document.getElementById("filter-type"),
+		clearFilters: document.getElementById("clear-filters"),
 		detailPanel: document.getElementById("job-detail-panel"),
 		detailContent: document.getElementById("job-detail-content"),
 		applicationPanel: document.getElementById("application-form"),
@@ -106,12 +111,21 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (!Array.isArray(jobs) || jobs.length === 0) {
 			elements.jobsCount.textContent = "0";
 			elements.jobsList.innerHTML = "";
-			setStatus(
-				"empty",
-				"No open positions right now.",
-				"Please check back soon. New opportunities will appear here as soon as they are available.",
-				false,
-			);
+			if (state.jobs.length > 0) {
+				setStatus(
+					"empty",
+					"No jobs match your filters.",
+					"Try a different department, job type, or search keyword — or clear the filters to see all roles.",
+					false,
+				);
+			} else {
+				setStatus(
+					"empty",
+					"No open positions right now.",
+					"Please check back soon. New opportunities will appear here as soon as they are available.",
+					false,
+				);
+			}
 			return;
 		}
 
@@ -129,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 							</div>
 							<div class="gis-job-card-body">
 								<h3>${escapeHtml(job.title)}</h3>
-								<p class="gis-job-company">${escapeHtml(job.company || "Gopang IT Solution")}</p>
+								<p class="gis-job-company">${escapeHtml(job.company || "Gopang IT Solution")}${job.department ? ' <span class="gis-job-dept">' + escapeHtml(job.department) + "</span>" : ""}</p>
 								<p class="gis-job-description">${escapeHtml(job.description)}</p>
 							</div>
 							<div class="gis-job-facts">
@@ -275,6 +289,45 @@ document.addEventListener("DOMContentLoaded", function () {
 		return "";
 	}
 
+	function applyFilters() {
+		const search = (elements.filterSearch ? elements.filterSearch.value : "").trim().toLowerCase();
+		const department = elements.filterDepartment ? elements.filterDepartment.value : "";
+		const type = elements.filterType ? elements.filterType.value : "";
+
+		state.filtered = state.jobs.filter(function (job) {
+			if (department && (job.department || "") !== department) {
+				return false;
+			}
+			if (type && (job.type || "") !== type) {
+				return false;
+			}
+			if (search) {
+				const haystack = (
+					(job.title || "") + " " + (job.description || "") + " " +
+					(job.location || "") + " " + (job.skills || "")
+				).toLowerCase();
+				if (haystack.indexOf(search) === -1) {
+					return false;
+				}
+			}
+			return true;
+		});
+
+		renderJobs(state.filtered);
+	}
+
+	function applyUrlFilters() {
+		const params = new URLSearchParams(window.location.search);
+		const dept = params.get("department");
+		const type = params.get("type");
+		if (dept && elements.filterDepartment) {
+			elements.filterDepartment.value = dept;
+		}
+		if (type && elements.filterType) {
+			elements.filterType.value = type;
+		}
+	}
+
 	async function loadJobs() {
 		elements.jobsCount.textContent = "--";
 		elements.jobsList.innerHTML = "";
@@ -286,7 +339,8 @@ document.addEventListener("DOMContentLoaded", function () {
 				headers: { Accept: "application/json" },
 			});
 			state.jobs = result.data || [];
-			renderJobs(state.jobs);
+			applyUrlFilters();
+			applyFilters();
 		} catch (error) {
 			elements.jobsCount.textContent = "--";
 			elements.jobsList.innerHTML = "";
@@ -376,6 +430,28 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	elements.retryJobs.addEventListener("click", loadJobs);
+
+	let searchTimer = 0;
+	if (elements.filterSearch) {
+		elements.filterSearch.addEventListener("input", function () {
+			window.clearTimeout(searchTimer);
+			searchTimer = window.setTimeout(applyFilters, 200);
+		});
+	}
+	if (elements.filterDepartment) {
+		elements.filterDepartment.addEventListener("change", applyFilters);
+	}
+	if (elements.filterType) {
+		elements.filterType.addEventListener("change", applyFilters);
+	}
+	if (elements.clearFilters) {
+		elements.clearFilters.addEventListener("click", function () {
+			if (elements.filterSearch) elements.filterSearch.value = "";
+			if (elements.filterDepartment) elements.filterDepartment.value = "";
+			if (elements.filterType) elements.filterType.value = "";
+			applyFilters();
+		});
+	}
 
 	loadJobs();
 });

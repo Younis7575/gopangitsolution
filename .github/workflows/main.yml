@@ -46,6 +46,8 @@ jobs:
             --ignore-time \
             --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
+            --exclude "api/uploads/" \
+            --exclude-glob "api/config.php" \
             . .
 
           echo "===== AFTER DEPLOY ====="

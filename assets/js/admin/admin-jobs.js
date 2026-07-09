@@ -1,7 +1,7 @@
 const API_BASE_URL =
 	window.JOB_API_BASE_URL ||
 	localStorage.getItem("JOB_API_BASE_URL") ||
-	"https://job-api.gopangit.workers.dev";
+	"";
 
 if (localStorage.getItem("isAdminLoggedIn") !== "true") {
 	window.location.replace("/admin-login");
@@ -17,6 +17,7 @@ const elements = {
 	jobId: document.getElementById("job-id"),
 	title: document.getElementById("job-title"),
 	company: document.getElementById("job-company"),
+	department: document.getElementById("job-department"),
 	location: document.getElementById("job-location"),
 	type: document.getElementById("job-type"),
 	salary: document.getElementById("job-salary"),
@@ -64,8 +65,25 @@ function clearMessage() {
 	elements.globalMessage.textContent = "";
 }
 
+function adminHeaders(extra) {
+	return Object.assign(
+		{ Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") },
+		extra || {},
+	);
+}
+
 async function fetchJson(path, options) {
+	options = options || {};
+	options.headers = adminHeaders(options.headers);
 	const response = await fetch(API_BASE_URL + path, options);
+
+	if (response.status === 401) {
+		localStorage.removeItem("isAdminLoggedIn");
+		localStorage.removeItem("adminToken");
+		window.location.replace("/admin-login");
+		throw new Error("Session expired. Please log in again.");
+	}
+
 	const contentType = response.headers.get("content-type") || "";
 	const result = contentType.includes("application/json")
 		? await response.json()
@@ -82,6 +100,7 @@ function getJobPayload() {
 	return {
 		title: elements.title.value.trim(),
 		company: elements.company.value.trim(),
+		department: elements.department.value.trim(),
 		location: elements.location.value.trim(),
 		type: elements.type.value.trim(),
 		salary: elements.salary.value.trim(),
@@ -111,6 +130,7 @@ function fillJobForm(job) {
 	elements.jobId.value = job.id;
 	elements.title.value = job.title || "";
 	elements.company.value = job.company || "";
+	elements.department.value = job.department || "";
 	elements.location.value = job.location || "";
 	elements.type.value = job.type || "";
 	elements.salary.value = job.salary || "";
@@ -141,6 +161,7 @@ function renderJobs(jobs) {
 					<h3>${escapeHtml(job.title)}</h3>
 					<div class="admin-job-meta">
 						<span>${escapeHtml(job.company)}</span>
+						<span>${escapeHtml(job.department || "General")}</span>
 						<span>${escapeHtml(job.location)}</span>
 						<span>${escapeHtml(job.type)}</span>
 						<span>${escapeHtml(job.salary || "Salary not specified")}</span>
@@ -189,7 +210,7 @@ function renderApplications(applications) {
 					<td>${escapeHtml(application.expected_salary || "")}</td>
 					<td>${escapeHtml(application.experience_years || "")}</td>
 					<td>${resumeUrl ? `<a class="admin-cv-link" href="${escapeHtml(resumeUrl)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : "No CV"}</td>
-					<td><span class="admin-status-pill pending">${escapeHtml(application.status || "Pending")}</span></td>
+					<td><span class="admin-status-pill ${escapeHtml(String(application.status || "New").replace("Pending", "New").toLowerCase())}">${escapeHtml(String(application.status || "New").replace("Pending", "New"))}</span></td>
 					<td>${escapeHtml(application.created_at || "")}</td>
 				</tr>
 			`;

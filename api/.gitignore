@@ -1,0 +1,6 @@
+# Never commit uploaded CVs / attachments
+uploads/*
+!uploads/.htaccess
+
+# Local PHP logs
+*.log

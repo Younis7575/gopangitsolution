@@ -263,6 +263,21 @@
     color: #b42318;
 }
 
+.admin-status-pill.new {
+    background: #eff8ff;
+    color: #175cd3;
+}
+
+.admin-status-pill.shortlisted {
+    background: #ecfeff;
+    color: #0e7490;
+}
+
+.admin-status-pill.hired {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
 .admin-card-list {
     display: grid;
     gap: 16px;

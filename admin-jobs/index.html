@@ -39,7 +39,9 @@
 
     <aside class="admin-sidebar" aria-label="Admin navigation">
         <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
             <a href="/admin-jobs" class="active"><i class="fal fa-briefcase" aria-hidden="true"></i> Jobs</a>
+            <a href="/admin-applications"><i class="fal fa-file-user" aria-hidden="true"></i> Applications</a>
             <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
             <a href="/admin-submissions#partners"><i class="fal fa-handshake" aria-hidden="true"></i> Apply as Partner</a>
             <a href="/admin-submissions#proposals"><i class="fal fa-file-alt" aria-hidden="true"></i> Proposals</a>
@@ -77,9 +79,26 @@
                                 <input type="text" id="job-title" name="title" required>
                             </div>
 
-                            <div class="admin-field">
-                                <label for="job-company">Company</label>
-                                <input type="text" id="job-company" name="company" required>
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="job-company">Company</label>
+                                    <input type="text" id="job-company" name="company" required>
+                                </div>
+
+                                <div class="admin-field">
+                                    <label for="job-department">Department</label>
+                                    <select id="job-department" name="department" required>
+                                        <option value="">Select department</option>
+                                        <option>Development</option>
+                                        <option>Design</option>
+                                        <option>Marketing</option>
+                                        <option>Sales</option>
+                                        <option>Human Resources</option>
+                                        <option>Quality Assurance</option>
+                                        <option>DevOps</option>
+                                        <option>Management</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="admin-two-col">
@@ -89,8 +108,16 @@
                                 </div>
 
                                 <div class="admin-field">
-                                    <label for="job-type">Type</label>
-                                    <input type="text" id="job-type" name="type" required>
+                                    <label for="job-type">Job Type</label>
+                                    <select id="job-type" name="type" required>
+                                        <option value="">Select type</option>
+                                        <option>Full Time</option>
+                                        <option>Part Time</option>
+                                        <option>Contract</option>
+                                        <option>Remote</option>
+                                        <option>Internship</option>
+                                        <option>Freelance</option>
+                                    </select>
                                 </div>
                             </div>
 

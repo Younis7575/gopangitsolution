@@ -4,7 +4,7 @@
 	const API_BASE_URL =
 		window.JOB_API_BASE_URL ||
 		localStorage.getItem("JOB_API_BASE_URL") ||
-		"https://job-api.gopangit.workers.dev";
+		"";
 	const maxAttachmentSize = 8 * 1024 * 1024;
 	const allowedExtensions = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png", ".webp"];
 

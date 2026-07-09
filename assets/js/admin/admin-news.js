@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://job-api.gopangit.workers.dev";
+const API_BASE_URL = "";
 
 if (localStorage.getItem("isAdminLoggedIn") !== "true") {
 	window.location.replace("/admin-login");
@@ -60,7 +60,20 @@ function clearMessage() {
 }
 
 async function fetchJson(path, options) {
+	options = options || {};
+	options.headers = Object.assign(
+		{ Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") },
+		options.headers || {},
+	);
 	const response = await fetch(API_BASE_URL + path, options);
+
+	if (response.status === 401) {
+		localStorage.removeItem("isAdminLoggedIn");
+		localStorage.removeItem("adminToken");
+		window.location.replace("/admin-login");
+		throw new Error("Session expired. Please log in again.");
+	}
+
 	const contentType = response.headers.get("content-type") || "";
 	const result = contentType.includes("application/json")
 		? await response.json()

@@ -1,0 +1,273 @@
+/* Admin Dashboard — builds on admin-jobs.css (shell, sidebar, hero, panels) */
+
+.dash-toolbar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.dash-toolbar .admin-ghost-btn {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+.dash-toolbar .admin-ghost-btn:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+/* Stat cards -------------------------------------------------------------- */
+.dash-stats {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dash-stat-card {
+    background: #fff;
+    border: 1px solid #e6eaf0;
+    border-radius: 14px;
+    box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    padding: 22px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-stat-card::after {
+    background: var(--accent, #0f62fe);
+    content: "";
+    height: 4px;
+    inset: 0 0 auto 0;
+    position: absolute;
+}
+
+.dash-stat-card:hover {
+    box-shadow: 0 24px 60px rgba(16, 24, 40, 0.14);
+    transform: translateY(-3px);
+}
+
+.dash-stat-top {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dash-stat-icon {
+    align-items: center;
+    background: color-mix(in srgb, var(--accent, #0f62fe) 12%, #fff);
+    border-radius: 12px;
+    color: var(--accent, #0f62fe);
+    display: flex;
+    font-size: 22px;
+    height: 52px;
+    justify-content: center;
+    width: 52px;
+}
+
+.dash-stat-trend {
+    background: #ecfdf3;
+    border-radius: 999px;
+    color: #027a48;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 10px;
+}
+
+.dash-stat-value {
+    color: #101828;
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.dash-stat-label {
+    color: #667085;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dash-stat-card.is-loading .dash-stat-value {
+    background: linear-gradient(90deg, #eef1f6 25%, #e2e7ef 37%, #eef1f6 63%);
+    background-size: 400% 100%;
+    border-radius: 8px;
+    color: transparent;
+    animation: dash-shimmer 1.3s ease infinite;
+    width: 64px;
+}
+
+@keyframes dash-shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+}
+
+/* Secondary mini stats ---------------------------------------------------- */
+.dash-mini-stats {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 20px;
+}
+
+.dash-mini-card {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e6eaf0;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.05);
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+}
+
+.dash-mini-card i {
+    color: #0f62fe;
+    font-size: 20px;
+}
+
+.dash-mini-card strong {
+    color: #101828;
+    display: block;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.dash-mini-card span {
+    color: #667085;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Two-column layout ------------------------------------------------------- */
+.dash-columns {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    margin-top: 24px;
+}
+
+.dash-panel-heading-link {
+    color: #0f62fe;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* Status breakdown bars --------------------------------------------------- */
+.dash-breakdown {
+    display: grid;
+    gap: 16px;
+}
+
+.dash-bar-row {
+    display: grid;
+    gap: 7px;
+}
+
+.dash-bar-top {
+    align-items: center;
+    color: #344054;
+    display: flex;
+    font-size: 13px;
+    font-weight: 800;
+    justify-content: space-between;
+}
+
+.dash-bar-track {
+    background: #eef1f6;
+    border-radius: 999px;
+    height: 9px;
+    overflow: hidden;
+}
+
+.dash-bar-fill {
+    border-radius: 999px;
+    height: 100%;
+    transition: width 0.6s ease;
+    width: 0;
+}
+
+.dash-bar-fill.new { background: #0f62fe; }
+.dash-bar-fill.reviewed { background: #7c3aed; }
+.dash-bar-fill.shortlisted { background: #0891b2; }
+.dash-bar-fill.hired { background: #12b76a; }
+.dash-bar-fill.rejected { background: #f04438; }
+
+/* Recent lists ------------------------------------------------------------ */
+.dash-recent-list {
+    display: grid;
+    gap: 12px;
+}
+
+.dash-recent-item {
+    align-items: center;
+    border: 1px solid #e6eaf0;
+    border-radius: 10px;
+    display: flex;
+    gap: 14px;
+    padding: 13px 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-recent-item:hover {
+    border-color: #b9d4ff;
+    box-shadow: 0 8px 24px rgba(15, 98, 254, 0.08);
+}
+
+.dash-avatar {
+    align-items: center;
+    background: #eef4ff;
+    border-radius: 50%;
+    color: #0f62fe;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 900;
+    height: 42px;
+    justify-content: center;
+    text-transform: uppercase;
+    width: 42px;
+}
+
+.dash-recent-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.dash-recent-main strong {
+    color: #101828;
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dash-recent-main span {
+    color: #667085;
+    font-size: 13px;
+}
+
+.dash-recent-time {
+    color: #98a2b3;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+    .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dash-mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dash-columns { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 575px) {
+    .dash-stats { grid-template-columns: 1fr; }
+    .dash-mini-stats { grid-template-columns: 1fr; }
+}

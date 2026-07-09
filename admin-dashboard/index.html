@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-dashboard.css">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/apply-job" class="admin-link">View Careers</a>
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard" class="active"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-jobs"><i class="fal fa-briefcase" aria-hidden="true"></i> Jobs</a>
+            <a href="/admin-applications"><i class="fal fa-file-user" aria-hidden="true"></i> Applications</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-submissions#partners"><i class="fal fa-handshake" aria-hidden="true"></i> Apply as Partner</a>
+            <a href="/admin-submissions#proposals"><i class="fal fa-file-alt" aria-hidden="true"></i> Proposals</a>
+            <a href="/admin-project-hiring"><i class="fal fa-users-cog" aria-hidden="true"></i> Project Hiring Requests</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Overview</span>
+                <h1>Admin Dashboard</h1>
+                <p>Live snapshot of jobs, applications, and inbound requests across Gopang IT Solution.</p>
+                <div class="dash-toolbar">
+                    <button type="button" id="refresh-dashboard" class="admin-ghost-btn">
+                        <i class="fal fa-sync" aria-hidden="true"></i> Refresh data
+                    </button>
+                    <a href="/admin-jobs" class="admin-ghost-btn">+ Post a new job</a>
+                </div>
+                <div id="global-message" class="admin-alert d-none" role="alert"></div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <!-- Primary stat cards -->
+                <div class="dash-stats">
+                    <article class="dash-stat-card is-loading" style="--accent:#0f62fe">
+                        <div class="dash-stat-top">
+                            <span class="dash-stat-icon"><i class="fal fa-briefcase" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="dash-stat-value" id="stat-total-jobs">0</div>
+                        <div class="dash-stat-label">Total Jobs</div>
+                    </article>
+
+                    <article class="dash-stat-card is-loading" style="--accent:#12b76a">
+                        <div class="dash-stat-top">
+                            <span class="dash-stat-icon"><i class="fal fa-bolt" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="dash-stat-value" id="stat-active-jobs">0</div>
+                        <div class="dash-stat-label">Active (Open) Jobs</div>
+                    </article>
+
+                    <article class="dash-stat-card is-loading" style="--accent:#7c3aed">
+                        <div class="dash-stat-top">
+                            <span class="dash-stat-icon"><i class="fal fa-file-user" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="dash-stat-value" id="stat-total-apps">0</div>
+                        <div class="dash-stat-label">Total Applications</div>
+                    </article>
+
+                    <article class="dash-stat-card is-loading" style="--accent:#f79009">
+                        <div class="dash-stat-top">
+                            <span class="dash-stat-icon"><i class="fal fa-inbox-in" aria-hidden="true"></i></span>
+                            <span class="dash-stat-trend" id="stat-new-trend">This week</span>
+                        </div>
+                        <div class="dash-stat-value" id="stat-new-apps">0</div>
+                        <div class="dash-stat-label">New Applications</div>
+                    </article>
+                </div>
+
+                <!-- Secondary mini stats -->
+                <div class="dash-mini-stats">
+                    <div class="dash-mini-card">
+                        <i class="fal fa-newspaper" aria-hidden="true"></i>
+                        <div><strong id="stat-news">0</strong><span>News Articles</span></div>
+                    </div>
+                    <div class="dash-mini-card">
+                        <i class="fal fa-handshake" aria-hidden="true"></i>
+                        <div><strong id="stat-partners">0</strong><span>Partner Requests</span></div>
+                    </div>
+                    <div class="dash-mini-card">
+                        <i class="fal fa-file-alt" aria-hidden="true"></i>
+                        <div><strong id="stat-proposals">0</strong><span>Project Proposals</span></div>
+                    </div>
+                    <div class="dash-mini-card">
+                        <i class="fal fa-check-circle" aria-hidden="true"></i>
+                        <div><strong id="stat-hired">0</strong><span>Hired Candidates</span></div>
+                    </div>
+                </div>
+
+                <!-- Two column: recent applications + side panels -->
+                <div class="dash-columns">
+                    <section class="admin-panel" aria-labelledby="recent-apps-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Latest</span>
+                                <h2 id="recent-apps-title">Recent Applications</h2>
+                            </div>
+                            <a href="/admin-applications" class="dash-panel-heading-link">View all &rarr;</a>
+                        </div>
+                        <div id="recent-apps-loading" class="admin-loading">Loading applications...</div>
+                        <div id="recent-apps" class="dash-recent-list"></div>
+                    </section>
+
+                    <div>
+                        <section class="admin-panel" aria-labelledby="status-title" style="margin-bottom:24px;">
+                            <div class="admin-panel-heading">
+                                <div>
+                                    <span class="admin-kicker">Pipeline</span>
+                                    <h2 id="status-title">Application Status</h2>
+                                </div>
+                            </div>
+                            <div id="status-breakdown" class="dash-breakdown"></div>
+                        </section>
+
+                        <section class="admin-panel" aria-labelledby="recent-jobs-title">
+                            <div class="admin-panel-heading">
+                                <div>
+                                    <span class="admin-kicker">Postings</span>
+                                    <h2 id="recent-jobs-title">Recent Jobs</h2>
+                                </div>
+                                <a href="/admin-jobs" class="dash-panel-heading-link">Manage &rarr;</a>
+                            </div>
+                            <div id="recent-jobs-loading" class="admin-loading">Loading jobs...</div>
+                            <div id="recent-jobs" class="dash-recent-list"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/admin/admin-dashboard.js"></script>
+</body>
+
+</html>
