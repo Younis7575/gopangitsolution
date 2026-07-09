@@ -13,48 +13,54 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install LFTP
+      - name: Install lftp
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp
 
-      - name: Deploy Website
+      - name: Show Local Files
+        run: |
+          echo "Current Directory:"
+          pwd
+          ls -lah
+
+      - name: Deploy to FTP
         env:
           FTP_HOST: ftp.gopangitsolution.com
           FTP_USERNAME: younas@gopangitsolution.com
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: 21
-          REMOTE_DIR: /public_html
 
         run: |
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST:$FTP_PORT <<EOF
+          lftp -d -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST:$FTP_PORT <<EOF
+
           set ssl:verify-certificate no
           set ftp:passive-mode on
-          set net:max-retries 2
+          set net:max-retries 3
           set net:timeout 30
           set cmd:fail-exit yes
 
-          echo "Remote before deploy:"
+          echo "Connected Successfully"
+
           pwd
           cls
 
-          cd $REMOTE_DIR
+          # FTP root is already the website root
+          cd /
 
           mirror --reverse \
             --delete \
             --verbose \
-            --parallel=3 \
+            --parallel=2 \
             --ignore-time \
             --size-only \
-            --exclude-glob ".git/**" \
+            --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
-            --exclude-glob "node_modules/**" \
-            --exclude-glob "vendor/**" \
-            --exclude-glob ".env" \
-            --exclude-glob "storage/**" \
+            --exclude-glob ".gitignore" \
+            --exclude-glob "README.md" \
             ./ .
 
-          echo "Deployment Finished"
-          cls
+          echo "Deployment completed."
+
           bye
           EOF
