@@ -1,7 +1,7 @@
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-	"Access-Control-Allow-Headers": "Content-Type",
+	"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type, Authorization, X-Admin-Token",
 	"Access-Control-Expose-Headers": "Content-Disposition",
 };
 
@@ -13,6 +13,56 @@ const allowedCvMimeTypes = [
 ];
 const maxCvSize = 5 * 1024 * 1024;
 const jobStatuses = ["Open", "Closed", "Draft"];
+const allowedProjectAttachmentExtensions = [
+	".pdf",
+	".doc",
+	".docx",
+	".jpg",
+	".jpeg",
+	".png",
+	".webp",
+];
+const allowedProjectAttachmentMimeTypes = [
+	"application/pdf",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"image/jpeg",
+	"image/png",
+	"image/webp",
+];
+const maxProjectAttachmentSize = 8 * 1024 * 1024;
+const projectHiringCategories = [
+	"Flutter App",
+	"Website",
+	"Backend API",
+	"UI/UX Design",
+	"CRM / ERP",
+	"E-commerce",
+	"AI / Automation",
+	"Other",
+];
+const projectHiringBudgets = [
+	"Under $500",
+	"$500 - $1000",
+	"$1000 - $3000",
+	"$3000 - $5000",
+	"$5000+",
+];
+const projectHiringTimelines = [
+	"Urgent",
+	"1-2 Weeks",
+	"1 Month",
+	"2-3 Months",
+	"Flexible",
+];
+const projectHiringStatuses = [
+	"pending",
+	"reviewed",
+	"contacted",
+	"proposal_sent",
+	"approved",
+	"rejected",
+];
 
 function jsonResponse(body, status = 200) {
 	return new Response(JSON.stringify(body), {
@@ -106,6 +156,38 @@ function isValidEmail(email) {
 
 function isValidPhone(phone) {
 	return /^[+()\d\s-]{7,20}$/.test(phone);
+}
+
+function normalizeText(value, maxLength = 500) {
+	return String(value || "").trim().slice(0, maxLength);
+}
+
+function getAdminRequestToken(request) {
+	const authHeader = request.headers.get("authorization") || "";
+
+	if (authHeader.toLowerCase().startsWith("bearer ")) {
+		return authHeader.slice(7).trim();
+	}
+
+	return (request.headers.get("x-admin-token") || "").trim();
+}
+
+function requireAdmin(request, env) {
+	if (!env.ADMIN_API_TOKEN) {
+		return {
+			error: "Admin API token is not configured on the Worker",
+		};
+	}
+
+	if (getAdminRequestToken(request) !== env.ADMIN_API_TOKEN) {
+		return {
+			error: "Unauthorized admin request",
+		};
+	}
+
+	return {
+		ok: true,
+	};
 }
 
 function parseRequiredNumber(value, fieldName) {
@@ -213,6 +295,28 @@ function validateCvFile(file) {
 
 	if (file.size > maxCvSize) {
 		return "CV file must be 5MB or smaller";
+	}
+
+	return null;
+}
+
+function validateProjectAttachmentFile(file) {
+	if (!file || typeof file.arrayBuffer !== "function" || !file.name) {
+		return null;
+	}
+
+	const extension = getFileExtension(file.name);
+
+	if (!allowedProjectAttachmentExtensions.includes(extension)) {
+		return "Attachment must be PDF, DOC, DOCX, JPG, PNG, or WEBP";
+	}
+
+	if (file.type && !allowedProjectAttachmentMimeTypes.includes(file.type)) {
+		return "Attachment file type is not allowed";
+	}
+
+	if (file.size > maxProjectAttachmentSize) {
+		return "Attachment file must be 8MB or smaller";
 	}
 
 	return null;
@@ -345,6 +449,110 @@ async function storeResume(env, application, job) {
 	};
 }
 
+function buildProjectHiringPayload(formData) {
+	const attachment = formData.get("attachment");
+
+	return {
+		full_name: normalizeText(formData.get("full_name"), 160),
+		email: normalizeText(formData.get("email"), 180),
+		phone: normalizeText(formData.get("phone"), 60),
+		company_name: normalizeText(formData.get("company_name"), 180) || null,
+		country_city: normalizeText(formData.get("country_city"), 180),
+		project_title: normalizeText(formData.get("project_title"), 220),
+		project_category: normalizeText(formData.get("project_category"), 80),
+		budget_range: normalizeText(formData.get("budget_range"), 80),
+		expected_timeline: normalizeText(formData.get("expected_timeline"), 80),
+		project_description: normalizeText(formData.get("project_description"), 5000),
+		agreement: String(formData.get("agreement") || "") === "yes",
+		attachment,
+	};
+}
+
+function validateProjectHiringPayload(project) {
+	if (!project.full_name) {
+		return "Full name is required";
+	}
+
+	if (!project.email || !isValidEmail(project.email)) {
+		return "A valid email is required";
+	}
+
+	if (!project.phone || !isValidPhone(project.phone)) {
+		return "A valid phone / WhatsApp number is required";
+	}
+
+	if (!project.country_city) {
+		return "Country / city is required";
+	}
+
+	if (!project.project_title) {
+		return "Project title is required";
+	}
+
+	if (!projectHiringCategories.includes(project.project_category)) {
+		return "Project category is required";
+	}
+
+	if (!projectHiringBudgets.includes(project.budget_range)) {
+		return "Budget range is required";
+	}
+
+	if (!projectHiringTimelines.includes(project.expected_timeline)) {
+		return "Expected timeline is required";
+	}
+
+	if (project.project_description.length < 20) {
+		return "Project description must be at least 20 characters";
+	}
+
+	if (!project.agreement) {
+		return "Agreement is required";
+	}
+
+	return validateProjectAttachmentFile(project.attachment);
+}
+
+async function storeProjectHiringAttachment(env, project) {
+	const file = project.attachment;
+
+	if (!file || typeof file.arrayBuffer !== "function" || !file.name || file.size === 0) {
+		return {
+			key: null,
+			fileName: null,
+			fileType: null,
+			fileSize: null,
+		};
+	}
+
+	if (!env.CV_BUCKET) {
+		throw new Error("Project attachment storage is not configured");
+	}
+
+	const safeName = sanitizeFileName(file.name);
+	const key = [
+		"project-hiring",
+		`${Date.now()}-${crypto.randomUUID()}-${safeName}`,
+	].join("/");
+
+	await env.CV_BUCKET.put(key, file, {
+		httpMetadata: {
+			contentType: file.type || "application/octet-stream",
+			contentDisposition: `attachment; filename="${safeName}"`,
+		},
+		customMetadata: {
+			project_title: project.project_title,
+			client_email: project.email,
+		},
+	});
+
+	return {
+		key,
+		fileName: safeName,
+		fileType: file.type || "application/octet-stream",
+		fileSize: file.size || 0,
+	};
+}
+
 function getNewsPayload(body) {
 	return {
 		title: String(body.title || "").trim(),
@@ -438,6 +646,11 @@ function validateProjectProposalPayload(proposal) {
 function normalizeSubmissionStatus(status) {
 	const nextStatus = String(status || "").trim();
 	return submissionStatuses.includes(nextStatus) ? nextStatus : null;
+}
+
+function normalizeProjectHiringStatus(status) {
+	const nextStatus = String(status || "").trim();
+	return projectHiringStatuses.includes(nextStatus) ? nextStatus : null;
 }
 
 export default {
@@ -684,6 +897,362 @@ export default {
 					success: true,
 					message: "Project proposal status updated successfully",
 					data: updatedProposal,
+				});
+			}
+
+			if (request.method === "POST" && path === "/api/project-hiring/apply") {
+				const contentType = request.headers.get("content-type") || "";
+
+				if (!contentType.includes("multipart/form-data")) {
+					return errorResponse(
+						"Project hiring request must use multipart/form-data",
+						415,
+					);
+				}
+
+				const formData = await request.formData();
+				const projectPayload = buildProjectHiringPayload(formData);
+				const validationError = validateProjectHiringPayload(projectPayload);
+
+				if (validationError) {
+					return errorResponse(validationError, 400);
+				}
+
+				const storedAttachment = await storeProjectHiringAttachment(
+					env,
+					projectPayload,
+				);
+
+				const result = await env.DB.prepare(
+					`INSERT INTO project_hiring_requests (
+						full_name,
+						email,
+						phone,
+						company_name,
+						country_city,
+						project_title,
+						project_category,
+						budget_range,
+						expected_timeline,
+						project_description,
+						attachment_url,
+						attachment_key,
+						attachment_file_name,
+						attachment_file_type,
+						attachment_file_size,
+						status
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'pending')`,
+				)
+					.bind(
+						projectPayload.full_name,
+						projectPayload.email,
+						projectPayload.phone,
+						projectPayload.company_name,
+						projectPayload.country_city,
+						projectPayload.project_title,
+						projectPayload.project_category,
+						projectPayload.budget_range,
+						projectPayload.expected_timeline,
+						projectPayload.project_description,
+						storedAttachment.key,
+						storedAttachment.fileName,
+						storedAttachment.fileType,
+						storedAttachment.fileSize,
+					)
+					.run();
+
+				const attachmentUrl = storedAttachment.key
+					? `/api/admin/project-hiring/${result.meta.last_row_id}/attachment`
+					: null;
+
+				await env.DB.prepare(
+					"UPDATE project_hiring_requests SET attachment_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+				)
+					.bind(attachmentUrl, result.meta.last_row_id)
+					.run();
+
+				const createdRequest = await env.DB.prepare(
+					`SELECT
+						id,
+						full_name,
+						email,
+						phone,
+						company_name,
+						country_city,
+						project_title,
+						project_category,
+						budget_range,
+						expected_timeline,
+						project_description,
+						attachment_url,
+						status,
+						created_at,
+						updated_at
+					FROM project_hiring_requests WHERE id = ?`,
+				)
+					.bind(result.meta.last_row_id)
+					.first();
+
+				return jsonResponse(
+					{
+						success: true,
+						message: "Project hiring request submitted successfully",
+						data: createdRequest,
+					},
+					201,
+				);
+			}
+
+			if (path.startsWith("/api/admin/project-hiring")) {
+				const admin = requireAdmin(request, env);
+
+				if (admin.error) {
+					return errorResponse(admin.error, admin.error.includes("configured") ? 500 : 401);
+				}
+			}
+
+			if (request.method === "GET" && path === "/api/admin/project-hiring") {
+				const search = normalizeText(url.searchParams.get("search"), 120);
+				const status = normalizeProjectHiringStatus(url.searchParams.get("status"));
+				const category = projectHiringCategories.includes(
+					url.searchParams.get("category") || "",
+				)
+					? url.searchParams.get("category")
+					: "";
+				const page = Math.max(Number(url.searchParams.get("page")) || 1, 1);
+				const limit = Math.min(
+					Math.max(Number(url.searchParams.get("limit")) || 10, 1),
+					50,
+				);
+				const offset = (page - 1) * limit;
+				const where = [];
+				const params = [];
+
+				if (search) {
+					where.push(
+						"(lower(full_name) LIKE lower(?) OR lower(email) LIKE lower(?) OR lower(project_title) LIKE lower(?))",
+					);
+					params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+				}
+
+				if (status) {
+					where.push("status = ?");
+					params.push(status);
+				}
+
+				if (category) {
+					where.push("project_category = ?");
+					params.push(category);
+				}
+
+				const whereSql = where.length ? ` WHERE ${where.join(" AND ")}` : "";
+				const countRow = await env.DB.prepare(
+					`SELECT COUNT(*) AS total FROM project_hiring_requests${whereSql}`,
+				)
+					.bind(...params)
+					.first();
+				const { results } = await env.DB.prepare(
+					`SELECT
+						id,
+						full_name,
+						email,
+						phone,
+						company_name,
+						country_city,
+						project_title,
+						project_category,
+						budget_range,
+						expected_timeline,
+						attachment_url,
+						attachment_file_name,
+						attachment_file_size,
+						status,
+						admin_notes,
+						created_at,
+						updated_at
+					FROM project_hiring_requests${whereSql}
+					ORDER BY datetime(created_at) DESC, id DESC
+					LIMIT ? OFFSET ?`,
+				)
+					.bind(...params, limit, offset)
+					.all();
+
+				return jsonResponse({
+					success: true,
+					message: "Project hiring requests fetched successfully",
+					data: results,
+					meta: {
+						page,
+						limit,
+						total: countRow ? countRow.total : 0,
+					},
+				});
+			}
+
+			const projectHiringAttachmentMatch = path.match(
+				/^\/api\/admin\/project-hiring\/(\d+)\/attachment$/,
+			);
+			if (request.method === "GET" && projectHiringAttachmentMatch) {
+				const requestId = Number(projectHiringAttachmentMatch[1]);
+				const item = await env.DB.prepare(
+					"SELECT attachment_key, attachment_file_name, attachment_file_type FROM project_hiring_requests WHERE id = ?",
+				)
+					.bind(requestId)
+					.first();
+
+				if (!item || !item.attachment_key) {
+					return errorResponse("Attachment not found", 404);
+				}
+
+				if (!env.CV_BUCKET) {
+					return errorResponse("Project attachment storage is not configured", 500);
+				}
+
+				const object = await env.CV_BUCKET.get(item.attachment_key);
+
+				if (!object) {
+					return errorResponse("Attachment file not found", 404);
+				}
+
+				return new Response(object.body, {
+					headers: {
+						...corsHeaders,
+						"Content-Type": item.attachment_file_type || "application/octet-stream",
+						"Content-Disposition": `attachment; filename="${item.attachment_file_name || "project-attachment"}"`,
+					},
+				});
+			}
+
+			const adminProjectHiringMatch = path.match(
+				/^\/api\/admin\/project-hiring\/(\d+)$/,
+			);
+			if (request.method === "GET" && adminProjectHiringMatch) {
+				const requestId = Number(adminProjectHiringMatch[1]);
+				const item = await env.DB.prepare(
+					`SELECT
+						id,
+						full_name,
+						email,
+						phone,
+						company_name,
+						country_city,
+						project_title,
+						project_category,
+						budget_range,
+						expected_timeline,
+						project_description,
+						attachment_url,
+						attachment_file_name,
+						attachment_file_type,
+						attachment_file_size,
+						status,
+						admin_notes,
+						created_at,
+						updated_at
+					FROM project_hiring_requests WHERE id = ?`,
+				)
+					.bind(requestId)
+					.first();
+
+				if (!item) {
+					return errorResponse("Project hiring request not found", 404);
+				}
+
+				return jsonResponse({
+					success: true,
+					message: "Project hiring request fetched successfully",
+					data: item,
+				});
+			}
+
+			const adminProjectHiringStatusMatch = path.match(
+				/^\/api\/admin\/project-hiring\/(\d+)\/status$/,
+			);
+			if (request.method === "PATCH" && adminProjectHiringStatusMatch) {
+				const requestId = Number(adminProjectHiringStatusMatch[1]);
+				const body = await readJsonBody(request);
+
+				if (!body) {
+					return errorResponse("Invalid JSON body", 400);
+				}
+
+				const status = normalizeProjectHiringStatus(body.status);
+
+				if (!status) {
+					return errorResponse(
+						"status must be pending, reviewed, contacted, proposal_sent, approved, or rejected",
+						400,
+					);
+				}
+
+				const existingRequest = await env.DB.prepare(
+					"SELECT id FROM project_hiring_requests WHERE id = ?",
+				)
+					.bind(requestId)
+					.first();
+
+				if (!existingRequest) {
+					return errorResponse("Project hiring request not found", 404);
+				}
+
+				const adminNotes =
+					Object.prototype.hasOwnProperty.call(body, "admin_notes")
+						? normalizeText(body.admin_notes, 2000)
+						: null;
+
+				if (Object.prototype.hasOwnProperty.call(body, "admin_notes")) {
+					await env.DB.prepare(
+						"UPDATE project_hiring_requests SET status = ?, admin_notes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+					)
+						.bind(status, adminNotes, requestId)
+						.run();
+				} else {
+					await env.DB.prepare(
+						"UPDATE project_hiring_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+					)
+						.bind(status, requestId)
+						.run();
+				}
+
+				const updatedRequest = await env.DB.prepare(
+					"SELECT * FROM project_hiring_requests WHERE id = ?",
+				)
+					.bind(requestId)
+					.first();
+
+				return jsonResponse({
+					success: true,
+					message: "Project hiring request updated successfully",
+					data: updatedRequest,
+				});
+			}
+
+			if (request.method === "DELETE" && adminProjectHiringMatch) {
+				const requestId = Number(adminProjectHiringMatch[1]);
+				const existingRequest = await env.DB.prepare(
+					"SELECT id, attachment_key FROM project_hiring_requests WHERE id = ?",
+				)
+					.bind(requestId)
+					.first();
+
+				if (!existingRequest) {
+					return errorResponse("Project hiring request not found", 404);
+				}
+
+				await env.DB.prepare("DELETE FROM project_hiring_requests WHERE id = ?")
+					.bind(requestId)
+					.run();
+
+				if (existingRequest.attachment_key && env.CV_BUCKET) {
+					ctx.waitUntil(env.CV_BUCKET.delete(existingRequest.attachment_key));
+				}
+
+				return jsonResponse({
+					success: true,
+					message: "Project hiring request deleted successfully",
+					data: {
+						id: requestId,
+					},
 				});
 			}
 

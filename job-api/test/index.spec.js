@@ -61,6 +61,31 @@ describe("Job Apply API", () => {
 		`).run();
 
 		await env.DB.prepare(`
+			CREATE TABLE IF NOT EXISTS project_hiring_requests (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				full_name TEXT NOT NULL,
+				email TEXT NOT NULL,
+				phone TEXT NOT NULL,
+				company_name TEXT,
+				country_city TEXT NOT NULL,
+				project_title TEXT NOT NULL,
+				project_category TEXT NOT NULL,
+				budget_range TEXT NOT NULL,
+				expected_timeline TEXT NOT NULL,
+				project_description TEXT NOT NULL,
+				attachment_url TEXT,
+				attachment_key TEXT,
+				attachment_file_name TEXT,
+				attachment_file_type TEXT,
+				attachment_file_size INTEGER,
+				status TEXT NOT NULL DEFAULT 'pending',
+				admin_notes TEXT,
+				created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+				updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+			)
+		`).run();
+
+		await env.DB.prepare(`
 			INSERT INTO jobs (
 				id,
 				title,
@@ -176,5 +201,106 @@ describe("Job Apply API", () => {
 
 		expect(response.status).toBe(400);
 		expect(result.message).toBe("CV must be a PDF, DOC, or DOCX file");
+	});
+
+	it("creates and manages a project hiring request", async () => {
+		const testEnv = {
+			...env,
+			ADMIN_API_TOKEN: "test-token",
+		};
+		const formData = new FormData();
+		formData.set("full_name", "Project Client");
+		formData.set("email", "client@example.com");
+		formData.set("phone", "+923342322324");
+		formData.set("company_name", "Client Co");
+		formData.set("country_city", "Lahore, Pakistan");
+		formData.set("project_title", "CRM Automation Build");
+		formData.set("project_category", "CRM / ERP");
+		formData.set("budget_range", "$1000 - $3000");
+		formData.set("expected_timeline", "1 Month");
+		formData.set(
+			"project_description",
+			"We need a CRM automation module with admin reporting and API integration.",
+		);
+		formData.set("agreement", "yes");
+
+		const ctx = createExecutionContext();
+		const createResponse = await worker.fetch(
+			new Request("http://example.com/api/project-hiring/apply", {
+				method: "POST",
+				body: formData,
+			}),
+			testEnv,
+			ctx,
+		);
+		await waitOnExecutionContext(ctx);
+		const created = await createResponse.json();
+
+		expect(createResponse.status).toBe(201);
+		expect(created.data.project_title).toBe("CRM Automation Build");
+		expect(created.data.status).toBe("pending");
+
+		const defaultListResponse = await worker.fetch(
+			new Request("http://example.com/api/admin/project-hiring", {
+				headers: {
+					Authorization: "Bearer test-token",
+				},
+			}),
+			testEnv,
+			createExecutionContext(),
+		);
+
+		expect(defaultListResponse.status).toBe(200);
+
+		const listResponse = await worker.fetch(
+			new Request("http://example.com/api/admin/project-hiring?search=client", {
+				headers: {
+					Authorization: "Bearer test-token",
+				},
+			}),
+			testEnv,
+			createExecutionContext(),
+		);
+		const list = await listResponse.json();
+
+		expect(listResponse.status).toBe(200);
+		expect(list.data.length).toBeGreaterThan(0);
+
+		const updateResponse = await worker.fetch(
+			new Request(
+				`http://example.com/api/admin/project-hiring/${created.data.id}/status`,
+				{
+					method: "PATCH",
+					headers: {
+						Authorization: "Bearer test-token",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						status: "reviewed",
+						admin_notes: "Initial review complete.",
+					}),
+				},
+			),
+			testEnv,
+			createExecutionContext(),
+		);
+		const updated = await updateResponse.json();
+
+		expect(updateResponse.status).toBe(200);
+		expect(updated.data.status).toBe("reviewed");
+		expect(updated.data.admin_notes).toBe("Initial review complete.");
+
+		const deleteResponse = await worker.fetch(
+			new Request(`http://example.com/api/admin/project-hiring/${created.data.id}`, {
+				method: "DELETE",
+				headers: {
+					Authorization: "Bearer test-token",
+				},
+			}),
+			testEnv,
+			createExecutionContext(),
+		);
+
+		expect(deleteResponse.status).toBe(200);
 	});
 });

@@ -247,6 +247,22 @@
     color: #b42318;
 }
 
+.admin-status-pill.reviewed,
+.admin-status-pill.contacted {
+    background: #eef4ff;
+    color: #0f62fe;
+}
+
+.admin-status-pill.proposal-sent {
+    background: #f0f9ff;
+    color: #026aa2;
+}
+
+.admin-status-pill.rejected {
+    background: #fff1f3;
+    color: #b42318;
+}
+
 .admin-card-list {
     display: grid;
     gap: 16px;
@@ -368,6 +384,130 @@
     color: #475467;
 }
 
+.admin-filter-bar {
+    align-items: end;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(220px, 1fr) minmax(170px, 0.32fr) minmax(190px, 0.36fr);
+    margin-bottom: 20px;
+}
+
+.admin-pagination {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.admin-pagination span {
+    color: #475467;
+    font-weight: 800;
+}
+
+.admin-ghost-btn:disabled,
+.admin-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.admin-modal {
+    align-items: center;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    padding: 24px;
+    position: fixed;
+    z-index: 1000;
+}
+
+.admin-modal-backdrop {
+    background: rgba(8, 26, 58, 0.62);
+    inset: 0;
+    position: absolute;
+}
+
+.admin-modal-panel {
+    background: #fff;
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    box-shadow: 0 32px 90px rgba(16, 24, 40, 0.24);
+    max-height: calc(100vh - 48px);
+    max-width: 980px;
+    overflow-y: auto;
+    padding: 26px;
+    position: relative;
+    width: min(980px, 100%);
+    z-index: 1;
+}
+
+.admin-confirm-panel {
+    max-width: 460px;
+}
+
+.admin-confirm-panel h2 {
+    font-size: 26px;
+    margin: 8px 0 10px;
+}
+
+.admin-confirm-panel p {
+    color: #667085;
+}
+
+.admin-modal-open {
+    overflow: hidden;
+}
+
+.admin-detail-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-detail-item {
+    background: #f8fafc;
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.admin-detail-item span {
+    color: #667085;
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.admin-detail-item strong,
+.admin-detail-item p {
+    color: #101828;
+    display: block;
+    font-weight: 800;
+    line-height: 1.5;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-detail-item p {
+    color: #475467;
+    font-weight: 600;
+    white-space: pre-wrap;
+}
+
+.admin-detail-wide {
+    grid-column: 1 / -1;
+}
+
+.admin-detail-editor {
+    margin-top: 18px;
+}
+
+.admin-modal-actions {
+    margin-top: 18px;
+}
+
 .d-none {
     display: none !important;
 }
@@ -388,6 +528,11 @@
     }
 
     .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-filter-bar,
+    .admin-detail-grid {
         grid-template-columns: 1fr;
     }
 
