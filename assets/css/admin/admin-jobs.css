@@ -278,6 +278,16 @@
     color: #027a48;
 }
 
+.admin-status-pill.interviewing {
+    background: #fef6ee;
+    color: #b93815;
+}
+
+.admin-status-pill.awarded {
+    background: #ecfdf3;
+    color: #05603a;
+}
+
 .admin-card-list {
     display: grid;
     gap: 16px;

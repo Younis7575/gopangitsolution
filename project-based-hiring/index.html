@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Based Hiring | Gopang IT Solution</title>
+    <title>Open Projects — Bid on Freelance Work | Gopang IT Solution</title>
     <link rel="shortcut icon" href="/assets/img/favicon.png">
     <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/custom/site.css">
     <link rel="stylesheet" href="/assets/css/premium.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/project-based-hiring.css">
+    <link rel="stylesheet" href="/assets/css/pages/careers.css">
 </head>
 
 <body class="body-wrapper project-hiring-page">
@@ -121,24 +122,18 @@
         </div>
     </header>
 
-    <main>
-        <section class="project-hiring-hero">
+    <main class="gis-careers-page">
+        <section class="gis-careers-hero">
             <div class="container">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-7">
-                        <span class="project-hiring-eyebrow">Project Based Hiring</span>
-                        <h1>Hire Expert Developers for Your Project</h1>
-                        <p>Businesses can hire skilled developers, designers, and delivery specialists on a project basis with clear scope, practical timelines, and secure collaboration.</p>
-                        <div class="project-hiring-actions">
-                            <a href="#project-hiring-form" class="theme-btn">Submit Project Request</a>
-                            <a href="#project-hiring-process" class="project-hiring-outline-btn">How It Works</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="project-hiring-visual" style="background-image: url('/assets/img/project/4.jpg')">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <span class="gis-careers-eyebrow">Open Projects</span>
+                        <h1>Bid on Live Projects</h1>
+                        <p>Browse open projects posted by Gopang IT Solution and submit your proposal — just like a freelance marketplace. Set your price, delivery time, and pitch your skills.</p>
+                        <div class="gis-careers-summary">
                             <div>
-                                <strong>Dedicated delivery team</strong>
-                                <span>Developers, designers, backend, APIs, CRM, ERP, AI</span>
+                                <strong id="projects-count">--</strong>
+                                <span>Open projects right now</span>
                             </div>
                         </div>
                     </div>
@@ -146,165 +141,128 @@
             </div>
         </section>
 
-        <section class="project-hiring-benefits">
+        <section class="gis-careers-content">
             <div class="container">
-                <div class="project-hiring-section-head">
-                    <span>Why choose this model</span>
-                    <h2>Flexible hiring for focused delivery</h2>
-                </div>
-                <div class="project-hiring-grid benefits-grid">
-                    <article><i class="fal fa-bolt"></i><h3>Fast delivery</h3></article>
-                    <article><i class="fal fa-sliders-h"></i><h3>Flexible hiring</h3></article>
-                    <article><i class="fal fa-user-hard-hat"></i><h3>Dedicated developers</h3></article>
-                    <article><i class="fal fa-tags"></i><h3>Transparent pricing</h3></article>
-                    <article><i class="fal fa-shield-check"></i><h3>NDA/security</h3></article>
-                    <article><i class="fal fa-layer-group"></i><h3>Scalable team</h3></article>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-hiring-skills">
-            <div class="container">
-                <div class="project-hiring-section-head">
-                    <span>Services & Skills</span>
-                    <h2>Build with the specialists your project needs</h2>
-                </div>
-                <div class="project-hiring-grid skills-grid">
-                    <article><i class="fal fa-mobile-android-alt"></i><span>Flutter App Development</span></article>
-                    <article><i class="fal fa-browser"></i><span>Web Development</span></article>
-                    <article><i class="fal fa-pencil-ruler"></i><span>UI/UX Design</span></article>
-                    <article><i class="fal fa-server"></i><span>Backend Development</span></article>
-                    <article><i class="fal fa-plug"></i><span>API Integration</span></article>
-                    <article><i class="fal fa-chart-network"></i><span>CRM / ERP Development</span></article>
-                    <article><i class="fal fa-shopping-cart"></i><span>E-commerce Development</span></article>
-                    <article><i class="fal fa-robot"></i><span>AI / Automation Solutions</span></article>
-                </div>
-            </div>
-        </section>
-
-        <section id="project-hiring-process" class="project-hiring-process">
-            <div class="container">
-                <div class="project-hiring-section-head">
-                    <span>How it works</span>
-                    <h2>From requirements to approved kickoff</h2>
-                </div>
-                <div class="process-list">
-                    <article><strong>01</strong><span>Submit project requirements</span></article>
-                    <article><strong>02</strong><span>Admin reviews request</span></article>
-                    <article><strong>03</strong><span>Team contacts client</span></article>
-                    <article><strong>04</strong><span>Proposal & timeline shared</span></article>
-                    <article><strong>05</strong><span>Project starts after approval</span></article>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-hiring-form-section">
-            <div class="container">
-                <div class="project-hiring-form-layout">
-                    <aside class="project-hiring-cta">
-                        <span class="project-hiring-eyebrow">Start the conversation</span>
-                        <h2>Submit Project Request</h2>
-                        <p>Share your scope, budget, timeline, and any supporting documents. The admin team will review and contact you with next steps.</p>
-                        <div class="project-hiring-trust-list">
-                            <div><i class="fal fa-check-circle"></i><span>Secure file handling</span></div>
-                            <div><i class="fal fa-check-circle"></i><span>Admin-reviewed requests</span></div>
-                            <div><i class="fal fa-check-circle"></i><span>Status-managed workflow</span></div>
+                <div class="gis-careers-surface">
+                    <div class="gis-careers-section-head">
+                        <div>
+                            <span>Marketplace</span>
+                            <h2>Current Open Projects</h2>
+                            <p>Choose a project to view the full brief and place your bid.</p>
                         </div>
-                    </aside>
+                        <button type="button" id="retry-projects" class="gis-retry-btn" hidden>Retry</button>
+                    </div>
 
-                    <section class="project-hiring-form-card" aria-labelledby="project-hiring-form-title">
-                        <div class="project-hiring-form-heading">
-                            <span>Project Details</span>
-                            <h2 id="project-hiring-form-title">Tell us what you want to build</h2>
+                    <div class="gis-careers-filters" role="search">
+                        <div class="gis-filter-field gis-filter-search">
+                            <label for="filter-search">Search</label>
+                            <input type="search" id="filter-search" placeholder="Project title, keyword, or skill">
                         </div>
-                        <div id="project-hiring-message" class="alert d-none" role="alert"></div>
+                        <div class="gis-filter-field">
+                            <label for="filter-category">Category</label>
+                            <select id="filter-category">
+                                <option value="">All Categories</option>
+                                <option>Web Development</option>
+                                <option>Mobile App Development</option>
+                                <option>Backend Development</option>
+                                <option>UI/UX Design</option>
+                                <option>E-commerce</option>
+                                <option>AI / Automation</option>
+                                <option>DevOps</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <button type="button" id="clear-filters" class="gis-retry-btn">Clear</button>
+                    </div>
 
-                        <form id="project-hiring-form" class="row g-3" enctype="multipart/form-data" novalidate>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-full-name">Full Name</label>
-                                <input class="form-control" id="project-full-name" name="full_name" type="text" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-email">Email</label>
-                                <input class="form-control" id="project-email" name="email" type="email" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-phone">Phone / WhatsApp</label>
-                                <input class="form-control" id="project-phone" name="phone" type="tel" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-company">Company Name</label>
-                                <input class="form-control" id="project-company" name="company_name" type="text">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-location">Country / City</label>
-                                <input class="form-control" id="project-location" name="country_city" type="text" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-title">Project Title</label>
-                                <input class="form-control" id="project-title" name="project_title" type="text" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-category">Project Category</label>
-                                <select class="form-control" id="project-category" name="project_category" required>
-                                    <option value="">Select category</option>
-                                    <option>Flutter App</option>
-                                    <option>Website</option>
-                                    <option>Backend API</option>
-                                    <option>UI/UX Design</option>
-                                    <option>CRM / ERP</option>
-                                    <option>E-commerce</option>
-                                    <option>AI / Automation</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-budget">Budget Range</label>
-                                <select class="form-control" id="project-budget" name="budget_range" required>
-                                    <option value="">Select budget</option>
-                                    <option>Under $500</option>
-                                    <option>$500 - $1000</option>
-                                    <option>$1000 - $3000</option>
-                                    <option>$3000 - $5000</option>
-                                    <option>$5000+</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-timeline">Expected Timeline</label>
-                                <select class="form-control" id="project-timeline" name="expected_timeline" required>
-                                    <option value="">Select timeline</option>
-                                    <option>Urgent</option>
-                                    <option>1-2 Weeks</option>
-                                    <option>1 Month</option>
-                                    <option>2-3 Months</option>
-                                    <option>Flexible</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="project-attachment">Attachment</label>
-                                <input class="form-control" id="project-attachment" name="attachment" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label" for="project-description">Project Description</label>
-                                <textarea class="form-control" id="project-description" name="project_description" rows="6" required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <label class="project-hiring-check">
-                                    <input type="checkbox" name="agreement" value="yes" required>
-                                    <span>I agree to be contacted regarding my project request.</span>
-                                </label>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" id="project-hiring-submit" class="theme-btn">Submit Project Request</button>
-                            </div>
-                        </form>
-                    </section>
+                    <div id="projects-status" class="gis-careers-state loading">
+                        <h3>Loading open projects...</h3>
+                        <p>Please wait while we fetch the latest projects.</p>
+                    </div>
+
+                    <div id="projects-list" class="row g-4 gis-jobs-grid"></div>
                 </div>
+
+                <section id="project-detail-panel" class="gis-detail-panel d-none" aria-labelledby="project-detail-title">
+                    <div id="project-detail-content"></div>
+                </section>
+
+                <section id="bid-form-panel" class="gis-application-panel d-none" aria-labelledby="bid-heading">
+                    <div class="gis-application-head">
+                        <span>Submit Proposal</span>
+                        <h2 id="bid-heading">Place your bid</h2>
+                        <p id="bid-sub">Tell the client why you're the best fit. Set your price and delivery time.</p>
+                    </div>
+
+                    <div id="bid-message" class="alert d-none" role="alert"></div>
+
+                    <form id="bid-form" enctype="multipart/form-data" novalidate>
+                        <input type="hidden" id="bid-project-id" name="project_id">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="bid-full-name">Full Name *</label>
+                                <input type="text" class="form-control" id="bid-full-name" name="full_name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="bid-email">Email *</label>
+                                <input type="email" class="form-control" id="bid-email" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="bid-phone">Phone / WhatsApp *</label>
+                                <input type="text" class="form-control" id="bid-phone" name="phone" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="bid-amount">Your Bid (USD) *</label>
+                                <input type="number" min="1" step="0.01" class="form-control" id="bid-amount" name="bid_amount" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="bid-days">Delivery (days) *</label>
+                                <input type="number" min="1" step="1" class="form-control" id="bid-days" name="delivery_days" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="bid-cover">Cover Letter / Proposal *</label>
+                                <textarea class="form-control" id="bid-cover" name="cover_letter" rows="5" placeholder="Introduce yourself, your relevant experience, and how you'll approach this project." required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="bid-experience">Relevant Experience</label>
+                                <textarea class="form-control" id="bid-experience" name="experience" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="bid-skills">Skills</label>
+                                <textarea class="form-control" id="bid-skills" name="skills" rows="3" placeholder="Flutter, Node.js, Figma..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="bid-milestones">Milestones / Breakdown (optional)</label>
+                                <textarea class="form-control" id="bid-milestones" name="milestones" rows="3" placeholder="Milestone 1: ... — $X — N days"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="bid-portfolio">Portfolio URL</label>
+                                <input type="url" class="form-control" id="bid-portfolio" name="portfolio_url" placeholder="https://">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="bid-linkedin">LinkedIn</label>
+                                <input type="url" class="form-control" id="bid-linkedin" name="linkedin_url" placeholder="https://">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="bid-github">GitHub</label>
+                                <input type="url" class="form-control" id="bid-github" name="github_url" placeholder="https://">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="bid-attachment">Attachment (PDF/DOC/Image, optional)</label>
+                                <input type="file" class="form-control" id="bid-attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp">
+                            </div>
+                        </div>
+                        <div class="apply-button-row mt-4">
+                            <button type="submit" id="submit-bid" class="theme-btn">Submit Bid</button>
+                            <button type="button" id="cancel-bid" class="apply-outline-btn">Cancel</button>
+                        </div>
+                    </form>
+                </section>
             </div>
         </section>
     </main>
 
-    <script src="/assets/js/pages/project-based-hiring.js" defer></script>
+    <script src="/assets/js/pages/project-bidding.js" defer></script>
     <script src="/assets/js/premium.js" defer></script>
 </body>
 

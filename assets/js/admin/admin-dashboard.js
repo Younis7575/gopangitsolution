@@ -22,6 +22,8 @@ const elements = {
 	partners: document.getElementById("stat-partners"),
 	proposals: document.getElementById("stat-proposals"),
 	hired: document.getElementById("stat-hired"),
+	projects: document.getElementById("stat-projects"),
+	bids: document.getElementById("stat-bids"),
 	recentApps: document.getElementById("recent-apps"),
 	recentAppsLoading: document.getElementById("recent-apps-loading"),
 	recentJobs: document.getElementById("recent-jobs"),
@@ -197,12 +199,14 @@ function renderStatusBreakdown(apps) {
 async function loadDashboard() {
 	clearMessage();
 
-	const [jobs, apps, news, partners, proposals] = await Promise.all([
+	const [jobs, apps, news, partners, proposals, projects, bids] = await Promise.all([
 		fetchData("/api/jobs?admin=1"),
 		fetchData("/api/applications"),
 		fetchData("/api/news"),
 		fetchData("/api/partner-applications"),
 		fetchData("/api/project-proposals"),
+		fetchData("/api/bid-projects?admin=1"),
+		fetchData("/api/bids"),
 	]);
 
 	// Primary stats
@@ -229,6 +233,12 @@ async function loadDashboard() {
 
 	const counts = renderStatusBreakdown(apps);
 	elements.hired.textContent = counts.Hired;
+
+	const openProjects = projects.filter(function (p) {
+		return String(p.status || "Open") === "Open";
+	}).length;
+	elements.projects.textContent = openProjects;
+	elements.bids.textContent = bids.length;
 
 	renderRecentApplications(apps);
 	renderRecentJobs(jobs);

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Bid Projects | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/project-based-hiring" class="admin-link">View Marketplace</a>
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-jobs"><i class="fal fa-briefcase" aria-hidden="true"></i> Jobs</a>
+            <a href="/admin-applications"><i class="fal fa-file-user" aria-hidden="true"></i> Applications</a>
+            <a href="/admin-projects" class="active"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-submissions#partners"><i class="fal fa-handshake" aria-hidden="true"></i> Apply as Partner</a>
+            <a href="/admin-submissions#proposals"><i class="fal fa-file-alt" aria-hidden="true"></i> Proposals</a>
+            <a href="/admin-project-hiring"><i class="fal fa-users-cog" aria-hidden="true"></i> Project Hiring Requests</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Marketplace</span>
+                <h1>Bid Projects</h1>
+                <p>Post projects for freelancers to bid on, and review every incoming proposal — Upwork style.</p>
+                <div id="global-message" class="admin-alert d-none" role="alert"></div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <div class="admin-grid">
+                    <section class="admin-panel admin-form-panel" aria-labelledby="project-form-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Section 1</span>
+                                <h2 id="project-form-title">Add New Project</h2>
+                            </div>
+                            <button type="button" id="reset-project-form" class="admin-ghost-btn">Clear</button>
+                        </div>
+
+                        <form id="project-form" class="admin-form">
+                            <input type="hidden" id="project-id" name="project_id">
+
+                            <div class="admin-field">
+                                <label for="project-title">Title</label>
+                                <input type="text" id="project-title" name="title" required>
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="project-category">Category</label>
+                                    <select id="project-category" name="category" required>
+                                        <option value="">Select category</option>
+                                        <option>Web Development</option>
+                                        <option>Mobile App Development</option>
+                                        <option>Backend Development</option>
+                                        <option>UI/UX Design</option>
+                                        <option>E-commerce</option>
+                                        <option>AI / Automation</option>
+                                        <option>DevOps</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="project-status">Status</label>
+                                    <select id="project-status" name="status">
+                                        <option value="Open">Open</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="project-budget-type">Budget Type</label>
+                                    <select id="project-budget-type" name="budget_type">
+                                        <option value="Fixed">Fixed</option>
+                                        <option value="Hourly">Hourly</option>
+                                    </select>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="project-experience">Experience Level</label>
+                                    <select id="project-experience" name="experience_level">
+                                        <option value="">Any level</option>
+                                        <option>Entry</option>
+                                        <option>Intermediate</option>
+                                        <option>Expert</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="project-budget-min">Budget Min (USD)</label>
+                                    <input type="number" min="0" step="0.01" id="project-budget-min" name="budget_min">
+                                </div>
+                                <div class="admin-field">
+                                    <label for="project-budget-max">Budget Max (USD)</label>
+                                    <input type="number" min="0" step="0.01" id="project-budget-max" name="budget_max">
+                                </div>
+                            </div>
+
+                            <div class="admin-two-col">
+                                <div class="admin-field">
+                                    <label for="project-duration">Duration</label>
+                                    <input type="text" id="project-duration" name="duration" placeholder="1-2 months">
+                                </div>
+                                <div class="admin-field">
+                                    <label for="project-deadline">Bid Deadline</label>
+                                    <input type="date" id="project-deadline" name="deadline">
+                                </div>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="project-description">Description</label>
+                                <textarea id="project-description" name="description" rows="6" required></textarea>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="project-skills">Skills Required</label>
+                                <textarea id="project-skills" name="skills" rows="3" placeholder="Flutter, Node.js, Figma"></textarea>
+                            </div>
+
+                            <button type="submit" id="save-project-btn" class="theme-btn admin-submit-btn">Add Project</button>
+                        </form>
+                    </section>
+
+                    <section class="admin-panel" aria-labelledby="projects-list-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Projects</span>
+                                <h2 id="projects-list-title">Posted Projects</h2>
+                            </div>
+                            <button type="button" id="refresh-projects" class="admin-ghost-btn">Refresh</button>
+                        </div>
+                        <div id="projects-loading" class="admin-loading">Loading projects...</div>
+                        <div id="projects-list" class="admin-card-list"></div>
+                    </section>
+                </div>
+
+                <section class="admin-panel admin-applications-panel" aria-labelledby="bids-title">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span class="admin-kicker">Section 2</span>
+                            <h2 id="bids-title">Submitted Bids</h2>
+                        </div>
+                        <button type="button" id="refresh-bids" class="admin-ghost-btn">Refresh</button>
+                    </div>
+
+                    <div class="admin-filter-bar" style="grid-template-columns: minmax(220px,1fr) repeat(3, minmax(150px,0.34fr));">
+                        <div class="admin-field">
+                            <label for="bid-search">Search</label>
+                            <input type="search" id="bid-search" placeholder="Name or email">
+                        </div>
+                        <div class="admin-field">
+                            <label for="bid-status-filter">Status</label>
+                            <select id="bid-status-filter">
+                                <option value="">All statuses</option>
+                                <option value="New">New</option>
+                                <option value="Shortlisted">Shortlisted</option>
+                                <option value="Interviewing">Interviewing</option>
+                                <option value="Awarded">Awarded</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="admin-field">
+                            <label for="bid-project-filter">Project</label>
+                            <select id="bid-project-filter">
+                                <option value="">All projects</option>
+                            </select>
+                        </div>
+                        <div class="admin-field">
+                            <label for="bid-sort">Sort by bid</label>
+                            <select id="bid-sort">
+                                <option value="recent">Most recent</option>
+                                <option value="low">Lowest bid</option>
+                                <option value="high">Highest bid</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="bids-loading" class="admin-loading">Loading bids...</div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Freelancer</th>
+                                    <th>Project</th>
+                                    <th>Email</th>
+                                    <th>Bid</th>
+                                    <th>Delivery</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bids-table"></tbody>
+                        </table>
+                    </div>
+                    <div class="admin-pagination">
+                        <button type="button" id="prev-page" class="admin-ghost-btn">Previous</button>
+                        <span id="page-summary">Page 1</span>
+                        <button type="button" id="next-page" class="admin-ghost-btn">Next</button>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <div id="bid-modal" class="admin-modal d-none" role="dialog" aria-modal="true" aria-labelledby="bid-modal-title">
+        <div class="admin-modal-backdrop" data-close-modal></div>
+        <div class="admin-modal-panel">
+            <div class="admin-panel-heading">
+                <div>
+                    <span class="admin-kicker">Bid Detail</span>
+                    <h2 id="bid-modal-title">Freelancer Proposal</h2>
+                </div>
+                <button type="button" class="admin-ghost-btn" data-close-modal>Close</button>
+            </div>
+            <div id="bid-detail" class="admin-detail-grid"></div>
+            <div class="admin-two-col admin-detail-editor">
+                <div class="admin-field">
+                    <label for="detail-status">Update Status</label>
+                    <select id="detail-status">
+                        <option value="New">New</option>
+                        <option value="Shortlisted">Shortlisted</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Awarded">Awarded</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="admin-field" style="display:flex; align-items:flex-end;">
+                    <button type="button" id="save-status" class="admin-action-btn" style="width:100%;">Save Status</button>
+                </div>
+            </div>
+            <div class="admin-job-actions admin-modal-actions">
+                <button type="button" id="download-attachment" class="admin-action-btn">Download Attachment</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/admin/admin-projects.js"></script>
+</body>
+
+</html>

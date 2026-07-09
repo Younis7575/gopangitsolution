@@ -145,6 +145,44 @@ $JOB_STATUSES = ['Open', 'Closed', 'Draft'];
 $APPLICATION_STATUSES = ['New', 'Reviewed', 'Shortlisted', 'Rejected', 'Hired'];
 $SUBMISSION_STATUSES = ['Pending', 'Approved', 'Reject'];
 $PROJECT_HIRING_STATUSES = ['pending', 'reviewed', 'contacted', 'proposal_sent', 'approved', 'rejected'];
+$BID_PROJECT_STATUSES = ['Open', 'Closed', 'Draft'];
+$BID_STATUSES = ['New', 'Shortlisted', 'Interviewing', 'Awarded', 'Rejected'];
+
+function bid_project_payload($body)
+{
+    global $BID_PROJECT_STATUSES;
+    $status = trim((string) ($body['status'] ?? ''));
+    $budgetType = trim((string) ($body['budget_type'] ?? 'Fixed'));
+    return [
+        'title'            => trim((string) ($body['title'] ?? '')),
+        'category'         => trim((string) ($body['category'] ?? '')),
+        'description'      => trim((string) ($body['description'] ?? '')),
+        'budget_type'      => in_array($budgetType, ['Fixed', 'Hourly'], true) ? $budgetType : 'Fixed',
+        'budget_min'       => trim((string) ($body['budget_min'] ?? '')) === '' ? null : (float) $body['budget_min'],
+        'budget_max'       => trim((string) ($body['budget_max'] ?? '')) === '' ? null : (float) $body['budget_max'],
+        'duration'         => trim((string) ($body['duration'] ?? '')) ?: null,
+        'experience_level' => trim((string) ($body['experience_level'] ?? '')) ?: null,
+        'skills'           => trim((string) ($body['skills'] ?? '')),
+        'deadline'         => trim((string) ($body['deadline'] ?? '')) ?: null,
+        'status'           => in_array($status, $BID_PROJECT_STATUSES, true) ? $status : 'Open',
+    ];
+}
+
+function validate_bid_project($p)
+{
+    if ($p['title'] === '') { return 'title is required'; }
+    if ($p['category'] === '') { return 'category is required'; }
+    if ($p['description'] === '') { return 'description is required'; }
+    return null;
+}
+
+function normalize_bid_status($status)
+{
+    global $BID_STATUSES;
+    $status = trim((string) $status);
+    if ($status === 'Pending' || $status === '') { return 'New'; }
+    return in_array($status, $BID_STATUSES, true) ? $status : null;
+}
 
 function normalize_application_status($status)
 {
@@ -823,6 +861,177 @@ try {
         $stmt = $pdo->prepare('SELECT * FROM project_hiring_requests WHERE id = ?');
         $stmt->execute([$rid]);
         json_response(['success' => true, 'message' => 'Project hiring request updated successfully', 'data' => $stmt->fetch()]);
+    }
+
+    /* ---- Bidding marketplace: projects ---- */
+    if ($method === 'GET' && $path === '/api/bid-projects') {
+        $includeAll = isset($_GET['admin']) && $_GET['admin'] === '1';
+        if ($includeAll) { require_admin(); }
+        $where = $includeAll ? [] : ["COALESCE(status,'Open') = 'Open'"];
+        $params = [];
+        $category = trim((string) ($_GET['category'] ?? ''));
+        if ($category !== '') { $where[] = 'category = ?'; $params[] = $category; }
+        $search = trim((string) ($_GET['search'] ?? ''));
+        if ($search !== '') {
+            $where[] = '(title LIKE ? OR description LIKE ? OR skills LIKE ?)';
+            $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%";
+        }
+        $sql = 'SELECT p.*, (SELECT COUNT(*) FROM project_bids b WHERE b.project_id = p.id) AS bid_count FROM bid_projects p';
+        if ($where) { $sql .= ' WHERE ' . implode(' AND ', $where); }
+        $sql .= ' ORDER BY p.id DESC';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        json_response(['success' => true, 'message' => 'Projects fetched successfully', 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/api/bid-projects') {
+        require_admin();
+        $body = read_json_body();
+        if (!$body) { error_response('Invalid JSON body', 400); }
+        $p = bid_project_payload($body);
+        $err = validate_bid_project($p);
+        if ($err) { error_response($err, 400); }
+        $stmt = $pdo->prepare('INSERT INTO bid_projects (title, category, description, budget_type, budget_min,
+            budget_max, duration, experience_level, skills, deadline, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+        $stmt->execute([$p['title'], $p['category'], $p['description'], $p['budget_type'], $p['budget_min'],
+            $p['budget_max'], $p['duration'], $p['experience_level'], $p['skills'], $p['deadline'], $p['status']]);
+        $id = (int) $pdo->lastInsertId();
+        $stmt = $pdo->prepare('SELECT * FROM bid_projects WHERE id = ?');
+        $stmt->execute([$id]);
+        json_response(['success' => true, 'message' => 'Project created successfully', 'data' => $stmt->fetch()], 201);
+    }
+
+    if (preg_match('#^/api/bid-projects/(\d+)$#', $path, $m)) {
+        $projectId = (int) $m[1];
+        if ($method === 'GET') {
+            $stmt = $pdo->prepare('SELECT * FROM bid_projects WHERE id = ?');
+            $stmt->execute([$projectId]);
+            $row = $stmt->fetch();
+            if (!$row) { error_response('Project not found', 404); }
+            json_response(['success' => true, 'message' => 'Project fetched successfully', 'data' => $row]);
+        }
+        if ($method === 'PUT') {
+            require_admin();
+            $body = read_json_body();
+            if (!$body) { error_response('Invalid JSON body', 400); }
+            $stmt = $pdo->prepare('SELECT id FROM bid_projects WHERE id = ?');
+            $stmt->execute([$projectId]);
+            if (!$stmt->fetch()) { error_response('Project not found', 404); }
+            $p = bid_project_payload($body);
+            $err = validate_bid_project($p);
+            if ($err) { error_response($err, 400); }
+            $pdo->prepare('UPDATE bid_projects SET title=?, category=?, description=?, budget_type=?, budget_min=?,
+                budget_max=?, duration=?, experience_level=?, skills=?, deadline=?, status=?, updated_at=CURRENT_TIMESTAMP
+                WHERE id=?')->execute([$p['title'], $p['category'], $p['description'], $p['budget_type'], $p['budget_min'],
+                $p['budget_max'], $p['duration'], $p['experience_level'], $p['skills'], $p['deadline'], $p['status'], $projectId]);
+            $stmt = $pdo->prepare('SELECT * FROM bid_projects WHERE id = ?');
+            $stmt->execute([$projectId]);
+            json_response(['success' => true, 'message' => 'Project updated successfully', 'data' => $stmt->fetch()]);
+        }
+        if ($method === 'DELETE') {
+            require_admin();
+            $stmt = $pdo->prepare('SELECT id FROM bid_projects WHERE id = ?');
+            $stmt->execute([$projectId]);
+            if (!$stmt->fetch()) { error_response('Project not found', 404); }
+            $pdo->prepare('DELETE FROM project_bids WHERE project_id = ?')->execute([$projectId]);
+            $pdo->prepare('DELETE FROM bid_projects WHERE id = ?')->execute([$projectId]);
+            json_response(['success' => true, 'message' => 'Project deleted successfully', 'data' => ['id' => $projectId]]);
+        }
+    }
+
+    /* ---- Bidding marketplace: submit a bid (public, multipart) ---- */
+    if ($method === 'POST' && preg_match('#^/api/bid-projects/(\d+)/bids$#', $path, $m)) {
+        $projectId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT * FROM bid_projects WHERE id = ?');
+        $stmt->execute([$projectId]);
+        $project = $stmt->fetch();
+        if (!$project) { error_response('Project not found', 404); }
+        if (($project['status'] ?: 'Open') !== 'Open') { error_response('This project is not accepting bids', 409); }
+
+        $bidAmount = trim((string) ($_POST['bid_amount'] ?? ''));
+        $deliveryDays = trim((string) ($_POST['delivery_days'] ?? ''));
+        $bid = [
+            'full_name'    => trim((string) ($_POST['full_name'] ?? '')),
+            'email'        => trim((string) ($_POST['email'] ?? '')),
+            'phone'        => trim((string) ($_POST['phone'] ?? '')),
+            'cover_letter' => trim((string) ($_POST['cover_letter'] ?? '')),
+            'experience'   => trim((string) ($_POST['experience'] ?? '')) ?: null,
+            'skills'       => trim((string) ($_POST['skills'] ?? '')) ?: null,
+            'milestones'   => trim((string) ($_POST['milestones'] ?? '')) ?: null,
+        ];
+        if ($bid['full_name'] === '') { error_response('full_name is required', 400); }
+        if (!is_valid_email($bid['email'])) { error_response('A valid email is required', 400); }
+        if (!is_valid_phone($bid['phone'])) { error_response('A valid phone number is required', 400); }
+        if ($bidAmount === '' || !is_numeric($bidAmount) || (float) $bidAmount <= 0) {
+            error_response('bid_amount must be a valid positive number', 400);
+        }
+        if ($deliveryDays === '' || !ctype_digit($deliveryDays) || (int) $deliveryDays <= 0) {
+            error_response('delivery_days must be a valid number of days', 400);
+        }
+        if ($bid['cover_letter'] === '') { error_response('cover_letter is required', 400); }
+
+        $portfolio = optional_url($_POST['portfolio_url'] ?? '');
+        if ($portfolio === false) { error_response('portfolio_url must be a valid URL', 400); }
+        $linkedin = optional_url($_POST['linkedin_url'] ?? '');
+        if ($linkedin === false) { error_response('linkedin_url must be a valid URL', 400); }
+        $github = optional_url($_POST['github_url'] ?? '');
+        if ($github === false) { error_response('github_url must be a valid URL', 400); }
+
+        $stored = store_upload('attachment', 'project-bids/' . $projectId,
+            ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.webp'], [], MAX_ATTACHMENT_SIZE, false);
+        if (isset($stored['error'])) { error_response($stored['error'], 400); }
+        $att = $stored['value'];
+
+        $stmt = $pdo->prepare('INSERT INTO project_bids (project_id, full_name, email, phone, bid_amount, delivery_days,
+            cover_letter, experience, skills, milestones, portfolio_url, linkedin_url, github_url,
+            attachment_key, attachment_file_name, attachment_file_type, attachment_file_size, status)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, "New")');
+        $stmt->execute([$projectId, $bid['full_name'], $bid['email'], $bid['phone'], (float) $bidAmount, (int) $deliveryDays,
+            $bid['cover_letter'], $bid['experience'], $bid['skills'], $bid['milestones'], $portfolio, $linkedin, $github,
+            $att['key'] ?? null, $att['fileName'] ?? null, $att['fileType'] ?? null, $att['fileSize'] ?? null]);
+        $id = (int) $pdo->lastInsertId();
+        $attachmentUrl = ($att && !empty($att['key'])) ? '/api/bids/' . $id . '/attachment' : null;
+        $pdo->prepare('UPDATE project_bids SET attachment_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute([$attachmentUrl, $id]);
+        json_response(['success' => true, 'message' => 'Your bid has been submitted successfully',
+            'data' => ['id' => $id, 'project_id' => $projectId, 'status' => 'New']], 201);
+    }
+
+    /* ---- Bidding marketplace: bids (admin) ---- */
+    if ($method === 'GET' && $path === '/api/bids') {
+        require_admin();
+        $where = []; $params = [];
+        $projectId = trim((string) ($_GET['project_id'] ?? ''));
+        if ($projectId !== '') { $where[] = 'b.project_id = ?'; $params[] = (int) $projectId; }
+        $whereSql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+        $stmt = $pdo->prepare('SELECT b.*, p.title AS project_title, p.category AS project_category
+            FROM project_bids b LEFT JOIN bid_projects p ON p.id = b.project_id' . $whereSql . ' ORDER BY b.id DESC');
+        $stmt->execute($params);
+        json_response(['success' => true, 'message' => 'Bids fetched successfully', 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'PATCH' && preg_match('#^/api/bids/(\d+)/status$#', $path, $m)) {
+        require_admin();
+        $body = read_json_body();
+        if (!$body) { error_response('Invalid JSON body', 400); }
+        $status = normalize_bid_status($body['status'] ?? '');
+        if (!$status) { error_response('status must be New, Shortlisted, Interviewing, Awarded, or Rejected', 400); }
+        $stmt = $pdo->prepare('SELECT id FROM project_bids WHERE id = ?');
+        $stmt->execute([(int) $m[1]]);
+        if (!$stmt->fetch()) { error_response('Bid not found', 404); }
+        $pdo->prepare('UPDATE project_bids SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute([$status, (int) $m[1]]);
+        $stmt = $pdo->prepare('SELECT * FROM project_bids WHERE id = ?');
+        $stmt->execute([(int) $m[1]]);
+        json_response(['success' => true, 'message' => 'Bid status updated successfully', 'data' => $stmt->fetch()]);
+    }
+
+    if ($method === 'GET' && preg_match('#^/api/bids/(\d+)/attachment$#', $path, $m)) {
+        $stmt = $pdo->prepare('SELECT attachment_key, attachment_file_name, attachment_file_type FROM project_bids WHERE id = ?');
+        $stmt->execute([(int) $m[1]]);
+        $row = $stmt->fetch();
+        if (!$row || !$row['attachment_key']) { error_response('Attachment not found', 404); }
+        stream_upload($row['attachment_key'], $row['attachment_file_name'], $row['attachment_file_type']);
     }
 
     error_response('Route not found', 404);

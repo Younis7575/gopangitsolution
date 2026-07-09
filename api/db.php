@@ -158,6 +158,50 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+    /* Bidding marketplace: admin posts projects, freelancers bid (Upwork-style). */
+    $pdo->exec("CREATE TABLE IF NOT EXISTS bid_projects (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(240) NOT NULL,
+        category VARCHAR(120) NOT NULL,
+        description TEXT NOT NULL,
+        budget_type VARCHAR(20) NOT NULL DEFAULT 'Fixed',
+        budget_min DECIMAL(12,2) NULL,
+        budget_max DECIMAL(12,2) NULL,
+        duration VARCHAR(80) NULL,
+        experience_level VARCHAR(60) NULL,
+        skills TEXT NULL,
+        deadline VARCHAR(40) NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'Open',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS project_bids (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        project_id INT NOT NULL,
+        full_name VARCHAR(180) NOT NULL,
+        email VARCHAR(200) NOT NULL,
+        phone VARCHAR(60) NOT NULL,
+        bid_amount DECIMAL(12,2) NOT NULL,
+        delivery_days INT NOT NULL,
+        cover_letter TEXT NOT NULL,
+        experience TEXT NULL,
+        skills TEXT NULL,
+        milestones TEXT NULL,
+        portfolio_url VARCHAR(400) NULL,
+        linkedin_url VARCHAR(400) NULL,
+        github_url VARCHAR(400) NULL,
+        attachment_key VARCHAR(400) NULL,
+        attachment_file_name VARCHAR(255) NULL,
+        attachment_file_type VARCHAR(120) NULL,
+        attachment_file_size INT NULL,
+        attachment_url VARCHAR(400) NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'New',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NULL DEFAULT NULL,
+        INDEX (project_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     /* Backfill for older installs. */
     ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
 
@@ -277,6 +321,50 @@ function seed_sample_data()
                 ':title' => $n['title'], ':slug' => $n['slug'],
                 ':short_description' => $n['short_description'], ':content' => $n['content'],
                 ':author' => $n['author'], ':status' => 'published',
+            ]);
+        }
+    }
+
+    $projectCount = (int) $pdo->query('SELECT COUNT(*) FROM bid_projects')->fetchColumn();
+    if ($projectCount === 0) {
+        $sampleProjects = [
+            [
+                'title' => 'Build a Flutter E-commerce App',
+                'category' => 'Mobile App Development',
+                'description' => "We need a complete Flutter e-commerce app (iOS + Android) with product catalog, cart, checkout, payment gateway, and push notifications. Backend APIs will be provided. Looking for clean architecture and pixel-perfect UI.",
+                'budget_type' => 'Fixed', 'budget_min' => 800, 'budget_max' => 1500,
+                'duration' => '1-2 months', 'experience_level' => 'Intermediate',
+                'skills' => 'Flutter, Dart, REST APIs, Stripe, Firebase',
+            ],
+            [
+                'title' => 'Company Website Redesign (Next.js)',
+                'category' => 'Web Development',
+                'description' => "Redesign our corporate website in Next.js with a modern, fast, SEO-friendly UI. ~8 pages, CMS-driven blog, contact forms, and Lighthouse score 90+. Figma designs will be shared.",
+                'budget_type' => 'Fixed', 'budget_min' => 500, 'budget_max' => 1200,
+                'duration' => '3-4 weeks', 'experience_level' => 'Expert',
+                'skills' => 'Next.js, React, Tailwind CSS, SEO',
+            ],
+            [
+                'title' => 'REST API + Admin Dashboard (Node.js)',
+                'category' => 'Backend Development',
+                'description' => "Design and build a secure REST API with JWT auth, role-based access, and an admin dashboard for a SaaS product. MySQL database. Deliverables include docs and tests.",
+                'budget_type' => 'Hourly', 'budget_min' => 15, 'budget_max' => 35,
+                'duration' => '2-3 months', 'experience_level' => 'Expert',
+                'skills' => 'Node.js, Express, MySQL, JWT, Docker',
+            ],
+        ];
+        $stmt = $pdo->prepare(
+            'INSERT INTO bid_projects (title, category, description, budget_type, budget_min, budget_max,
+                duration, experience_level, skills, status)
+             VALUES (:title, :category, :description, :budget_type, :budget_min, :budget_max,
+                :duration, :experience_level, :skills, :status)'
+        );
+        foreach ($sampleProjects as $p) {
+            $stmt->execute([
+                ':title' => $p['title'], ':category' => $p['category'], ':description' => $p['description'],
+                ':budget_type' => $p['budget_type'], ':budget_min' => $p['budget_min'], ':budget_max' => $p['budget_max'],
+                ':duration' => $p['duration'], ':experience_level' => $p['experience_level'],
+                ':skills' => $p['skills'], ':status' => 'Open',
             ]);
         }
     }
