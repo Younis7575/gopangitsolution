@@ -83,6 +83,32 @@ if (!defined('TURNSTILE_SITE_KEY'))   define('TURNSTILE_SITE_KEY', getenv('TURNS
 if (!defined('TURNSTILE_SECRET_KEY')) define('TURNSTILE_SECRET_KEY', getenv('TURNSTILE_SECRET_KEY') ?: '');
 
 /* ------------------------------------------------------------------ */
+/* NewsAPI (technology news) — SERVER-SIDE ONLY                        */
+/* The API key is NEVER sent to the browser. Put the real key in       */
+/* config.local.php (define NEWS_API_KEY) or a NEWS_API_KEY env var.   */
+/* Everything else (enable/disable, page size, cache) can also be      */
+/* changed at runtime from the Admin > External Technology News panel. */
+/* ------------------------------------------------------------------ */
+if (!defined('NEWS_API_KEY'))       define('NEWS_API_KEY', getenv('NEWS_API_KEY') ?: '');
+if (!defined('NEWS_API_BASE_URL'))  define('NEWS_API_BASE_URL', rtrim(getenv('NEWS_API_BASE_URL') ?: 'https://newsapi.org/v2', '/'));
+if (!defined('NEWS_API_CATEGORY'))  define('NEWS_API_CATEGORY', getenv('NEWS_API_CATEGORY') ?: 'technology');
+if (!defined('NEWS_API_LANGUAGE'))  define('NEWS_API_LANGUAGE', getenv('NEWS_API_LANGUAGE') ?: 'en');
+if (!defined('NEWS_API_PAGE_SIZE')) define('NEWS_API_PAGE_SIZE', (int) (getenv('NEWS_API_PAGE_SIZE') ?: 20));
+if (!defined('NEWS_API_CACHE_MINUTES')) define('NEWS_API_CACHE_MINUTES', (int) (getenv('NEWS_API_CACHE_MINUTES') ?: 30));
+/* Seconds to wait for NewsAPI before giving up and serving cache/manual news. */
+if (!defined('NEWS_API_TIMEOUT'))   define('NEWS_API_TIMEOUT', (int) (getenv('NEWS_API_TIMEOUT') ?: 8));
+/* Master switch. Admin panel can override this at runtime (news_settings). */
+if (!defined('NEWS_API_ENABLED')) {
+    define('NEWS_API_ENABLED', filter_var(getenv('NEWS_API_ENABLED') ?: 'true', FILTER_VALIDATE_BOOLEAN));
+}
+/* Default category assigned to admin/company news (used for the tech feed). */
+if (!defined('NEWS_DEFAULT_CATEGORY')) define('NEWS_DEFAULT_CATEGORY', getenv('NEWS_DEFAULT_CATEGORY') ?: 'technology');
+/* Company label shown on admin-authored news cards. */
+if (!defined('NEWS_COMPANY_SOURCE')) define('NEWS_COMPANY_SOURCE', getenv('NEWS_COMPANY_SOURCE') ?: 'Gopang IT Solution');
+/* Safe fallback image for external articles with no/invalid image. */
+if (!defined('NEWS_PLACEHOLDER_IMAGE')) define('NEWS_PLACEHOLDER_IMAGE', getenv('NEWS_PLACEHOLDER_IMAGE') ?: '/assets/img/blog/p1.jpg');
+
+/* ------------------------------------------------------------------ */
 /* Careers taxonomy (shared dropdown option sets)                     */
 /* ------------------------------------------------------------------ */
 $GLOBALS['JOB_TYPES'] = [

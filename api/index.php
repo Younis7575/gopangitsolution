@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/news_service.php';
 
 /* ------------------------------------------------------------------ */
 /* CORS + response helpers                                            */
@@ -130,6 +131,35 @@ function slugify($value)
     $value = strtolower(trim((string) $value));
     $value = preg_replace('/[^a-z0-9]+/', '-', $value);
     return trim($value, '-');
+}
+
+/**
+ * Normalize an admin news create/update payload (shared by POST + PUT).
+ * Adds category + SEO fields + publish date while keeping backward compatibility.
+ */
+function news_admin_payload($body)
+{
+    $publishInput = trim((string) ($body['published_at'] ?? ($body['publish_date'] ?? '')));
+    $publishedAt = null;
+    if ($publishInput !== '') {
+        $ts = strtotime($publishInput);
+        if ($ts !== false) {
+            $publishedAt = date('Y-m-d H:i:s', $ts);
+        }
+    }
+    return [
+        'title'             => trim((string) ($body['title'] ?? '')),
+        'slug'              => slugify($body['slug'] ?? ($body['title'] ?? '')),
+        'short_description' => trim((string) ($body['short_description'] ?? '')),
+        'content'           => trim((string) ($body['content'] ?? '')),
+        'image_url'         => trim((string) ($body['image_url'] ?? '')) ?: null,
+        'author'            => trim((string) ($body['author'] ?? '')) ?: null,
+        'category'          => (trim((string) ($body['category'] ?? '')) ?: NEWS_DEFAULT_CATEGORY),
+        'seo_title'         => trim((string) ($body['seo_title'] ?? '')) ?: null,
+        'meta_description'  => (trim((string) ($body['meta_description'] ?? '')) !== '' ? mb_substr(trim((string) $body['meta_description']), 0, 320) : null),
+        'published_at'      => $publishedAt,
+        'status'            => trim((string) ($body['status'] ?? '')) ?: 'published',
+    ];
 }
 
 function optional_url($value)
@@ -866,22 +896,14 @@ try {
         require_admin();
         $body = read_json_body();
         if (!$body) { error_response('Invalid JSON body', 400); }
-        $news = [
-            'title'             => trim((string) ($body['title'] ?? '')),
-            'slug'              => slugify($body['slug'] ?? ($body['title'] ?? '')),
-            'short_description' => trim((string) ($body['short_description'] ?? '')),
-            'content'           => trim((string) ($body['content'] ?? '')),
-            'image_url'         => trim((string) ($body['image_url'] ?? '')) ?: null,
-            'author'            => trim((string) ($body['author'] ?? '')) ?: null,
-            'status'            => trim((string) ($body['status'] ?? '')) ?: 'published',
-        ];
+        $news = news_admin_payload($body);
         if ($news['title'] === '' || $news['slug'] === '' || $news['short_description'] === '' || $news['content'] === '') {
             error_response('title, slug, short_description and content are required', 400);
         }
-        $stmt = $pdo->prepare('INSERT INTO news (title, slug, short_description, content, image_url, author, status)
-            VALUES (?,?,?,?,?,?,?)');
+        $stmt = $pdo->prepare('INSERT INTO news (title, slug, short_description, content, image_url, author, category, seo_title, meta_description, published_at, status)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?)');
         $stmt->execute([$news['title'], $news['slug'], $news['short_description'], $news['content'],
-            $news['image_url'], $news['author'], $news['status']]);
+            $news['image_url'], $news['author'], $news['category'], $news['seo_title'], $news['meta_description'], $news['published_at'], $news['status']]);
         $id = (int) $pdo->lastInsertId();
         $stmt = $pdo->prepare('SELECT * FROM news WHERE id = ?');
         $stmt->execute([$id]);
@@ -910,22 +932,14 @@ try {
             $stmt = $pdo->prepare('SELECT id FROM news WHERE id = ?');
             $stmt->execute([$newsId]);
             if (!$stmt->fetch()) { error_response('News not found', 404); }
-            $news = [
-                'title'             => trim((string) ($body['title'] ?? '')),
-                'slug'              => slugify($body['slug'] ?? ($body['title'] ?? '')),
-                'short_description' => trim((string) ($body['short_description'] ?? '')),
-                'content'           => trim((string) ($body['content'] ?? '')),
-                'image_url'         => trim((string) ($body['image_url'] ?? '')) ?: null,
-                'author'            => trim((string) ($body['author'] ?? '')) ?: null,
-                'status'            => trim((string) ($body['status'] ?? '')) ?: 'published',
-            ];
+            $news = news_admin_payload($body);
             if ($news['title'] === '' || $news['slug'] === '' || $news['short_description'] === '' || $news['content'] === '') {
                 error_response('title, slug, short_description and content are required', 400);
             }
             $pdo->prepare('UPDATE news SET title=?, slug=?, short_description=?, content=?, image_url=?, author=?,
-                status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?')
+                category=?, seo_title=?, meta_description=?, published_at=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?')
                 ->execute([$news['title'], $news['slug'], $news['short_description'], $news['content'],
-                    $news['image_url'], $news['author'], $news['status'], $newsId]);
+                    $news['image_url'], $news['author'], $news['category'], $news['seo_title'], $news['meta_description'], $news['published_at'], $news['status'], $newsId]);
             $stmt = $pdo->prepare('SELECT * FROM news WHERE id = ?');
             $stmt->execute([$newsId]);
             json_response(['success' => true, 'message' => 'News updated successfully', 'data' => $stmt->fetch()]);
@@ -938,6 +952,54 @@ try {
             $pdo->prepare('DELETE FROM news WHERE id = ?')->execute([$newsId]);
             json_response(['success' => true, 'message' => 'News deleted successfully', 'data' => ['id' => $newsId]]);
         }
+    }
+
+    /* ---- Technology news feed (admin/company news + external NewsAPI) ---- */
+    if ($method === 'GET' && $path === '/api/news/technology') {
+        json_response(news_build_feed($_GET));
+    }
+
+    /* Admin: external-news connection status + last sync + latest articles. */
+    if ($method === 'GET' && $path === '/api/news/external/status') {
+        require_admin();
+        json_response(['success' => true, 'message' => 'External news status', 'data' => news_external_status()]);
+    }
+
+    /* Admin: force-refresh the cached external news. */
+    if ($method === 'POST' && $path === '/api/news/external/refresh') {
+        require_admin();
+        news_cache_clear('ext_pool:');
+        $cfg = news_runtime_config();
+        news_get_external_pool($cfg, true);
+        json_response(['success' => true, 'message' => 'External news cache refreshed.', 'data' => news_external_status()]);
+    }
+
+    /* Admin: update runtime settings (enable/disable, page size, cache minutes). */
+    if ($method === 'POST' && $path === '/api/news/external/settings') {
+        require_admin();
+        $body = read_json_body();
+        if (!is_array($body)) { error_response('Invalid JSON body', 400); }
+        if (array_key_exists('enabled', $body)) {
+            news_settings_set('external_enabled', filter_var($body['enabled'], FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false');
+        }
+        if (isset($body['pageSize']) && (int) $body['pageSize'] > 0) {
+            news_settings_set('page_size', (string) min(50, max(1, (int) $body['pageSize'])));
+        }
+        if (isset($body['cacheMinutes']) && (int) $body['cacheMinutes'] > 0) {
+            news_settings_set('cache_minutes', (string) min(1440, max(1, (int) $body['cacheMinutes'])));
+        }
+        /* Settings changed → drop cached pool so new values take effect. */
+        news_cache_clear('ext_pool:');
+        json_response(['success' => true, 'message' => 'External news settings saved.', 'data' => news_external_status()]);
+    }
+
+    /* Public: single external article by its stable id (for the preview page). */
+    if ($method === 'GET' && preg_match('#^/api/news/external/(ext-[a-f0-9]{6,40})$#', $path, $m)) {
+        $article = news_find_external($m[1]);
+        if (!$article) {
+            json_response(['success' => false, 'message' => 'Article not available. It may have expired.', 'errorCode' => 'NEWS_ARTICLE_NOT_FOUND'], 404);
+        }
+        json_response(['success' => true, 'message' => 'Article retrieved successfully.', 'data' => $article]);
     }
 
     /* Public runtime config for the Solutions frontend (safe values only). */

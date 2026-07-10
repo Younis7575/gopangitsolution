@@ -166,8 +166,29 @@ function init_schema()
         content MEDIUMTEXT NOT NULL,
         image_url VARCHAR(500) NULL,
         author VARCHAR(160) NULL,
+        category VARCHAR(80) NOT NULL DEFAULT 'technology',
+        seo_title VARCHAR(255) NULL,
+        meta_description VARCHAR(320) NULL,
+        published_at TIMESTAMP NULL DEFAULT NULL,
         status VARCHAR(20) NOT NULL DEFAULT 'published',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    /* Server-side cache for external (NewsAPI) responses — reduces API calls. */
+    safely_exec_schema('news_cache', "CREATE TABLE IF NOT EXISTS news_cache (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cache_key VARCHAR(191) NOT NULL UNIQUE,
+        payload MEDIUMTEXT NOT NULL,
+        expires_at INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    /* Runtime, admin-editable settings (external news on/off, page size, cache mins). */
+    safely_exec_schema('news_settings', "CREATE TABLE IF NOT EXISTS news_settings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        setting_key VARCHAR(120) NOT NULL UNIQUE,
+        setting_value VARCHAR(255) NULL,
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
@@ -334,6 +355,20 @@ function init_schema()
     /* Backfill for older installs. */
     safely_ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
     safely_ensure_column('applications', 'admin_notes', 'TEXT NULL AFTER status');
+
+    /* News: category + SEO/publish fields for existing installs. Existing rows
+       keep their data; new columns default to a safe 'technology' category and
+       NULL SEO fields, so nothing is deleted or corrupted. */
+    safely_ensure_column('news', 'category', "VARCHAR(80) NOT NULL DEFAULT 'technology' AFTER author");
+    safely_ensure_column('news', 'seo_title', 'VARCHAR(255) NULL AFTER category');
+    safely_ensure_column('news', 'meta_description', 'VARCHAR(320) NULL AFTER seo_title');
+    safely_ensure_column('news', 'published_at', 'TIMESTAMP NULL DEFAULT NULL AFTER meta_description');
+    /* Ensure any legacy NULL/empty categories are set to the safe default. */
+    try {
+        db()->exec("UPDATE news SET category = 'technology' WHERE category IS NULL OR category = ''");
+    } catch (Throwable $e) {
+        error_log('News category backfill skipped: ' . $e->getMessage());
+    }
     safely_ensure_column('project_proposals', 'company_name', 'VARCHAR(200) NULL AFTER phone');
     safely_ensure_column('project_proposals', 'service_category', 'VARCHAR(160) NULL AFTER company_name');
     safely_ensure_column('project_proposals', 'attachment_key', 'VARCHAR(400) NULL AFTER attachment_names');

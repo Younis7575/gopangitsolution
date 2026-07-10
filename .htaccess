@@ -32,6 +32,7 @@ DirectoryIndex home.html index.html
     RewriteRule ^solutions/([^/]+)/?$ solutions/detail.html [L]
     RewriteRule ^news-detail/?$ news-detail/news-detail.html [L]
     RewriteRule ^news-details/?$ news-details/news-details.html [L]
+    RewriteRule ^news-external/?$ news-external/index.html [L]
     RewriteRule ^pricing/?$ pricing/pricing.html [L]
     RewriteRule ^privacy-policy/?$ privacy-policy/privacy-policy.html [L]
     RewriteRule ^project-based-hiring/?$ project-based-hiring/project-based-hiring.html [L]

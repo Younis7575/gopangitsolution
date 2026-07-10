@@ -18,6 +18,10 @@ const elements = {
 	shortDescription: document.getElementById("news-short-description"),
 	content: document.getElementById("news-content"),
 	imageUrl: document.getElementById("news-image-url"),
+	category: document.getElementById("news-category"),
+	publishedAt: document.getElementById("news-published-at"),
+	seoTitle: document.getElementById("news-seo-title"),
+	metaDescription: document.getElementById("news-meta-description"),
 	author: document.getElementById("news-author"),
 	status: document.getElementById("news-status"),
 	saveBtn: document.getElementById("save-news-btn"),
@@ -93,9 +97,24 @@ function getNewsPayload() {
 		short_description: elements.shortDescription.value.trim(),
 		content: elements.content.value.trim(),
 		image_url: elements.imageUrl.value.trim(),
+		category: (elements.category && elements.category.value.trim()) || "technology",
+		published_at: (elements.publishedAt && elements.publishedAt.value) || "",
+		seo_title: (elements.seoTitle && elements.seoTitle.value.trim()) || "",
+		meta_description: (elements.metaDescription && elements.metaDescription.value.trim()) || "",
 		author: elements.author.value.trim(),
 		status: elements.status.value,
 	};
+}
+
+function toDateInput(value) {
+	if (!value) {
+		return "";
+	}
+	var d = new Date(String(value).replace(" ", "T"));
+	if (isNaN(d.getTime())) {
+		return "";
+	}
+	return d.toISOString().slice(0, 10);
 }
 
 function resetForm() {
@@ -104,6 +123,9 @@ function resetForm() {
 	elements.form.reset();
 	elements.author.value = "Admin";
 	elements.status.value = "published";
+	if (elements.category) {
+		elements.category.value = "technology";
+	}
 	elements.id.value = "";
 	elements.saveBtn.textContent = "Add News";
 	clearMessage();
@@ -118,6 +140,18 @@ function fillForm(item) {
 	elements.shortDescription.value = item.short_description || "";
 	elements.content.value = item.content || "";
 	elements.imageUrl.value = item.image_url || "";
+	if (elements.category) {
+		elements.category.value = item.category || "technology";
+	}
+	if (elements.publishedAt) {
+		elements.publishedAt.value = toDateInput(item.published_at);
+	}
+	if (elements.seoTitle) {
+		elements.seoTitle.value = item.seo_title || "";
+	}
+	if (elements.metaDescription) {
+		elements.metaDescription.value = item.meta_description || "";
+	}
 	elements.author.value = item.author || "Admin";
 	elements.status.value = item.status || "published";
 	elements.saveBtn.textContent = "Update News";
@@ -273,4 +307,151 @@ elements.list.addEventListener("click", function (event) {
 	}
 });
 
+/* ------------------------------------------------------------------ */
+/* External Technology News (NewsAPI) admin panel                      */
+/* ------------------------------------------------------------------ */
+var extEls = {
+	statusCards: document.getElementById("ext-status-cards"),
+	refresh: document.getElementById("ext-refresh"),
+	settingsForm: document.getElementById("ext-settings-form"),
+	enabled: document.getElementById("ext-enabled"),
+	pageSize: document.getElementById("ext-page-size"),
+	cacheMinutes: document.getElementById("ext-cache-minutes"),
+	saveBtn: document.getElementById("ext-save-settings"),
+	latestList: document.getElementById("ext-latest-list"),
+};
+
+var EXT_STATUS_META = {
+	ok: { label: "Connected", cls: "ok" },
+	disabled: { label: "Disabled", cls: "warn" },
+	no_key: { label: "API key missing", cls: "warn" },
+	error: { label: "Unavailable", cls: "error" },
+};
+
+function formatDateTime(value) {
+	if (!value) {
+		return "Never";
+	}
+	var d = new Date(value);
+	if (isNaN(d.getTime())) {
+		return "Never";
+	}
+	return d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function renderExternalStatus(data) {
+	if (!extEls.statusCards) {
+		return;
+	}
+	var meta = EXT_STATUS_META[data.status] || EXT_STATUS_META.error;
+	extEls.statusCards.innerHTML =
+		'<div class="gis-ext-stat ' + meta.cls + '"><span>Connection</span><strong>' + escapeHtml(meta.label) + "</strong></div>" +
+		'<div class="gis-ext-stat"><span>Last synced</span><strong>' + escapeHtml(formatDateTime(data.lastSyncedAt)) + "</strong></div>" +
+		'<div class="gis-ext-stat"><span>Cached articles</span><strong>' + escapeHtml(String(data.articleCount || 0)) + "</strong></div>" +
+		'<div class="gis-ext-stat"><span>Serving from cache</span><strong>' + (data.cached ? "Yes" : "No") + "</strong></div>";
+
+	if (extEls.enabled) {
+		extEls.enabled.value = data.enabled ? "true" : "false";
+	}
+	if (extEls.pageSize && data.pageSize) {
+		extEls.pageSize.value = data.pageSize;
+	}
+	if (extEls.cacheMinutes && data.cacheMinutes) {
+		extEls.cacheMinutes.value = data.cacheMinutes;
+	}
+
+	if (extEls.latestList) {
+		var articles = Array.isArray(data.latestArticles) ? data.latestArticles : [];
+		if (articles.length === 0) {
+			extEls.latestList.innerHTML = data.status === "ok"
+				? "No articles cached yet. Try Refresh Cache."
+				: "External news is not available right now.";
+		} else {
+			extEls.latestList.innerHTML =
+				'<ul class="gis-ext-latest-ul">' +
+				articles
+					.map(function (a) {
+						return (
+							'<li><a href="' + escapeHtml(a.originalUrl || "#") + '" target="_blank" rel="noopener noreferrer nofollow">' +
+							escapeHtml(a.title) + "</a><small>" + escapeHtml(a.sourceName || "") + "</small></li>"
+						);
+					})
+					.join("") +
+				"</ul>";
+		}
+	}
+}
+
+async function loadExternalStatus() {
+	if (!extEls.statusCards) {
+		return;
+	}
+	try {
+		var result = await fetchJson("/api/news/external/status", {
+			method: "GET",
+			headers: { Accept: "application/json" },
+		});
+		renderExternalStatus(result.data || {});
+	} catch (error) {
+		extEls.statusCards.innerHTML = '<div class="gis-ext-stat error"><span>Connection</span><strong>' + escapeHtml(error.message) + "</strong></div>";
+	}
+}
+
+async function refreshExternal() {
+	if (!extEls.refresh) {
+		return;
+	}
+	extEls.refresh.disabled = true;
+	extEls.refresh.textContent = "Refreshing...";
+	try {
+		var result = await fetchJson("/api/news/external/refresh", {
+			method: "POST",
+			headers: { Accept: "application/json" },
+		});
+		renderExternalStatus(result.data || {});
+		showMessage("success", result.message || "External news refreshed.");
+	} catch (error) {
+		showMessage("error", error.message || "Unable to refresh external news.");
+	} finally {
+		extEls.refresh.disabled = false;
+		extEls.refresh.textContent = "Refresh Cache";
+	}
+}
+
+async function saveExternalSettings(event) {
+	event.preventDefault();
+	if (!extEls.saveBtn) {
+		return;
+	}
+	extEls.saveBtn.disabled = true;
+	extEls.saveBtn.textContent = "Saving...";
+	try {
+		var payload = {
+			enabled: extEls.enabled.value === "true",
+			pageSize: Number(extEls.pageSize.value) || 20,
+			cacheMinutes: Number(extEls.cacheMinutes.value) || 30,
+		};
+		var result = await fetchJson("/api/news/external/settings", {
+			method: "POST",
+			headers: { Accept: "application/json", "Content-Type": "application/json" },
+			body: JSON.stringify(payload),
+		});
+		renderExternalStatus(result.data || {});
+		showMessage("success", result.message || "External settings saved.");
+	} catch (error) {
+		showMessage("error", error.message || "Unable to save external settings.");
+	} finally {
+		extEls.saveBtn.disabled = false;
+		extEls.saveBtn.textContent = "Save External Settings";
+	}
+}
+
+if (extEls.refresh) {
+	extEls.refresh.addEventListener("click", refreshExternal);
+}
+if (extEls.settingsForm) {
+	extEls.settingsForm.addEventListener("submit", saveExternalSettings);
+}
+
 loadNews();
+loadExternalStatus();

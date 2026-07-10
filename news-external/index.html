@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Gopang IT Solution">
-    <title>News | Gopang IT Solution</title>
+    <title>Technology Article | Gopang IT Solution</title>
+    <meta name="robots" content="noindex, follow">
     <link rel="shortcut icon" href="/assets/img/favicon.png">
     <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/animate.css">
@@ -208,44 +209,13 @@
         </div>
     </header>
 
-    <main class="gis-news-page">
-        <section class="gis-news-hero">
-            <div class="container">
-                <span>Insights & Updates</span>
-                <h1>News from Gopang IT Solution</h1>
-                <p>Latest company updates, technology insights, and digital product stories from our team.</p>
+    <main class="gis-news-detail-page">
+        <div id="news-external" class="gis-news-detail-shell">
+            <div class="gis-news-loading">
+                <span class="gis-loader"></span>
+                <p>Loading article...</p>
             </div>
-        </section>
-
-        <section class="gis-news-content">
-            <div class="container">
-                <div class="gis-news-toolbar">
-                    <div class="gis-news-search">
-                        <i class="fas fa-magnifying-glass"></i>
-                        <input type="search" id="news-search" placeholder="Search technology news, title or source..." aria-label="Search technology news" autocomplete="off">
-                    </div>
-                    <div class="gis-news-toolbar-right">
-                        <span id="news-result-count" class="gis-news-count" aria-live="polite"></span>
-                        <label class="gis-news-sort-label" for="news-sort">Sort</label>
-                        <select id="news-sort" class="gis-news-sort" aria-label="Sort news">
-                            <option value="latest">Latest first</option>
-                            <option value="oldest">Oldest first</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="news-list" class="gis-news-grid">
-                    <div class="gis-news-loading">
-                        <span class="gis-loader"></span>
-                        <p>Loading news...</p>
-                    </div>
-                </div>
-
-                <div id="news-load-more-wrap" class="gis-news-load-more-wrap" style="display:none">
-                    <button type="button" id="news-load-more" class="theme-btn">Load More Articles</button>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
     <footer class="footer-1 footer-wrap">
@@ -276,7 +246,7 @@
     <script src="/assets/js/metismenu.js"></script>
     <script src="/assets/js/active.js?v=5"></script>
     <script src="/assets/js/premium.js?v=2" defer></script>
-    <script src="/assets/js/pages/news.js"></script>
+    <script src="/assets/js/pages/news-external.js"></script>
 </body>
 
 </html>

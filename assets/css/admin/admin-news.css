@@ -34,3 +34,91 @@
     background: #fff7ed;
     color: #c2410c;
 }
+
+/* ------------------------------------------------------------------ */
+/* External Technology News admin panel                                */
+/* ------------------------------------------------------------------ */
+.admin-muted {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.admin-hint {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.gis-ext-status-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    margin: 18px 0 22px;
+}
+
+.gis-ext-stat {
+    background: #f8fafc;
+    border: 1px solid #e6ebf3;
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.gis-ext-stat span {
+    color: #64748b;
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.gis-ext-stat strong {
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.gis-ext-stat.ok strong { color: #0f7a4f; }
+.gis-ext-stat.warn strong { color: #b45309; }
+.gis-ext-stat.error strong { color: #b91c1c; }
+
+.gis-ext-settings {
+    background: #f8fafc;
+    border: 1px solid #e6ebf3;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    padding: 20px;
+}
+
+.gis-ext-latest h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.gis-ext-latest-ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.gis-ext-latest-ul li {
+    border-bottom: 1px solid #eef1f6;
+    padding: 10px 0;
+}
+
+.gis-ext-latest-ul li:last-child {
+    border-bottom: 0;
+}
+
+.gis-ext-latest-ul a {
+    color: #0f45c0;
+    display: block;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.gis-ext-latest-ul small {
+    color: #94a3b8;
+    font-size: 12px;
+}

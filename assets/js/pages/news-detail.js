@@ -47,9 +47,52 @@ async function fetchNewsDetail() {
 	return result.data;
 }
 
+function setMeta(attr, key, content) {
+	if (!content) {
+		return;
+	}
+	let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+	if (!el) {
+		el = document.createElement("meta");
+		el.setAttribute(attr, key);
+		document.head.appendChild(el);
+	}
+	el.setAttribute("content", content);
+}
+
+function setCanonical(href) {
+	let el = document.head.querySelector('link[rel="canonical"]');
+	if (!el) {
+		el = document.createElement("link");
+		el.setAttribute("rel", "canonical");
+		document.head.appendChild(el);
+	}
+	el.setAttribute("href", href);
+}
+
+function applySeo(item) {
+	const title = (item.seo_title || item.title) + " | Gopang IT Solution";
+	const description = item.meta_description || item.short_description || "";
+	const image = item.image_url || "/assets/img/blog/p1.jpg";
+	const canonical = window.location.origin + "/news-detail?slug=" + encodeURIComponent(item.slug || "");
+
+	document.title = title;
+	setMeta("name", "description", description);
+	setCanonical(canonical);
+	setMeta("property", "og:type", "article");
+	setMeta("property", "og:title", item.seo_title || item.title);
+	setMeta("property", "og:description", description);
+	setMeta("property", "og:image", image);
+	setMeta("property", "og:url", canonical);
+	setMeta("name", "twitter:card", "summary_large_image");
+	setMeta("name", "twitter:title", item.seo_title || item.title);
+	setMeta("name", "twitter:description", description);
+	setMeta("name", "twitter:image", image);
+}
+
 function renderDetail(item) {
 	const imageUrl = item.image_url || "/assets/img/blog/p1.jpg";
-	document.title = item.title + " | Gopang IT Solution";
+	applySeo(item);
 
 	detailRoot.innerHTML = `
 		<article class="gis-news-detail-article">
@@ -57,7 +100,7 @@ function renderDetail(item) {
 			<div class="gis-news-detail-body">
 				<div class="gis-news-meta">
 					<span>${escapeHtml(item.author || "Admin")}</span>
-					<span>${escapeHtml(formatDate(item.created_at))}</span>
+					<span>${escapeHtml(formatDate(item.published_at || item.created_at))}</span>
 				</div>
 				<h1>${escapeHtml(item.title)}</h1>
 				<div class="gis-news-detail-content">${escapeHtml(item.content)}</div>
