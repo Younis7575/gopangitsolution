@@ -7,6 +7,7 @@ const state = {
     status: "",
     sort: "newest",
     search: "",
+    tag: "",
     total: 0,
 };
 
@@ -65,6 +66,7 @@ function buildUrl() {
     if (state.status) params.set("status", state.status);
     if (state.sort) params.set("sort", state.sort);
     if (state.search) params.set("search", state.search);
+    if (state.tag) params.set("tag", state.tag);
     return "/api/solutions?" + params.toString();
 }
 
@@ -93,6 +95,8 @@ function renderQuestion(item) {
     const solved = String(item.solved_status || "unsolved") === "solved";
     const featured = item.is_featured ? "solutions-badge solutions-badge-featured" : "";
     const pinned = item.is_pinned ? "solutions-badge solutions-badge-pinned" : "";
+    const isAdmin = String(item.source || "") === "admin";
+    const hasAccepted = Number(item.accepted_comment_id) > 0;
     return `
         <article class="solutions-card">
             <div class="solutions-card-header">
@@ -100,6 +104,8 @@ function renderQuestion(item) {
                     <span class="solutions-category">${escapeHtml(item.category_name || "General")}</span>
                     ${featured ? `<span class="solutions-badge solutions-badge-featured">Featured</span>` : ""}
                     ${pinned ? `<span class="solutions-badge solutions-badge-pinned">Pinned</span>` : ""}
+                    ${isAdmin ? `<span class="solutions-badge solutions-badge--admin">Admin Posted</span>` : ""}
+                    ${hasAccepted ? `<span class="solutions-badge solutions-badge--accepted">Accepted Solution</span>` : ""}
                 </div>
                 <span class="solutions-status ${solved ? "solved" : "unsolved"}">${solved ? "Solved" : "Unsolved"}</span>
             </div>
@@ -184,9 +190,7 @@ function getQueryValues() {
     if (params.has("sort")) state.sort = params.get("sort");
     if (params.has("search")) state.search = params.get("search");
     if (params.has("page")) state.page = Math.max(1, Number(params.get("page")) || 1);
-    if (params.has("tag")) {
-        state.search = params.get("tag");
-    }
+    if (params.has("tag")) state.tag = params.get("tag");
 }
 
 function syncUI() {
@@ -216,6 +220,7 @@ async function loadSolutions() {
 function updateUrl() {
     const params = new URLSearchParams();
     if (state.search) params.set("search", state.search);
+    if (state.tag) params.set("tag", state.tag);
     if (state.category) params.set("category", state.category);
     if (state.status) params.set("status", state.status);
     if (state.sort) params.set("sort", state.sort);
@@ -269,7 +274,7 @@ function initEvents() {
     elements.popularTags.addEventListener("click", function (event) {
         const button = event.target.closest("button[data-tag]");
         if (!button) return;
-        state.search = button.dataset.tag;
+        state.tag = button.dataset.tag;
         state.page = 1;
         syncUI();
         updateUrl();

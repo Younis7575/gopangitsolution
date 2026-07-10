@@ -721,3 +721,80 @@ textarea:focus-visible {
   .gis-reveal { opacity: 1; transform: none; transition: none; }
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Active nav state (set by premium.js initActiveNav) */
+header.header-1.gis-main-header .main-menu > ul > li > a.gis-nav-active {
+  color: var(--gis-accent);
+}
+.mobile-nav .sidebar-nav .metismenu a.gis-nav-active {
+  color: var(--gis-accent);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation — collapsible submenus (metisMenu)
+   -------------------------------------------------------------------------- */
+.mobile-nav .sidebar-nav .metismenu .gis-mm-arrow {
+  float: right;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+}
+.mobile-nav .sidebar-nav .metismenu li.active > a > .gis-mm-arrow {
+  transform: rotate(180deg);
+}
+/* Nested (collapsible) submenu items sit in a subtle inset panel */
+.mobile-nav .sidebar-nav .metismenu ul {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  margin: 2px 0 6px;
+  overflow: hidden;
+}
+.mobile-nav .sidebar-nav .metismenu ul a {
+  font-size: 0.92rem;
+}
+/* Let the mobile drawer scroll if the menu is taller than the viewport */
+.mobile-nav {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* --------------------------------------------------------------------------
+   Global responsive safeguards + tuning
+   -------------------------------------------------------------------------- */
+html, body { overflow-x: hidden; }
+img, svg, video { max-width: 100%; height: auto; }
+.table-responsive, .gis-table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 1199px) {
+  header.header-1.gis-main-header .main-menu > ul > li > a { padding: 10px 10px; font-size: 0.9rem; }
+}
+
+@media (max-width: 991px) {
+  .gis-section-title, .gis-section h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+  .gis-hero-premium h1, h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.2; }
+  .gis-hero-actions { flex-wrap: wrap; }
+  .gis-hero-visual { margin-top: 40px; }
+  .gis-stats-bar .row > [class*="col-"] { margin-bottom: 24px; }
+  .mobile-nav { width: 300px; }
+}
+
+@media (max-width: 767px) {
+  .gis-section { padding: 56px 0; }
+  .gis-hero-premium { padding: 60px 0 40px; }
+  .gis-hero-stats { gap: 20px; flex-wrap: wrap; }
+  .gis-card { padding: 24px 20px; }
+  .theme-btn, .theme-btn-outline { width: 100%; justify-content: center; text-align: center; }
+  .gis-hero-actions .theme-btn,
+  .gis-hero-actions .theme-btn-outline { width: auto; }
+  .cta-banner-box .theme-btn { width: auto; }
+}
+
+@media (max-width: 480px) {
+  .gis-hero-premium h1 { font-size: clamp(1.6rem, 8vw, 2rem); }
+  .gis-hero-stat strong { font-size: 1.5rem; }
+  .gis-hero-actions { flex-direction: column; align-items: stretch; }
+  .gis-hero-actions .theme-btn,
+  .gis-hero-actions .theme-btn-outline { width: 100%; justify-content: center; }
+  .mobile-nav { width: 88vw; max-width: 320px; }
+}

@@ -243,6 +243,25 @@ async function loadDashboard() {
 	renderRecentApplications(apps);
 	renderRecentJobs(jobs);
 	stopLoading();
+	loadSolutionStats();
+}
+
+/* Community Solutions counts (read pagination meta for accurate totals). */
+async function loadSolutionStats() {
+	async function total(query) {
+		try {
+			const response = await fetch(API_BASE_URL + "/api/solutions?admin=1&limit=1" + query, {
+				headers: { Accept: "application/json", Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") },
+			});
+			const result = await response.json();
+			if (!response.ok || result.success === false) return 0;
+			return (result.meta && result.meta.total_records) || 0;
+		} catch (e) { return 0; }
+	}
+	const totalEl = document.getElementById("stat-solutions");
+	const pendingEl = document.getElementById("stat-solutions-pending");
+	if (totalEl) totalEl.textContent = await total("");
+	if (pendingEl) pendingEl.textContent = await total("&moderation=pending");
 }
 
 elements.refresh.addEventListener("click", function () {

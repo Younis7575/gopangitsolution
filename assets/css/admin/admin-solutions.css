@@ -1,0 +1,48 @@
+/* Admin — Solutions Management additions (builds on admin-jobs.css). */
+
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e4e7ec;
+}
+.admin-tab {
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #667085;
+    cursor: pointer;
+}
+.admin-tab:hover { color: #0f62fe; }
+.admin-tab.active { color: #081a3a; border-bottom-color: #0f62fe; }
+
+.admin-form-actions { margin-top: 18px; }
+
+.admin-modal-comments { margin-top: 24px; border-top: 1px solid #e4e7ec; padding-top: 18px; }
+.admin-modal-comments-title { font-size: 16px; margin-bottom: 12px; }
+.admin-inline-comment {
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: #f9fafb;
+}
+.admin-inline-comment p { margin: 8px 0; color: #344054; white-space: pre-wrap; }
+.admin-inline-comment-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.admin-detail-item pre {
+    background: #0b1524;
+    color: #e6edf7;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 12px;
+    margin-top: 6px;
+}
+.admin-detail-item p { margin-top: 6px; white-space: pre-wrap; color: #344054; }
+
+.admin-status-pill.admin { background: #e0e7ff; color: #3538cd; }

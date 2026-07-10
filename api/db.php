@@ -325,6 +325,11 @@ function init_schema()
         reporter_email VARCHAR(200) NOT NULL, reason VARCHAR(160) NOT NULL, description TEXT NULL,
         status VARCHAR(20) NOT NULL DEFAULT 'pending', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, reviewed_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_rate_limits', "CREATE TABLE IF NOT EXISTS solutions_rate_limits (
+        id INT AUTO_INCREMENT PRIMARY KEY, bucket VARCHAR(40) NOT NULL, ip_hash VARCHAR(64) NOT NULL,
+        content_hash VARCHAR(64) NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX (bucket, ip_hash), INDEX (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     /* Backfill for older installs. */
     safely_ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
@@ -387,6 +392,35 @@ function init_schema()
         $categories = ['Web Development','Mobile App Development','Flutter','Backend Development','APIs','Database','UI/UX','DevOps','Cloud','Cybersecurity','General Technology'];
         $stmt = $pdo->prepare('INSERT INTO solutions_categories (name,slug,sort_order,is_active) VALUES (?,?,?,1)');
         foreach ($categories as $position => $name) { $stmt->execute([$name, slugify_db($name), $position + 1]); }
+    }
+
+    /* Optional demo questions (dev only, off by default like SEED_SAMPLE_PROJECTS). */
+    if (defined('SEED_SAMPLE_SOLUTIONS') && SEED_SAMPLE_SOLUTIONS) {
+        try {
+            seed_sample_solutions();
+        } catch (Throwable $e) {
+            error_log('Optional solutions seed failed: ' . $e->getMessage());
+        }
+    }
+}
+
+function seed_sample_solutions()
+{
+    $pdo = db();
+    if ((int) $pdo->query('SELECT COUNT(*) FROM solutions_questions')->fetchColumn() > 0) {
+        return;
+    }
+    $catId = (int) $pdo->query("SELECT id FROM solutions_categories ORDER BY sort_order ASC LIMIT 1")->fetchColumn();
+    if ($catId <= 0) { return; }
+    $samples = [
+        ['Flutter ListView not scrolling inside Column', 'A Flutter ListView placed inside a Column throws an unbounded height error and does not scroll.', 'Gopang Team', 'admin'],
+        ['CORS error when calling PHP API from JavaScript fetch', 'The browser blocks my fetch() call to the PHP API with a CORS policy error even though the endpoint works in Postman.', 'Ali Raza', 'visitor'],
+        ['MySQL query is slow on a large table without an index', 'A SELECT with a WHERE clause takes several seconds on a table with a few hundred thousand rows.', 'Sana Khan', 'visitor'],
+    ];
+    $stmt = $pdo->prepare('INSERT INTO solutions_questions (title, slug, description, short_description, category_id, visitor_name, visitor_email, source, status, solved_status, published_at) VALUES (?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)');
+    foreach ($samples as $i => $s) {
+        $slug = slugify_db($s[0]) . '-' . ($i + 1);
+        $stmt->execute([$s[0], $slug, $s[1], mb_substr($s[1], 0, 300), $catId, $s[2], 'demo' . ($i + 1) . '@example.com', $s[3], 'approved', 'unsolved']);
     }
 }
 

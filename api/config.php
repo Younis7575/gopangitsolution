@@ -54,6 +54,35 @@ if (!defined('MAX_ATTACHMENT_SIZE'))  define('MAX_ATTACHMENT_SIZE', 8 * 1024 * 1
 if (!defined('SEED_SAMPLE_PROJECTS')) define('SEED_SAMPLE_PROJECTS', false);
 
 /* ------------------------------------------------------------------ */
+/* Solutions community module (Q&A)                                   */
+/* ------------------------------------------------------------------ */
+/* When true, guest questions/comments publish immediately; otherwise
+   they stay "pending" until an admin approves them. */
+if (!defined('SOLUTIONS_AUTO_PUBLISH')) {
+    define('SOLUTIONS_AUTO_PUBLISH', filter_var(getenv('SOLUTIONS_AUTO_PUBLISH') ?: 'false', FILTER_VALIDATE_BOOLEAN));
+}
+/* CAPTCHA is only actually enforced when this is true AND a Turnstile
+   secret key is configured, so guest posting never breaks when keys are absent. */
+if (!defined('SOLUTIONS_REQUIRE_CAPTCHA')) {
+    define('SOLUTIONS_REQUIRE_CAPTCHA', filter_var(getenv('SOLUTIONS_REQUIRE_CAPTCHA') ?: 'true', FILTER_VALIDATE_BOOLEAN));
+}
+if (!defined('SOLUTIONS_MAX_UPLOAD_SIZE')) {
+    define('SOLUTIONS_MAX_UPLOAD_SIZE', (int) (getenv('SOLUTIONS_MAX_UPLOAD_SIZE') ?: (8 * 1024 * 1024)));
+}
+if (!defined('SOLUTIONS_ALLOWED_FILE_TYPES')) {
+    define('SOLUTIONS_ALLOWED_FILE_TYPES', getenv('SOLUTIONS_ALLOWED_FILE_TYPES') ?: '.pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,.txt,.log');
+}
+/* Max guest submissions per IP within the rolling window (seconds). */
+if (!defined('SOLUTIONS_QUESTION_RATE_LIMIT')) define('SOLUTIONS_QUESTION_RATE_LIMIT', (int) (getenv('SOLUTIONS_QUESTION_RATE_LIMIT') ?: 5));
+if (!defined('SOLUTIONS_COMMENT_RATE_LIMIT'))  define('SOLUTIONS_COMMENT_RATE_LIMIT', (int) (getenv('SOLUTIONS_COMMENT_RATE_LIMIT') ?: 15));
+if (!defined('SOLUTIONS_RATE_LIMIT_WINDOW'))   define('SOLUTIONS_RATE_LIMIT_WINDOW', (int) (getenv('SOLUTIONS_RATE_LIMIT_WINDOW') ?: 3600));
+/* Optional: seed a few demo questions (dev only). Off by default. */
+if (!defined('SEED_SAMPLE_SOLUTIONS')) define('SEED_SAMPLE_SOLUTIONS', filter_var(getenv('SEED_SAMPLE_SOLUTIONS') ?: 'false', FILTER_VALIDATE_BOOLEAN));
+/* Cloudflare Turnstile keys (leave empty to disable CAPTCHA). */
+if (!defined('TURNSTILE_SITE_KEY'))   define('TURNSTILE_SITE_KEY', getenv('TURNSTILE_SITE_KEY') ?: '');
+if (!defined('TURNSTILE_SECRET_KEY')) define('TURNSTILE_SECRET_KEY', getenv('TURNSTILE_SECRET_KEY') ?: '');
+
+/* ------------------------------------------------------------------ */
 /* Careers taxonomy (shared dropdown option sets)                     */
 /* ------------------------------------------------------------------ */
 $GLOBALS['JOB_TYPES'] = [

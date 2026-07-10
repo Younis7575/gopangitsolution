@@ -40,6 +40,55 @@ async function fetchJson(path) {
     return json;
 }
 
+var solutionsConfig = { auto_publish: false, require_captcha: false, turnstile_site_key: "" };
+var turnstileWidgetId = null;
+const counterUpdaters = [];
+
+function bindCounter(inputId, counterId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(counterId);
+    if (!input || !counter) return;
+    function update() {
+        counter.textContent = input.value.length + " / " + max;
+    }
+    input.addEventListener("input", update);
+    update();
+    counterUpdaters.push(update);
+}
+
+function refreshCounters() {
+    counterUpdaters.forEach(function (fn) {
+        fn();
+    });
+}
+
+function initTurnstile(siteKey) {
+    const container = document.getElementById("ask-captcha");
+    if (!container) return;
+    window.__renderAskTurnstile = function () {
+        if (window.turnstile && container) {
+            turnstileWidgetId = window.turnstile.render(container, { sitekey: siteKey });
+        }
+    };
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__renderAskTurnstile";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
+async function loadConfig() {
+    try {
+        const result = await fetchJson("/api/solutions/config");
+        solutionsConfig = result.data || solutionsConfig;
+        if (solutionsConfig.turnstile_site_key) {
+            initTurnstile(solutionsConfig.turnstile_site_key);
+        }
+    } catch (error) {
+        console.warn(error);
+    }
+}
+
 async function loadCategories() {
     try {
         const result = await fetchJson("/api/solutions/categories");
@@ -109,6 +158,18 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
+    var captchaToken = "";
+    if (window.turnstile && turnstileWidgetId !== null) {
+        captchaToken = window.turnstile.getResponse(turnstileWidgetId) || "";
+    }
+    if (solutionsConfig.require_captcha && !captchaToken) {
+        showMessage("Please complete the CAPTCHA verification before submitting.", "error");
+        return;
+    }
+    if (captchaToken) {
+        formData.append("cf-turnstile-response", captchaToken);
+    }
+
     const submitButton = document.getElementById("solutions-submit");
     submitButton.disabled = true;
     submitButton.textContent = "Submitting...";
@@ -125,6 +186,10 @@ form.addEventListener("submit", async function (event) {
         showMessage("Your query has been submitted successfully and is pending admin approval.");
         form.reset();
         attachmentPreview.innerHTML = "";
+        refreshCounters();
+        if (window.turnstile && turnstileWidgetId !== null) {
+            window.turnstile.reset(turnstileWidgetId);
+        }
     } catch (error) {
         showMessage(error.message, "error");
     } finally {
@@ -133,4 +198,7 @@ form.addEventListener("submit", async function (event) {
     }
 });
 
+bindCounter("question_title", "title-counter", 220);
+bindCounter("question_description", "description-counter", 8000);
+loadConfig();
 loadCategories();

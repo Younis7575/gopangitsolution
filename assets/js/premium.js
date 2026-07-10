@@ -197,10 +197,32 @@
     if (overlay) overlay.addEventListener('click', closeMenu);
   }
 
+  function initActiveNav() {
+    var path = window.location.pathname.replace(/\/+$/, '') || '/';
+    var links = document.querySelectorAll('.gis-main-menu > ul > li > a, #mobile-menu > li > a');
+    links.forEach(function (link) {
+      var href = (link.getAttribute('href') || '').replace(/\/+$/, '');
+      if (!href || href === '#') return;
+      var isActive = href === '/' ? path === '/' : (path === href || path.indexOf(href + '/') === 0);
+      if (isActive) {
+        link.classList.add('gis-nav-active');
+        var parentLi = link.closest('li');
+        if (parentLi) {
+          var groupToggle = parentLi.closest('.gis-main-menu > ul > li, #mobile-menu > li');
+          if (groupToggle) {
+            var toggleLink = groupToggle.querySelector('a');
+            if (toggleLink) toggleLink.classList.add('gis-nav-active');
+          }
+        }
+      }
+    });
+  }
+
   function init() {
     initPreloader();
     initStickyHeader();
     initMobileNavigation();
+    initActiveNav();
     initScrollReveal();
     initCounters();
     initContactForms();

@@ -179,41 +179,45 @@
         /* =============================================
             # Magnific popup init
          ===============================================*/
-        $(".popup-link").magnificPopup({
-            type: 'image',
-            fixedContentPos: false
-        });
+        if (typeof $.fn.magnificPopup !== 'undefined') {
+            $(".popup-link").magnificPopup({
+                type: 'image',
+                fixedContentPos: false
+            });
 
-        $(".popup-gallery").magnificPopup({
-            type: 'image',
-            fixedContentPos: false,
-            gallery: {
-                enabled: true
-            },
-            // other options
-        });
+            $(".popup-gallery").magnificPopup({
+                type: 'image',
+                fixedContentPos: false,
+                gallery: {
+                    enabled: true
+                },
+                // other options
+            });
 
-        $(".popup-video, .popup-vimeo, .popup-gmaps").magnificPopup({
-            type: "iframe",
-            mainClass: "mfp-fade",
-            removalDelay: 160,
-            preloader: false,
-            fixedContentPos: false
-        });        
+            $(".popup-video, .popup-vimeo, .popup-gmaps").magnificPopup({
+                type: "iframe",
+                mainClass: "mfp-fade",
+                removalDelay: 160,
+                preloader: false,
+                fixedContentPos: false
+            });
+        }
 
         /*==========================
            Scroll To Up Init
         ============================*/
-        $.scrollUp({
-            scrollName: 'scrollUp', // Element ID
-            topDistance: '1110', // Distance from top before showing element (px)
-            topSpeed: 2000, // Speed back to top (ms)
-            animation: 'slide', // Fade, slide, none
-            animationInSpeed: 300, // Animation in speed (ms)
-            animationOutSpeed: 300, // Animation out speed (ms)
-            scrollText: '<i class="fal fa-angle-up"></i>', // Text for element
-            activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
-        });
+        if (typeof $.scrollUp !== 'undefined') {
+            $.scrollUp({
+                scrollName: 'scrollUp', // Element ID
+                topDistance: '1110', // Distance from top before showing element (px)
+                topSpeed: 2000, // Speed back to top (ms)
+                animation: 'slide', // Fade, slide, none
+                animationInSpeed: 300, // Animation in speed (ms)
+                animationOutSpeed: 300, // Animation out speed (ms)
+                scrollText: '<i class="fal fa-angle-up"></i>', // Text for element
+                activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+            });
+        }
 
         //# Smooth Scroll
         $('#onepagemenu a').on('click', function(event) {
@@ -238,17 +242,19 @@
             }
         });
 
-        $('.container').imagesLoaded(function() {
-            $('.case-cat-filter').on('click', 'button', function() {
-                var filterValue = $(this).attr('data-filter');
-                $grid.isotope({ filter: filterValue });
-            });
+        if (typeof $.fn.imagesLoaded !== 'undefined' && typeof $.fn.isotope !== 'undefined') {
+            $('.container').imagesLoaded(function() {
+                $('.case-cat-filter').on('click', 'button', function() {
+                    var filterValue = $(this).attr('data-filter');
+                    $grid.isotope({ filter: filterValue });
+                });
 
-            var $grid = $('.grid').isotope({
-                itemSelector: '.grid-item',
-                percentPosition: true,
+                var $grid = $('.grid').isotope({
+                    itemSelector: '.grid-item',
+                    percentPosition: true,
+                });
             });
-        });
+        }
 
         var catButton = '.case-cat-filter button';
 
