@@ -47,6 +47,8 @@ if (!defined('ADMIN_TOKEN_TTL')) define('ADMIN_TOKEN_TTL', 60 * 60 * 8);
 if (!defined('UPLOAD_DIR'))           define('UPLOAD_DIR', __DIR__ . '/uploads');
 if (!defined('MAX_CV_SIZE'))          define('MAX_CV_SIZE', 5 * 1024 * 1024);
 if (!defined('MAX_ATTACHMENT_SIZE'))  define('MAX_ATTACHMENT_SIZE', 8 * 1024 * 1024);
+/* Marketplace projects must be created by an admin; keep demo projects disabled. */
+if (!defined('SEED_SAMPLE_PROJECTS')) define('SEED_SAMPLE_PROJECTS', false);
 
 /* ------------------------------------------------------------------ */
 /* Careers taxonomy (shared dropdown option sets)                     */

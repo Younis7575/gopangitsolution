@@ -264,7 +264,7 @@ function applyBidFilters() {
 		if (status && normalizeStatus(b.status) !== status) return false;
 		if (project && String(b.project_id) !== String(project)) return false;
 		if (search) {
-			const haystack = ((b.full_name || "") + " " + (b.email || "")).toLowerCase();
+			const haystack = ((b.full_name || "") + " " + (b.email || "") + " " + (b.phone || "")).toLowerCase();
 			if (haystack.indexOf(search) === -1) return false;
 		}
 		return true;
@@ -285,7 +285,7 @@ function renderBids() {
 	const items = state.filtered.slice(start, start + PAGE_SIZE);
 
 	if (!items.length) {
-		el.bidsTable.innerHTML = '<tr><td colspan="9" class="admin-empty">No bids match your filters.</td></tr>';
+		el.bidsTable.innerHTML = '<tr><td colspan="10" class="admin-empty">No bids match your filters.</td></tr>';
 	} else {
 		el.bidsTable.innerHTML = items.map(function (b) {
 			const status = normalizeStatus(b.status);
@@ -295,6 +295,7 @@ function renderBids() {
 					<td>${escapeHtml(b.full_name)}</td>
 					<td>${escapeHtml(b.project_title || "")}</td>
 					<td>${escapeHtml(b.email)}</td>
+					<td>${escapeHtml(b.phone || "")}</td>
 					<td>${escapeHtml(money(b.bid_amount))}</td>
 					<td>${escapeHtml(b.delivery_days != null ? b.delivery_days + " days" : "")}</td>
 					<td>${fileUrl ? `<a class="admin-cv-link" href="${escapeHtml(fileUrl)}" target="_blank" rel="noopener noreferrer">File</a>` : "None"}</td>
@@ -318,7 +319,7 @@ async function loadBids() {
 		state.bids = result.data || [];
 		applyBidFilters();
 	} catch (error) {
-		el.bidsTable.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(error.message) + "</td></tr>";
+		el.bidsTable.innerHTML = '<tr><td colspan="10" class="admin-empty">' + escapeHtml(error.message) + "</td></tr>";
 	} finally {
 		el.bidsLoading.classList.add("d-none");
 	}
@@ -337,7 +338,7 @@ function renderBidDetail(b) {
 		${detailRow("Freelancer", b.full_name)}
 		${detailRow("Project", b.project_title)}
 		${detailRow("Email", b.email)}
-		${detailRow("Phone", b.phone)}
+		${detailRow("WhatsApp Number", b.phone)}
 		${detailRow("Bid Amount", money(b.bid_amount))}
 		${detailRow("Delivery", b.delivery_days != null ? b.delivery_days + " days" : "")}
 		${detailLink("Portfolio", b.portfolio_url)}

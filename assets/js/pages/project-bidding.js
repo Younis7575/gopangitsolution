@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		projectId: document.getElementById("bid-project-id"),
 		bidHeading: document.getElementById("bid-heading"),
 		bidSub: document.getElementById("bid-sub"),
+		selectedBidProject: document.getElementById("selected-bid-project"),
 	};
 
 	function escapeHtml(value) {
@@ -193,6 +194,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		elements.projectId.value = project.id || "";
 		elements.bidHeading.textContent = "Bid on: " + (project.title || "Selected Project");
 		elements.bidSub.textContent = "Set your price and delivery time, and pitch why you're the best fit.";
+		if (elements.selectedBidProject) {
+			elements.selectedBidProject.className = "gis-careers-state";
+			elements.selectedBidProject.innerHTML =
+				"<h3>Selected project: " + escapeHtml(project.title) + "</h3>" +
+				"<p>" + escapeHtml(project.category || "Project") + " · " + escapeHtml(budgetText(project)) + "</p>";
+		}
 		clearBidMessage();
 		elements.bidPanel.classList.remove("d-none");
 		elements.bidPanel.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -203,6 +210,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function validateBid(formData) {
+		if (!state.selectedProject || Number(formData.get("project_id")) !== Number(state.selectedProject.id)) {
+			return "Please select a project before submitting your bid.";
+		}
 		const required = ["full_name", "email", "phone", "bid_amount", "delivery_days", "cover_letter"];
 		for (const field of required) {
 			if (!String(formData.get(field) || "").trim()) {
@@ -294,7 +304,8 @@ document.addEventListener("DOMContentLoaded", function () {
 			showBidMessage("danger", error);
 			return;
 		}
-		const projectId = elements.projectId.value;
+		const projectId = String(state.selectedProject.id);
+		elements.projectId.value = projectId;
 		elements.submitBid.disabled = true;
 		elements.submitBid.textContent = "Submitting...";
 		try {
@@ -306,6 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			elements.bidForm.reset();
 			elements.projectId.value = projectId;
 			showBidMessage("success", result.message || "Your bid has been submitted successfully.");
+			await loadProjects();
 		} catch (error) {
 			showBidMessage("danger", error.message || "Bid submission failed. Please try again.");
 		} finally {
@@ -317,6 +329,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	elements.cancelBid.addEventListener("click", function () {
 		elements.bidPanel.classList.add("d-none");
 		elements.bidForm.reset();
+		state.selectedProject = null;
+		elements.projectId.value = "";
+		if (elements.selectedBidProject) elements.selectedBidProject.className = "gis-careers-state d-none";
 		clearBidMessage();
 	});
 

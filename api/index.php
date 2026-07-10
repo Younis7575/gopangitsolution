@@ -944,9 +944,21 @@ try {
         $sql = 'SELECT p.*, (SELECT COUNT(*) FROM project_bids b WHERE b.project_id = p.id) AS bid_count FROM bid_projects p';
         if ($where) { $sql .= ' WHERE ' . implode(' AND ', $where); }
         $sql .= ' ORDER BY p.id DESC';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        json_response(['success' => true, 'message' => 'Projects fetched successfully', 'data' => $stmt->fetchAll()]);
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $projects = $stmt->fetchAll();
+        } catch (Throwable $countError) {
+            /* A legacy bids table must not prevent admin projects from appearing publicly. */
+            error_log('Project bid-count query failed: ' . $countError->getMessage());
+            $fallbackSql = 'SELECT p.*, 0 AS bid_count FROM bid_projects p';
+            if ($where) { $fallbackSql .= ' WHERE ' . implode(' AND ', $where); }
+            $fallbackSql .= ' ORDER BY p.id DESC';
+            $stmt = $pdo->prepare($fallbackSql);
+            $stmt->execute($params);
+            $projects = $stmt->fetchAll();
+        }
+        json_response(['success' => true, 'message' => 'Projects fetched successfully', 'data' => $projects]);
     }
 
     if ($method === 'POST' && $path === '/api/bid-projects') {
@@ -1007,6 +1019,8 @@ try {
     /* ---- Bidding marketplace: submit a bid (public, multipart) ---- */
     if ($method === 'POST' && preg_match('#^/api/bid-projects/(\d+)/bids$#', $path, $m)) {
         $projectId = (int) $m[1];
+        $submittedProjectId = (int) ($_POST['project_id'] ?? 0);
+        if ($submittedProjectId !== $projectId) { error_response('Please select a valid project before bidding', 422); }
         $stmt = $pdo->prepare('SELECT * FROM bid_projects WHERE id = ?');
         $stmt->execute([$projectId]);
         $project = $stmt->fetch();
@@ -1026,7 +1040,7 @@ try {
         ];
         if ($bid['full_name'] === '') { error_response('full_name is required', 400); }
         if (!is_valid_email($bid['email'])) { error_response('A valid email is required', 400); }
-        if (!is_valid_phone($bid['phone'])) { error_response('A valid phone number is required', 400); }
+        if (!is_valid_phone($bid['phone'])) { error_response('A valid WhatsApp number is required', 422); }
         if ($bidAmount === '' || !is_numeric($bidAmount) || (float) $bidAmount <= 0) {
             error_response('bid_amount must be a valid positive number', 400);
         }

@@ -42,6 +42,15 @@ function ensure_column($table, $column, $definition)
     }
 }
 
+function safely_ensure_column($table, $column, $definition)
+{
+    try {
+        ensure_column($table, $column, $definition);
+    } catch (Throwable $e) {
+        error_log("Schema migration failed for {$table}.{$column}: " . $e->getMessage());
+    }
+}
+
 function init_schema()
 {
     $pdo = db();
@@ -211,18 +220,60 @@ function init_schema()
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     /* Backfill for older installs. */
-    ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
-    ensure_column('applications', 'admin_notes', 'TEXT NULL AFTER status');
-    ensure_column('project_proposals', 'company_name', 'VARCHAR(200) NULL AFTER phone');
-    ensure_column('project_proposals', 'service_category', 'VARCHAR(160) NULL AFTER company_name');
-    ensure_column('project_proposals', 'attachment_key', 'VARCHAR(400) NULL AFTER attachment_names');
-    ensure_column('project_proposals', 'attachment_file_name', 'VARCHAR(255) NULL AFTER attachment_key');
-    ensure_column('project_proposals', 'attachment_file_type', 'VARCHAR(120) NULL AFTER attachment_file_name');
-    ensure_column('project_proposals', 'attachment_file_size', 'INT NULL AFTER attachment_file_type');
-    ensure_column('project_proposals', 'attachment_url', 'VARCHAR(400) NULL AFTER attachment_file_size');
-    ensure_column('project_proposals', 'admin_notes', 'TEXT NULL AFTER attachment_url');
+    safely_ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
+    safely_ensure_column('applications', 'admin_notes', 'TEXT NULL AFTER status');
+    safely_ensure_column('project_proposals', 'company_name', 'VARCHAR(200) NULL AFTER phone');
+    safely_ensure_column('project_proposals', 'service_category', 'VARCHAR(160) NULL AFTER company_name');
+    safely_ensure_column('project_proposals', 'attachment_key', 'VARCHAR(400) NULL AFTER attachment_names');
+    safely_ensure_column('project_proposals', 'attachment_file_name', 'VARCHAR(255) NULL AFTER attachment_key');
+    safely_ensure_column('project_proposals', 'attachment_file_type', 'VARCHAR(120) NULL AFTER attachment_file_name');
+    safely_ensure_column('project_proposals', 'attachment_file_size', 'INT NULL AFTER attachment_file_type');
+    safely_ensure_column('project_proposals', 'attachment_url', 'VARCHAR(400) NULL AFTER attachment_file_size');
+    safely_ensure_column('project_proposals', 'admin_notes', 'TEXT NULL AFTER attachment_url');
 
-    seed_sample_data();
+    /* Upgrade older marketplace tables created by previous site versions. */
+    safely_ensure_column('bid_projects', 'title', 'VARCHAR(240) NOT NULL AFTER id');
+    safely_ensure_column('bid_projects', 'category', 'VARCHAR(120) NOT NULL AFTER title');
+    safely_ensure_column('bid_projects', 'description', 'TEXT NOT NULL AFTER category');
+    safely_ensure_column('bid_projects', 'budget_type', "VARCHAR(20) NOT NULL DEFAULT 'Fixed' AFTER description");
+    safely_ensure_column('bid_projects', 'budget_min', 'DECIMAL(12,2) NULL AFTER budget_type');
+    safely_ensure_column('bid_projects', 'budget_max', 'DECIMAL(12,2) NULL AFTER budget_min');
+    safely_ensure_column('bid_projects', 'duration', 'VARCHAR(80) NULL AFTER budget_max');
+    safely_ensure_column('bid_projects', 'experience_level', 'VARCHAR(60) NULL AFTER duration');
+    safely_ensure_column('bid_projects', 'skills', 'TEXT NULL AFTER experience_level');
+    safely_ensure_column('bid_projects', 'deadline', 'VARCHAR(40) NULL AFTER skills');
+    safely_ensure_column('bid_projects', 'status', "VARCHAR(20) NOT NULL DEFAULT 'Open' AFTER deadline");
+    safely_ensure_column('bid_projects', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER status');
+    safely_ensure_column('bid_projects', 'updated_at', 'TIMESTAMP NULL DEFAULT NULL AFTER created_at');
+
+    safely_ensure_column('project_bids', 'project_id', 'INT NOT NULL AFTER id');
+    safely_ensure_column('project_bids', 'full_name', 'VARCHAR(180) NOT NULL AFTER project_id');
+    safely_ensure_column('project_bids', 'email', 'VARCHAR(200) NOT NULL AFTER full_name');
+    safely_ensure_column('project_bids', 'phone', 'VARCHAR(60) NOT NULL AFTER email');
+    safely_ensure_column('project_bids', 'bid_amount', 'DECIMAL(12,2) NOT NULL AFTER phone');
+    safely_ensure_column('project_bids', 'delivery_days', 'INT NOT NULL AFTER bid_amount');
+    safely_ensure_column('project_bids', 'cover_letter', 'TEXT NOT NULL AFTER delivery_days');
+    safely_ensure_column('project_bids', 'experience', 'TEXT NULL AFTER cover_letter');
+    safely_ensure_column('project_bids', 'skills', 'TEXT NULL AFTER experience');
+    safely_ensure_column('project_bids', 'milestones', 'TEXT NULL AFTER skills');
+    safely_ensure_column('project_bids', 'portfolio_url', 'VARCHAR(400) NULL AFTER milestones');
+    safely_ensure_column('project_bids', 'linkedin_url', 'VARCHAR(400) NULL AFTER portfolio_url');
+    safely_ensure_column('project_bids', 'github_url', 'VARCHAR(400) NULL AFTER linkedin_url');
+    safely_ensure_column('project_bids', 'attachment_key', 'VARCHAR(400) NULL AFTER github_url');
+    safely_ensure_column('project_bids', 'attachment_file_name', 'VARCHAR(255) NULL AFTER attachment_key');
+    safely_ensure_column('project_bids', 'attachment_file_type', 'VARCHAR(120) NULL AFTER attachment_file_name');
+    safely_ensure_column('project_bids', 'attachment_file_size', 'INT NULL AFTER attachment_file_type');
+    safely_ensure_column('project_bids', 'attachment_url', 'VARCHAR(400) NULL AFTER attachment_file_size');
+    safely_ensure_column('project_bids', 'status', "VARCHAR(20) NOT NULL DEFAULT 'New' AFTER attachment_url");
+    safely_ensure_column('project_bids', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER status');
+    safely_ensure_column('project_bids', 'updated_at', 'TIMESTAMP NULL DEFAULT NULL AFTER created_at');
+
+    /* Demo seeding is optional and must never take production APIs down. */
+    try {
+        seed_sample_data();
+    } catch (Throwable $e) {
+        error_log('Optional sample data seed failed: ' . $e->getMessage());
+    }
 }
 
 function seed_sample_data()
@@ -343,7 +394,7 @@ function seed_sample_data()
     }
 
     $projectCount = (int) $pdo->query('SELECT COUNT(*) FROM bid_projects')->fetchColumn();
-    if ($projectCount === 0) {
+    if (SEED_SAMPLE_PROJECTS && $projectCount === 0) {
         $sampleProjects = [
             [
                 'title' => 'Build a Flutter E-commerce App',
