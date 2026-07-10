@@ -30,6 +30,8 @@ DirectoryIndex home.html
     RewriteRule ^pricing/?$ pricing/pricing.html [L]
     RewriteRule ^privacy-policy/?$ privacy-policy/privacy-policy.html [L]
     RewriteRule ^project-based-hiring/?$ project-based-hiring/project-based-hiring.html [L]
+    RewriteRule ^project-bid-detail/?$ project-bid-detail/project-bid-detail.html [L]
+    RewriteRule ^submit-project-bid/?$ submit-project-bid/submit-project-bid.html [L]
     RewriteRule ^project-details/?$ project-details/project-details.html [L]
     RewriteRule ^projects/?$ projects/projects.html [L]
     RewriteRule ^services/?$ services/services.html [L]
@@ -38,4 +40,3 @@ DirectoryIndex home.html
     RewriteRule ^team/?$ team/team.html [L]
     RewriteRule ^team-details/?$ team-details/team-details.html [L]
 </IfModule>
-

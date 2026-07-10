@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Proposal | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/pages/project-based-hiring.css">
+</head>
+<body class="body-wrapper project-hiring-page marketplace-page">
+    <header class="marketplace-header">
+        <div class="container marketplace-header-inner">
+            <a href="/" class="marketplace-logo"><img src="/assets/img/logo.svg" alt="Gopang IT Solution"></a>
+            <nav><a href="/project-based-hiring">Browse Projects</a><a href="/" class="marketplace-home-btn">Back to Site</a></nav>
+        </div>
+    </header>
+    <main>
+        <section class="marketplace-subhero compact">
+            <div class="container">
+                <a id="back-to-project" href="/project-based-hiring" class="marketplace-back-link"><i class="fal fa-arrow-left"></i> Back to project</a>
+                <span>Submit Proposal</span>
+                <h1>Place Your Bid</h1>
+                <p>No account, coins, or connects required. Submit directly to the selected project.</p>
+            </div>
+        </section>
+        <section class="marketplace-bid-section">
+            <div class="container">
+                <div id="bid-page-state" class="marketplace-state"><span class="gis-loader"></span><p>Loading selected project...</p></div>
+                <div id="bid-page-layout" class="marketplace-bid-layout d-none">
+                    <aside class="marketplace-selected-project"><span>Selected Project</span><div id="bid-project-summary"></div></aside>
+                    <section class="marketplace-bid-form-card">
+                        <div id="bid-page-message" class="alert d-none" role="alert"></div>
+                        <form id="project-bid-page-form" enctype="multipart/form-data" novalidate>
+                            <input type="hidden" name="project_id" id="bid-page-project-id">
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label">Full Name *</label><input class="form-control" name="full_name" required maxlength="180"></div>
+                                <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" name="email" required maxlength="200"></div>
+                                <div class="col-md-6"><label class="form-label">WhatsApp Number *</label><input class="form-control" name="phone" placeholder="+92 300 1234567" required maxlength="20"></div>
+                                <div class="col-md-3"><label class="form-label">Your Bid (USD) *</label><input type="number" min="1" step="0.01" class="form-control" name="bid_amount" required></div>
+                                <div class="col-md-3"><label class="form-label">Delivery Days *</label><input type="number" min="1" step="1" class="form-control" name="delivery_days" required></div>
+                                <div class="col-12"><label class="form-label">Cover Letter / Proposal *</label><textarea class="form-control" name="cover_letter" rows="6" required maxlength="5000" placeholder="Explain your approach, relevant experience, and why you are a strong fit."></textarea></div>
+                                <div class="col-md-6"><label class="form-label">Relevant Experience</label><textarea class="form-control" name="experience" rows="3" maxlength="2000"></textarea></div>
+                                <div class="col-md-6"><label class="form-label">Skills</label><textarea class="form-control" name="skills" rows="3" maxlength="1000" placeholder="Flutter, Firebase, Node.js..."></textarea></div>
+                                <div class="col-12"><label class="form-label">Milestones (optional)</label><textarea class="form-control" name="milestones" rows="3" maxlength="2000"></textarea></div>
+                                <div class="col-md-4"><label class="form-label">Portfolio URL</label><input type="url" class="form-control" name="portfolio_url" placeholder="https://"></div>
+                                <div class="col-md-4"><label class="form-label">LinkedIn URL</label><input type="url" class="form-control" name="linkedin_url" placeholder="https://"></div>
+                                <div class="col-md-4"><label class="form-label">GitHub URL</label><input type="url" class="form-control" name="github_url" placeholder="https://"></div>
+                                <div class="col-12"><label class="form-label">Attachment (optional)</label><input type="file" class="form-control" name="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp"><small>PDF, DOC, DOCX, JPG, PNG or WEBP — maximum 8MB.</small></div>
+                            </div>
+                            <div class="marketplace-submit-row"><button type="submit" id="bid-page-submit" class="theme-btn">Submit Proposal</button><span><i class="fal fa-lock"></i> Your contact details are visible only to the admin.</span></div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/assets/js/pages/submit-project-bid.js" defer></script>
+</body>
+</html>

@@ -136,8 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
 								<div><span>Level</span><strong>${escapeHtml(project.experience_level || "Any")}</strong></div>
 							</div>
 							<div class="gis-job-card-footer">
-								<button type="button" class="apply-btn" data-action="details" data-project-id="${escapeHtml(project.id)}">View Details</button>
-								<button type="button" class="apply-btn solid" data-action="bid" data-project-id="${escapeHtml(project.id)}">Place Bid</button>
+								<a class="apply-btn solid marketplace-view-btn" href="/project-bid-detail?id=${encodeURIComponent(project.id)}">View Project</a>
 							</div>
 						</article>
 					</div>
@@ -270,24 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 
-	elements.list.addEventListener("click", function (event) {
-		const button = event.target.closest("button[data-project-id]");
-		if (!button) return;
-		const projectId = button.getAttribute("data-project-id");
-		const action = button.getAttribute("data-action");
-		const project = getSelectedProject(projectId);
-		if (action === "details") {
-			void openProjectDetail(projectId);
-		}
-		if (action === "bid") {
-			if (project) {
-				renderProjectDetail(project);
-				openBidForm(project);
-			} else {
-				void openProjectDetail(projectId);
-			}
-		}
-	});
+
 
 	elements.detailContent.addEventListener("click", function (event) {
 		if (event.target.closest("button[data-action='detail-bid']")) {
