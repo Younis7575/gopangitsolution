@@ -1,0 +1,222 @@
+/* ==========================================================================
+   Careers — department / field landing pages
+   Professional, clean layout built on the site's --gis-* design system.
+   ========================================================================== */
+
+.career-page main {
+  background: var(--gis-bg);
+}
+
+/* ---- Hero ---------------------------------------------------------------- */
+.career-hero {
+  background: var(--gis-dark);
+  color: #fff;
+  padding: 84px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.career-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px 300px at 85% -10%, rgba(15, 98, 254, 0.35), transparent 70%),
+    radial-gradient(480px 260px at 0% 120%, rgba(15, 98, 254, 0.18), transparent 70%);
+  pointer-events: none;
+}
+.career-hero .container { position: relative; z-index: 1; }
+.career-breadcrumb {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.62);
+  margin-bottom: 18px;
+}
+.career-breadcrumb a { color: rgba(255, 255, 255, 0.82); text-decoration: none; }
+.career-breadcrumb a:hover { color: #fff; }
+.career-breadcrumb span { margin: 0 8px; opacity: 0.5; }
+.career-hero-kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8ab4ff;
+  background: rgba(15, 98, 254, 0.16);
+  border: 1px solid rgba(138, 180, 255, 0.28);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+.career-hero h1 {
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.12;
+  margin: 0 0 16px;
+  max-width: 18ch;
+}
+.career-hero p.career-hero-lead {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.06rem;
+  line-height: 1.7;
+  max-width: 58ch;
+  margin: 0 0 30px;
+}
+.career-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.career-hero-actions .theme-btn,
+.career-hero-actions .theme-btn-outline { min-width: 190px; text-align: center; justify-content: center; }
+.career-hero-actions .theme-btn-outline {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.career-hero-actions .theme-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ---- Generic section ----------------------------------------------------- */
+.career-section { padding: 74px 0; }
+.career-section.is-alt { background: var(--gis-bg-subtle); }
+.career-section-head { max-width: 62ch; margin-bottom: 40px; }
+.career-section-head .career-eyebrow {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gis-accent);
+  margin-bottom: 12px;
+}
+.career-section-head h2 {
+  color: var(--gis-ink);
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+.career-section-head p {
+  color: var(--gis-text);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.career-lead {
+  color: var(--gis-text);
+  font-size: 1.08rem;
+  line-height: 1.85;
+  max-width: 70ch;
+}
+.career-lead + .career-lead { margin-top: 18px; }
+
+/* ---- Focus-area cards ---------------------------------------------------- */
+.career-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.career-card {
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r);
+  padding: 28px 26px;
+  box-shadow: var(--gis-shadow-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.career-card:hover {
+  border-color: var(--gis-border-strong);
+  box-shadow: var(--gis-shadow);
+  transform: translateY(-3px);
+}
+.career-card .career-card-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--gis-accent-soft);
+  color: var(--gis-accent);
+  font-size: 1.25rem;
+  margin-bottom: 18px;
+}
+.career-card h3 { color: var(--gis-ink); font-size: 1.12rem; margin: 0 0 10px; }
+.career-card p { color: var(--gis-text); font-size: 0.96rem; line-height: 1.65; margin: 0; }
+
+/* ---- Bulleted responsibility list ---------------------------------------- */
+.career-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 34px; }
+.career-list li {
+  position: relative;
+  padding-left: 30px;
+  color: var(--gis-text);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.career-list li::before {
+  content: "\f00c";
+  font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 2px;
+  color: var(--gis-accent);
+  font-size: 0.9rem;
+}
+
+/* ---- Tech / tool stack chips --------------------------------------------- */
+.career-stack { display: flex; flex-wrap: wrap; gap: 10px; }
+.career-stack span {
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  color: var(--gis-ink);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ---- Two column layout --------------------------------------------------- */
+.career-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: start; }
+.career-panel {
+  background: #fff;
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r-lg);
+  padding: 34px 32px;
+  box-shadow: var(--gis-shadow-sm);
+}
+.career-panel h3 { color: var(--gis-ink); font-size: 1.2rem; margin: 0 0 18px; }
+
+/* ---- CTA band ------------------------------------------------------------ */
+.career-cta-band {
+  background: var(--gis-accent);
+  border-radius: var(--gis-r-lg);
+  padding: 48px 44px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.career-cta-band h2 { color: #fff; font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 8px; }
+.career-cta-band p { color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 1.02rem; }
+.career-cta-band .theme-btn {
+  background: #fff !important;
+  color: var(--gis-accent) !important;
+  border-color: #fff !important;
+  white-space: nowrap;
+}
+.career-cta-band .theme-btn:hover { background: #f1f5ff !important; }
+
+/* ---- Responsive ---------------------------------------------------------- */
+@media (max-width: 991px) {
+  .career-cards { grid-template-columns: repeat(2, 1fr); }
+  .career-split { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 767px) {
+  .career-hero { padding: 60px 0 52px; }
+  .career-section { padding: 54px 0; }
+  .career-cards { grid-template-columns: 1fr; }
+  .career-list { grid-template-columns: 1fr; }
+  .career-hero-actions { flex-direction: column; }
+  .career-hero-actions .theme-btn,
+  .career-hero-actions .theme-btn-outline { width: 100%; }
+  .career-cta-band { padding: 36px 26px; text-align: center; justify-content: center; }
+}

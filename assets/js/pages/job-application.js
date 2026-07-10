@@ -29,6 +29,23 @@ document.addEventListener("DOMContentLoaded", function () {
 		position: document.getElementById("position"),
 		formHeading: document.getElementById("form-heading"),
 		formSub: document.getElementById("form-sub"),
+		informationPage: document.getElementById("career-information-page"),
+		listingSurface: document.getElementById("jobs-listing-surface"),
+	};
+
+	const careerProfiles = {
+		Development: { icon: "fal fa-code", image: "/assets/img/services/b1.jpg", title: "Software Development Careers", intro: "Discover how our engineering teams turn business ideas into secure, scalable web, mobile and backend products.", skills: ["Problem solving", "Clean architecture", "APIs and databases", "Testing and Git"], flow: ["Understand requirements", "Plan architecture", "Build in iterations", "Test and review", "Deploy and improve"], areas: ["Frontend Engineering", "Backend Engineering", "Mobile Applications", "Full-stack Development"] },
+		Design: { icon: "fal fa-pencil-ruler", image: "/assets/img/about-img.jpg", title: "UI/UX Design Careers", intro: "Learn how our designers research users, shape intuitive journeys and deliver polished interfaces that support real business goals.", skills: ["Figma", "User research", "Wireframing", "Design systems"], flow: ["Discover users", "Map journeys", "Create wireframes", "Prototype and test", "Developer handoff"], areas: ["Product Design", "UX Research", "Visual Design", "Interaction Design"] },
+		Marketing: { icon: "fal fa-bullhorn", image: "/assets/img/home2/slide1.jpg", title: "Digital Marketing Careers", intro: "See how strategy, content, search and paid campaigns work together to create measurable growth for modern brands.", skills: ["Content strategy", "SEO and analytics", "Paid media", "Campaign reporting"], flow: ["Research the market", "Define audience", "Plan campaigns", "Launch and optimize", "Measure outcomes"], areas: ["SEO", "Social Media", "Performance Marketing", "Content Marketing"] },
+		Sales: { icon: "fal fa-handshake", image: "/assets/img/contact-img.jpg", title: "Technology Sales Careers", intro: "Understand our consultative sales process—from discovering a client challenge to proposing the right digital solution.", skills: ["Communication", "Lead qualification", "Solution selling", "CRM discipline"], flow: ["Identify prospects", "Discover needs", "Design solution", "Present proposal", "Build relationship"], areas: ["Business Development", "Account Management", "Pre-sales", "Client Success"] },
+		"Human Resources": { icon: "fal fa-users", image: "/assets/img/team/6.jpg", title: "Human Resources Careers", intro: "Explore how our people team attracts talent, supports development and builds a healthy, inclusive workplace.", skills: ["Talent acquisition", "People operations", "Communication", "Performance support"], flow: ["Plan workforce", "Source talent", "Interview fairly", "Onboard people", "Support growth"], areas: ["Recruitment", "People Operations", "Learning", "Culture"] },
+		"Quality Assurance": { icon: "fal fa-check-circle", image: "/assets/img/why-bg.jpg", title: "Quality Assurance Careers", intro: "Learn how QA professionals protect product quality through thoughtful test planning, automation and continuous feedback.", skills: ["Test planning", "Bug reporting", "API testing", "Automation basics"], flow: ["Review requirements", "Design test cases", "Test every build", "Report defects", "Verify release"], areas: ["Manual QA", "Automation QA", "API Testing", "Mobile Testing"] },
+		DevOps: { icon: "fal fa-cloud", image: "/assets/img/services-bg.jpg", title: "DevOps & Cloud Careers", intro: "See how infrastructure, automation and observability help our teams ship reliable software confidently and repeatedly.", skills: ["Linux and networking", "CI/CD", "Cloud platforms", "Monitoring"], flow: ["Design infrastructure", "Automate builds", "Deploy safely", "Monitor systems", "Improve reliability"], areas: ["Cloud Engineering", "CI/CD", "Infrastructure", "Site Reliability"] },
+		Management: { icon: "fal fa-tasks", image: "/assets/img/project/case-head.png", title: "Project Management Careers", intro: "Understand how our managers align clients and delivery teams around clear scope, priorities, communication and outcomes.", skills: ["Planning", "Stakeholder communication", "Risk management", "Agile delivery"], flow: ["Define outcomes", "Plan delivery", "Coordinate teams", "Track risks", "Review results"], areas: ["Project Management", "Product Operations", "Delivery Management", "Team Leadership"] },
+		"Full Time": { icon: "fal fa-briefcase", image: "/assets/img/man-img.jpg", title: "Full-Time Careers", intro: "Build long-term expertise, own meaningful work and grow with a collaborative technology team.", skills: ["Ownership", "Team collaboration", "Continuous learning", "Reliable delivery"], flow: ["Join your team", "Set clear goals", "Deliver projects", "Receive feedback", "Grow your career"], areas: ["Stable team role", "Mentorship", "Career progression", "Performance growth"] },
+		"Part Time": { icon: "fal fa-clock", image: "/assets/img/team/4.jpg", title: "Part-Time Careers", intro: "Contribute specialist skills through a structured schedule while maintaining flexibility and clear delivery expectations.", skills: ["Time management", "Clear communication", "Focused delivery", "Remote collaboration"], flow: ["Agree schedule", "Define priorities", "Complete focused work", "Share progress", "Review outcomes"], areas: ["Flexible schedule", "Defined workload", "Team access", "Practical experience"] },
+		Remote: { icon: "fal fa-laptop-house", image: "/assets/img/home3/hero.png", title: "Remote Careers", intro: "Work effectively from your location through outcome-based planning, modern collaboration tools and transparent communication.", skills: ["Async communication", "Self-management", "Digital collaboration", "Accountability"], flow: ["Plan weekly goals", "Collaborate online", "Share progress", "Review together", "Deliver outcomes"], areas: ["Location flexibility", "Remote teamwork", "Digital tools", "Outcome-based work"] },
+		Internship: { icon: "fal fa-graduation-cap", image: "/assets/img/team/3.jpg", title: "Internship Program", intro: "Start your technology career with guided learning, real project exposure and feedback from experienced team members.", skills: ["Learning mindset", "Core fundamentals", "Communication", "Problem solving"], flow: ["Orientation", "Learn the tools", "Shadow the team", "Complete tasks", "Present your work"], areas: ["Mentorship", "Real assignments", "Portfolio growth", "Career guidance"] }
 	};
 
 	function escapeHtml(value) {
@@ -68,6 +85,31 @@ document.addEventListener("DOMContentLoaded", function () {
 				.join("") +
 			"</ul>"
 		);
+	}
+
+	function renderCareerInformation(profile, label) {
+		document.title = profile.title + " | Gopang IT Solution";
+		const heroTitle = document.querySelector(".gis-careers-hero h1");
+		const heroText = document.querySelector(".gis-careers-hero .col-lg-8 p");
+		const heroEyebrow = document.querySelector(".gis-careers-eyebrow");
+		if (heroTitle) heroTitle.textContent = profile.title;
+		if (heroText) heroText.textContent = profile.intro;
+		if (heroEyebrow) heroEyebrow.textContent = label + " at Gopang IT Solution";
+		elements.listingSurface.classList.add("d-none");
+		elements.informationPage.classList.remove("d-none");
+		elements.jobsCount.textContent = label;
+		if (elements.jobsCount.nextElementSibling) elements.jobsCount.nextElementSibling.textContent = "Career Area";
+		elements.informationPage.innerHTML = `
+			<div class="career-info-hero">
+				<div><span>Career Path</span><h2>${escapeHtml(profile.title)}</h2><p>${escapeHtml(profile.intro)}</p><a href="/apply-job" class="theme-btn">View Current Open Jobs</a></div>
+				<img src="${escapeHtml(profile.image)}" alt="${escapeHtml(profile.title)} workflow">
+			</div>
+			<div class="career-info-grid">
+				<section><span class="career-info-icon"><i class="${escapeHtml(profile.icon)}"></i></span><h3>What You Can Work On</h3><div class="career-chip-list">${profile.areas.map(function (item) { return "<span>" + escapeHtml(item) + "</span>"; }).join("")}</div></section>
+				<section><h3>Skills That Matter</h3><ul>${profile.skills.map(function (item) { return "<li><i class=\"fal fa-check-circle\"></i>" + escapeHtml(item) + "</li>"; }).join("")}</ul></section>
+			</div>
+			<section class="career-workflow"><span>How the work happens</span><h3>Our Typical Workflow</h3><div>${profile.flow.map(function (item, index) { return "<article><strong>0" + (index + 1) + "</strong><h4>" + escapeHtml(item) + "</h4></article>"; }).join("")}</div></section>
+			<section class="career-growth"><div><span>Grow with us</span><h3>What You Will Experience</h3><p>Collaborative delivery, practical feedback, real client problems and opportunities to improve your craft.</p></div><a href="/apply-job" class="gis-retry-btn">Explore Open Positions</a></section>`;
 	}
 
 	function setStatus(type, title, message, showRetry) {
@@ -453,5 +495,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	}
 
-	loadJobs();
+	const pageParams = new URLSearchParams(window.location.search);
+	const careerLabel = pageParams.get("department") || pageParams.get("type");
+	if (careerLabel && careerProfiles[careerLabel]) {
+		renderCareerInformation(careerProfiles[careerLabel], careerLabel);
+	} else {
+		loadJobs();
+	}
 });
