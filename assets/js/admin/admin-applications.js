@@ -3,7 +3,7 @@ const API_BASE_URL =
 	localStorage.getItem("JOB_API_BASE_URL") ||
 	"";
 
-const STATUSES = ["New", "Reviewed", "Shortlisted", "Rejected", "Hired"];
+const STATUSES = ["New", "Under Review", "Shortlisted", "Interview Scheduled", "Selected", "Rejected", "Hired"];
 const PAGE_SIZE = 10;
 
 if (localStorage.getItem("isAdminLoggedIn") !== "true") {
@@ -94,6 +94,7 @@ async function fetchJson(path, options) {
 function normalizeStatus(status) {
 	const value = String(status || "").trim();
 	if (value === "Pending" || value === "" ) return "New";
+	if (value === "Reviewed") return "Under Review";
 	return STATUSES.indexOf(value) >= 0 ? value : "New";
 }
 
@@ -205,7 +206,7 @@ async function loadApplications() {
 	elements.loading.classList.remove("d-none");
 
 	try {
-		const result = await fetchJson("/api/applications", {
+		const result = await fetchJson("/api/applications?limit=100", {
 			method: "GET",
 			headers: { Accept: "application/json" },
 		});
@@ -324,9 +325,16 @@ function cvUrl() {
 		: "";
 }
 
-function viewCv() {
+async function viewCv() {
 	const url = cvUrl();
-	if (url) window.open(url, "_blank", "noopener");
+	if (!url) return;
+	try {
+		const response = await fetch(url, { headers: adminHeaders() });
+		if (!response.ok) throw new Error("Unable to view CV.");
+		const objectUrl = URL.createObjectURL(await response.blob());
+		window.open(objectUrl, "_blank", "noopener");
+		window.setTimeout(function () { URL.revokeObjectURL(objectUrl); }, 60000);
+	} catch (error) { showMessage("error", error.message); }
 }
 
 async function downloadCv() {
@@ -334,7 +342,7 @@ async function downloadCv() {
 	if (!url) return;
 
 	try {
-		const response = await fetch(url);
+		const response = await fetch(url, { headers: adminHeaders() });
 		if (!response.ok) throw new Error("Unable to download CV.");
 		const blob = await response.blob();
 		const objectUrl = URL.createObjectURL(blob);

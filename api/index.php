@@ -142,9 +142,10 @@ function optional_url($value)
 }
 
 $JOB_STATUSES = ['Open', 'Closed', 'Draft'];
-$APPLICATION_STATUSES = ['New', 'Reviewed', 'Shortlisted', 'Rejected', 'Hired'];
+$APPLICATION_STATUSES = ['New', 'Under Review', 'Shortlisted', 'Interview Scheduled', 'Selected', 'Rejected', 'Hired'];
 $SUBMISSION_STATUSES = ['Pending', 'Approved', 'Reject'];
-$PROJECT_HIRING_STATUSES = ['pending', 'reviewed', 'contacted', 'proposal_sent', 'approved', 'rejected'];
+$PROPOSAL_STATUSES = ['New', 'Under Review', 'Contacted', 'Approved', 'Rejected', 'Closed'];
+$PROJECT_HIRING_STATUSES = ['new', 'reviewing', 'contacted', 'quotation_sent', 'approved', 'in_progress', 'completed', 'rejected', 'pending', 'reviewed', 'proposal_sent'];
 $BID_PROJECT_STATUSES = ['Open', 'Closed', 'Draft'];
 $BID_STATUSES = ['New', 'Shortlisted', 'Interviewing', 'Awarded', 'Rejected'];
 
@@ -191,7 +192,16 @@ function normalize_application_status($status)
     if ($status === 'Pending' || $status === '') {
         return 'New';
     }
+    if ($status === 'Reviewed') { return 'Under Review'; }
     return in_array($status, $APPLICATION_STATUSES, true) ? $status : null;
+}
+
+function pagination_meta($page, $limit, $total)
+{
+    $pages = max((int) ceil($total / $limit), 1);
+    return ['current_page' => $page, 'per_page' => $limit, 'total_records' => $total,
+        'total_pages' => $pages, 'next_page' => $page < $pages ? $page + 1 : null,
+        'previous_page' => $page > 1 ? $page - 1 : null, 'page' => $page, 'limit' => $limit, 'total' => $total];
 }
 
 /* ------------------------------------------------------------------ */
@@ -341,6 +351,17 @@ try {
     init_schema();
     $pdo = db();
 
+    /* Public status lookup returns only non-sensitive summary fields. */
+    if ($method === 'GET' && $path === '/api/submission-status') {
+        $email = clean_text($_GET['email'] ?? '', 200);
+        if (!is_valid_email($email)) { error_response('A valid email is required', 422); }
+        $partners = $pdo->prepare('SELECT company, contact_person, status, created_at FROM partner_applications WHERE LOWER(email)=LOWER(?) ORDER BY id DESC');
+        $partners->execute([$email]);
+        $proposals = $pdo->prepare('SELECT title, budget, timeline, status, created_at FROM project_proposals WHERE LOWER(email)=LOWER(?) ORDER BY id DESC');
+        $proposals->execute([$email]);
+        json_response(['success'=>true,'message'=>'Submission status fetched successfully','data'=>['partners'=>$partners->fetchAll(),'proposals'=>$proposals->fetchAll()]]);
+    }
+
     /* ---- Jobs ---- */
     if ($method === 'GET' && $path === '/api/jobs') {
         $includeAll = isset($_GET['admin']) && $_GET['admin'] === '1';
@@ -439,7 +460,7 @@ try {
     }
 
     /* ---- Apply (public, multipart) ---- */
-    if ($method === 'POST' && $path === '/api/apply') {
+    if ($method === 'POST' && ($path === '/api/apply' || $path === '/api/applications')) {
         $jobId = (int) ($_POST['job_id'] ?? 0);
         $expectedSalary = trim((string) ($_POST['expected_salary'] ?? ''));
         $experienceYears = trim((string) ($_POST['experience_years'] ?? ''));
@@ -518,9 +539,33 @@ try {
     /* ---- Applications ---- */
     if ($method === 'GET' && $path === '/api/applications') {
         require_admin();
-        $stmt = $pdo->query('SELECT a.*, j.title AS job_title, j.company AS job_company, j.department AS job_department
-            FROM applications a LEFT JOIN jobs j ON j.id = a.job_id ORDER BY a.id DESC');
-        json_response(['success' => true, 'message' => 'Applications fetched successfully', 'data' => $stmt->fetchAll()]);
+        $page = max((int) ($_GET['page'] ?? 1), 1); $limit = min(max((int) ($_GET['limit'] ?? 25), 1), 100);
+        $where = []; $params = [];
+        $search = clean_text($_GET['search'] ?? '', 120);
+        if ($search !== '') { $where[] = '(a.full_name LIKE ? OR a.email LIKE ? OR a.phone LIKE ? OR a.position LIKE ? OR j.title LIKE ?)'; for ($i=0;$i<5;$i++) $params[]="%$search%"; }
+        $status = normalize_application_status($_GET['status'] ?? '');
+        if (!empty($_GET['status']) && $status) { $where[]='a.status = ?'; $params[]=$status; }
+        if (!empty($_GET['job_id'])) { $where[]='a.job_id = ?'; $params[]=(int)$_GET['job_id']; }
+        $whereSql = $where ? ' WHERE '.implode(' AND ', $where) : '';
+        $count = $pdo->prepare('SELECT COUNT(*) FROM applications a LEFT JOIN jobs j ON j.id=a.job_id'.$whereSql); $count->execute($params); $total=(int)$count->fetchColumn();
+        $sql='SELECT a.*, j.title AS job_title, j.company AS job_company, j.department AS job_department FROM applications a LEFT JOIN jobs j ON j.id=a.job_id'.$whereSql.' ORDER BY a.created_at DESC, a.id DESC LIMIT '.(int)$limit.' OFFSET '.(int)(($page-1)*$limit);
+        $stmt=$pdo->prepare($sql); $stmt->execute($params);
+        json_response(['success'=>true,'message'=>'Applications fetched successfully','data'=>$stmt->fetchAll(),'meta'=>pagination_meta($page,$limit,$total)]);
+    }
+
+    if (preg_match('#^/api/applications/(\d+)$#', $path, $m)) {
+        require_admin(); $id=(int)$m[1];
+        $stmt=$pdo->prepare('SELECT a.*, j.title AS job_title FROM applications a LEFT JOIN jobs j ON j.id=a.job_id WHERE a.id=?'); $stmt->execute([$id]); $row=$stmt->fetch();
+        if (!$row) { error_response('Application not found',404); }
+        if ($method==='GET') { json_response(['success'=>true,'message'=>'Application fetched successfully','data'=>$row]); }
+        if ($method==='PUT') {
+            $body=read_json_body(); if (!$body) error_response('Invalid JSON body',400);
+            $status=normalize_application_status($body['status'] ?? $row['status']); if (!$status) error_response('Invalid application status',422);
+            $pdo->prepare('UPDATE applications SET full_name=?,email=?,phone=?,current_city=?,position=?,expected_salary=?,current_salary=?,experience_years=?,notice_period=?,linkedin_profile=?,portfolio_url=?,message=?,status=?,admin_notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?')->execute([
+                clean_text($body['full_name']??$row['full_name'],180),clean_text($body['email']??$row['email'],200),clean_text($body['phone']??$row['phone'],60),clean_text($body['current_city']??$row['current_city'],160),clean_text($body['position']??$row['position'],220),$body['expected_salary']??$row['expected_salary'],$body['current_salary']??$row['current_salary'],$body['experience_years']??$row['experience_years'],clean_text($body['notice_period']??$row['notice_period'],120),optional_url($body['linkedin_profile']??$row['linkedin_profile']),optional_url($body['portfolio_url']??$row['portfolio_url']),clean_text($body['message']??$row['message'],5000),$status,clean_text($body['admin_notes']??$row['admin_notes'],2000),$id]);
+            $stmt->execute([$id]); json_response(['success'=>true,'message'=>'Application updated successfully','data'=>$stmt->fetch()]);
+        }
+        if ($method==='DELETE') { $pdo->prepare('DELETE FROM applications WHERE id=?')->execute([$id]); if (!empty($row['resume_key'])) @unlink(UPLOAD_DIR.'/'.$row['resume_key']); json_response(['success'=>true,'message'=>'Application deleted successfully','data'=>['id'=>$id]]); }
     }
 
     if ($method === 'PATCH' && preg_match('#^/api/applications/(\d+)/status$#', $path, $m)) {
@@ -528,7 +573,7 @@ try {
         $body = read_json_body();
         if (!$body) { error_response('Invalid JSON body', 400); }
         $status = normalize_application_status($body['status'] ?? '');
-        if (!$status) { error_response('status must be New, Reviewed, Shortlisted, Rejected, or Hired', 400); }
+        if (!$status) { error_response('Invalid application status', 422); }
         $stmt = $pdo->prepare('SELECT id FROM applications WHERE id = ?');
         $stmt->execute([(int) $m[1]]);
         if (!$stmt->fetch()) { error_response('Application not found', 404); }
@@ -540,6 +585,7 @@ try {
     }
 
     if ($method === 'GET' && preg_match('#^/api/applications/(\d+)/resume$#', $path, $m)) {
+        require_admin();
         $stmt = $pdo->prepare('SELECT resume_key, resume_file_name, resume_file_type FROM applications WHERE id = ?');
         $stmt->execute([(int) $m[1]]);
         $row = $stmt->fetch();
@@ -632,14 +678,8 @@ try {
 
     /* ---- Partner applications ---- */
     if ($method === 'GET' && $path === '/api/partner-applications') {
-        $email = trim((string) ($_GET['email'] ?? ''));
-        if ($email !== '') {
-            $stmt = $pdo->prepare('SELECT * FROM partner_applications WHERE LOWER(email) = LOWER(?) ORDER BY id DESC');
-            $stmt->execute([$email]);
-        } else {
-            require_admin();
-            $stmt = $pdo->query('SELECT * FROM partner_applications ORDER BY id DESC');
-        }
+        require_admin();
+        $stmt = $pdo->query('SELECT * FROM partner_applications ORDER BY id DESC');
         json_response(['success' => true, 'message' => 'Partner applications fetched successfully', 'data' => $stmt->fetchAll()]);
     }
     if ($method === 'POST' && $path === '/api/partner-applications') {
@@ -681,20 +721,15 @@ try {
     }
 
     /* ---- Project proposals ---- */
-    if ($method === 'GET' && $path === '/api/project-proposals') {
-        $email = trim((string) ($_GET['email'] ?? ''));
-        if ($email !== '') {
-            $stmt = $pdo->prepare('SELECT * FROM project_proposals WHERE LOWER(email) = LOWER(?) ORDER BY id DESC');
-            $stmt->execute([$email]);
-        } else {
-            require_admin();
-            $stmt = $pdo->query('SELECT * FROM project_proposals ORDER BY id DESC');
-        }
+    if ($method === 'GET' && ($path === '/api/project-proposals' || $path === '/api/proposals')) {
+        require_admin();
+        $stmt = $pdo->query('SELECT * FROM project_proposals ORDER BY id DESC');
         json_response(['success' => true, 'message' => 'Project proposals fetched successfully', 'data' => $stmt->fetchAll()]);
     }
-    if ($method === 'POST' && $path === '/api/project-proposals') {
-        $body = read_json_body();
-        if (!$body) { error_response('Invalid JSON body', 400); }
+    if ($method === 'POST' && ($path === '/api/project-proposals' || $path === '/api/proposals')) {
+        $isMultipart = strpos($_SERVER['CONTENT_TYPE'] ?? '', 'multipart/form-data') !== false;
+        $body = $isMultipart ? $_POST : read_json_body();
+        if (!$body) { error_response('Invalid request body', 400); }
         $names = $body['attachment_names'] ?? null;
         if (is_array($names)) { $names = implode(', ', $names); }
         $pr = [
@@ -705,24 +740,35 @@ try {
             'contact_name' => trim((string) ($body['contact_name'] ?? '')) ?: null,
             'email' => trim((string) ($body['email'] ?? '')) ?: null,
             'phone' => trim((string) ($body['phone'] ?? '')) ?: null,
+            'company_name' => clean_text($body['company_name'] ?? '', 200) ?: null,
+            'service_category' => clean_text($body['service_category'] ?? '', 160) ?: null,
             'attachment_names' => $names ? trim((string) $names) : null,
         ];
-        if ($pr['title'] === '' || $pr['description'] === '') { error_response('title and description are required', 400); }
-        $stmt = $pdo->prepare('INSERT INTO project_proposals (title, description, budget, timeline, contact_name, email, phone, attachment_names, status)
-            VALUES (?,?,?,?,?,?,?,?, "Pending")');
+        if ($pr['title'] === '' || $pr['description'] === '') { error_response('title and description are required', 422); }
+        if ($pr['email'] && !is_valid_email($pr['email'])) { error_response('A valid email is required', 422); }
+        if ($pr['phone'] && !is_valid_phone($pr['phone'])) { error_response('A valid phone number is required', 422); }
+        $stored = $isMultipart ? store_upload('attachment', 'proposals', ['.pdf','.doc','.docx','.jpg','.jpeg','.png'], [], MAX_ATTACHMENT_SIZE, false) : ['value'=>null];
+        if (isset($stored['error'])) { error_response($stored['error'],422); }
+        $att=$stored['value'];
+        $stmt = $pdo->prepare('INSERT INTO project_proposals (title, description, budget, timeline, contact_name, email, phone, company_name, service_category, attachment_names, attachment_key, attachment_file_name, attachment_file_type, attachment_file_size, status)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, "New")');
         $stmt->execute([$pr['title'], $pr['description'], $pr['budget'], $pr['timeline'], $pr['contact_name'],
-            $pr['email'], $pr['phone'], $pr['attachment_names']]);
+            $pr['email'], $pr['phone'], $pr['company_name'], $pr['service_category'], $pr['attachment_names'], $att['key']??null, $att['fileName']??null, $att['fileType']??null, $att['fileSize']??null]);
         $id = (int) $pdo->lastInsertId();
+        $url=!empty($att['key'])?'/api/proposals/'.$id.'/attachment':null;
+        $pdo->prepare('UPDATE project_proposals SET attachment_url=? WHERE id=?')->execute([$url,$id]);
         $stmt = $pdo->prepare('SELECT * FROM project_proposals WHERE id = ?');
         $stmt->execute([$id]);
         json_response(['success' => true, 'message' => 'Project proposal submitted successfully', 'data' => $stmt->fetch()], 201);
     }
-    if ($method === 'PUT' && preg_match('#^/api/project-proposals/(\d+)/status$#', $path, $m)) {
+    if (($method === 'PUT' || $method === 'PATCH') && preg_match('#^/api/(?:project-proposals|proposals)/(\d+)/status$#', $path, $m)) {
         require_admin();
         $body = read_json_body();
         if (!$body) { error_response('Invalid JSON body', 400); }
         $status = trim((string) ($body['status'] ?? ''));
-        if (!in_array($status, $SUBMISSION_STATUSES, true)) { error_response('status must be Pending, Approved, or Reject', 400); }
+        if ($status==='Pending') { $status='New'; }
+        if ($status==='Reject') { $status='Rejected'; }
+        if (!in_array($status, $PROPOSAL_STATUSES, true)) { error_response('Invalid proposal status', 422); }
         $stmt = $pdo->prepare('SELECT id FROM project_proposals WHERE id = ?');
         $stmt->execute([(int) $m[1]]);
         if (!$stmt->fetch()) { error_response('Project proposal not found', 404); }
@@ -733,8 +779,20 @@ try {
         json_response(['success' => true, 'message' => 'Project proposal status updated successfully', 'data' => $stmt->fetch()]);
     }
 
+    if ($method==='GET' && preg_match('#^/api/proposals/(\d+)/attachment$#',$path,$m)) {
+        require_admin(); $stmt=$pdo->prepare('SELECT attachment_key,attachment_file_name,attachment_file_type FROM project_proposals WHERE id=?');
+        $stmt->execute([(int)$m[1]]); $row=$stmt->fetch(); if(!$row||!$row['attachment_key']) { error_response('Attachment not found',404); }
+        stream_upload($row['attachment_key'],$row['attachment_file_name'],$row['attachment_file_type']);
+    }
+    if (preg_match('#^/api/proposals/(\d+)$#',$path,$m)) {
+        require_admin(); $id=(int)$m[1]; $stmt=$pdo->prepare('SELECT * FROM project_proposals WHERE id=?'); $stmt->execute([$id]); $row=$stmt->fetch();
+        if(!$row) { error_response('Proposal not found',404); }
+        if($method==='GET') { json_response(['success'=>true,'message'=>'Proposal fetched successfully','data'=>$row]); }
+        if($method==='DELETE') { $pdo->prepare('DELETE FROM project_proposals WHERE id=?')->execute([$id]); if(!empty($row['attachment_key'])) { @unlink(UPLOAD_DIR.'/'.$row['attachment_key']); } json_response(['success'=>true,'message'=>'Proposal deleted successfully','data'=>['id'=>$id]]); }
+    }
+
     /* ---- Project hiring (public apply) ---- */
-    if ($method === 'POST' && $path === '/api/project-hiring/apply') {
+    if ($method === 'POST' && ($path === '/api/project-hiring/apply' || $path === '/api/project-hiring')) {
         $ph = [
             'full_name' => clean_text($_POST['full_name'] ?? '', 160),
             'email' => clean_text($_POST['email'] ?? '', 180),
@@ -767,7 +825,7 @@ try {
         $stmt = $pdo->prepare('INSERT INTO project_hiring_requests (full_name, email, phone, company_name, country_city,
             project_title, project_category, budget_range, expected_timeline, project_description,
             attachment_key, attachment_file_name, attachment_file_type, attachment_file_size, status)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, "pending")');
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, "new")');
         $stmt->execute([$ph['full_name'], $ph['email'], $ph['phone'], $ph['company_name'], $ph['country_city'],
             $ph['project_title'], $ph['project_category'], $ph['budget_range'], $ph['expected_timeline'],
             $ph['project_description'],
@@ -784,7 +842,7 @@ try {
     }
 
     /* ---- Project hiring (admin) ---- */
-    if ($method === 'GET' && $path === '/api/admin/project-hiring') {
+    if ($method === 'GET' && ($path === '/api/admin/project-hiring' || $path === '/api/project-hiring')) {
         require_admin();
         $search = clean_text($_GET['search'] ?? '', 120);
         $status = trim((string) ($_GET['status'] ?? ''));
@@ -809,9 +867,9 @@ try {
             ' ORDER BY created_at DESC, id DESC LIMIT ' . (int) $limit . ' OFFSET ' . (int) $offset);
         $listStmt->execute($params);
         json_response(['success' => true, 'message' => 'Project hiring requests fetched successfully',
-            'data' => $listStmt->fetchAll(), 'meta' => ['page' => $page, 'limit' => $limit, 'total' => $total]]);
+            'data' => $listStmt->fetchAll(), 'meta' => pagination_meta($page, $limit, $total)]);
     }
-    if ($method === 'GET' && preg_match('#^/api/admin/project-hiring/(\d+)/attachment$#', $path, $m)) {
+    if ($method === 'GET' && preg_match('#^/api/(?:admin/)?project-hiring/(\d+)/attachment$#', $path, $m)) {
         require_admin();
         $stmt = $pdo->prepare('SELECT attachment_key, attachment_file_name, attachment_file_type FROM project_hiring_requests WHERE id = ?');
         $stmt->execute([(int) $m[1]]);
@@ -819,7 +877,7 @@ try {
         if (!$row || !$row['attachment_key']) { error_response('Attachment not found', 404); }
         stream_upload($row['attachment_key'], $row['attachment_file_name'], $row['attachment_file_type']);
     }
-    if (preg_match('#^/api/admin/project-hiring/(\d+)$#', $path, $m)) {
+    if (preg_match('#^/api/(?:admin/)?project-hiring/(\d+)$#', $path, $m)) {
         require_admin();
         $rid = (int) $m[1];
         if ($method === 'GET') {
@@ -838,14 +896,21 @@ try {
             if (!empty($row['attachment_key'])) { @unlink(UPLOAD_DIR . '/' . $row['attachment_key']); }
             json_response(['success' => true, 'message' => 'Project hiring request deleted successfully', 'data' => ['id' => $rid]]);
         }
+        if ($method === 'PUT') {
+            $body=read_json_body(); if(!$body){error_response('Invalid JSON body',400);}
+            $status=trim((string)($body['status']??'new')); if(!in_array($status,$PROJECT_HIRING_STATUSES,true)){error_response('Invalid project hiring status',422);}
+            $pdo->prepare('UPDATE project_hiring_requests SET full_name=?,email=?,phone=?,company_name=?,country_city=?,project_title=?,project_category=?,budget_range=?,expected_timeline=?,project_description=?,admin_notes=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?')->execute([
+                clean_text($body['full_name']??'',180),clean_text($body['email']??'',200),clean_text($body['phone']??'',60),clean_text($body['company_name']??'',200),clean_text($body['country_city']??'',200),clean_text($body['project_title']??'',240),clean_text($body['project_category']??'',120),clean_text($body['budget_range']??'',120),clean_text($body['expected_timeline']??'',120),clean_text($body['project_description']??'',5000),clean_text($body['admin_notes']??'',2000),$status,$rid]);
+            $stmt=$pdo->prepare('SELECT * FROM project_hiring_requests WHERE id=?');$stmt->execute([$rid]);json_response(['success'=>true,'message'=>'Project hiring request updated successfully','data'=>$stmt->fetch()]);
+        }
     }
-    if ($method === 'PATCH' && preg_match('#^/api/admin/project-hiring/(\d+)/status$#', $path, $m)) {
+    if ($method === 'PATCH' && preg_match('#^/api/(?:admin/)?project-hiring/(\d+)/status$#', $path, $m)) {
         require_admin();
         $body = read_json_body();
         if (!$body) { error_response('Invalid JSON body', 400); }
         $status = trim((string) ($body['status'] ?? ''));
         if (!in_array($status, $PROJECT_HIRING_STATUSES, true)) {
-            error_response('status must be pending, reviewed, contacted, proposal_sent, approved, or rejected', 400);
+            error_response('Invalid project hiring status', 422);
         }
         $rid = (int) $m[1];
         $stmt = $pdo->prepare('SELECT id FROM project_hiring_requests WHERE id = ?');

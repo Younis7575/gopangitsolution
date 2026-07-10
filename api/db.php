@@ -129,7 +129,15 @@ function init_schema()
         contact_name VARCHAR(180) NULL,
         email VARCHAR(200) NULL,
         phone VARCHAR(60) NULL,
+        company_name VARCHAR(200) NULL,
+        service_category VARCHAR(160) NULL,
         attachment_names TEXT NULL,
+        attachment_key VARCHAR(400) NULL,
+        attachment_file_name VARCHAR(255) NULL,
+        attachment_file_type VARCHAR(120) NULL,
+        attachment_file_size INT NULL,
+        attachment_url VARCHAR(400) NULL,
+        admin_notes TEXT NULL,
         status VARCHAR(20) NOT NULL DEFAULT 'Pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NULL DEFAULT NULL
@@ -204,6 +212,15 @@ function init_schema()
 
     /* Backfill for older installs. */
     ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
+    ensure_column('applications', 'admin_notes', 'TEXT NULL AFTER status');
+    ensure_column('project_proposals', 'company_name', 'VARCHAR(200) NULL AFTER phone');
+    ensure_column('project_proposals', 'service_category', 'VARCHAR(160) NULL AFTER company_name');
+    ensure_column('project_proposals', 'attachment_key', 'VARCHAR(400) NULL AFTER attachment_names');
+    ensure_column('project_proposals', 'attachment_file_name', 'VARCHAR(255) NULL AFTER attachment_key');
+    ensure_column('project_proposals', 'attachment_file_type', 'VARCHAR(120) NULL AFTER attachment_file_name');
+    ensure_column('project_proposals', 'attachment_file_size', 'INT NULL AFTER attachment_file_type');
+    ensure_column('project_proposals', 'attachment_url', 'VARCHAR(400) NULL AFTER attachment_file_size');
+    ensure_column('project_proposals', 'admin_notes', 'TEXT NULL AFTER attachment_url');
 
     seed_sample_data();
 }

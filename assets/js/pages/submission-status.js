@@ -110,12 +110,9 @@ async function loadSubmissionStatus(event) {
 
 	try {
 		const encodedEmail = encodeURIComponent(email);
-		const results = await Promise.all([
-			fetchJson("/api/partner-applications?email=" + encodedEmail),
-			fetchJson("/api/project-proposals?email=" + encodedEmail),
-		]);
-		renderPartners(results[0].data || []);
-		renderProposals(results[1].data || []);
+		const result = await fetchJson("/api/submission-status?email=" + encodedEmail);
+		renderPartners((result.data && result.data.partners) || []);
+		renderProposals((result.data && result.data.proposals) || []);
 		showStatusMessage("success", "Status loaded successfully.");
 	} catch (error) {
 		showStatusMessage("danger", error.message || "Unable to load submission status.");

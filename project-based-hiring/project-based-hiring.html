@@ -260,9 +260,35 @@
                 </section>
             </div>
         </section>
+        <section class="gis-careers-content" id="hire-for-project">
+            <div class="container">
+                <section class="gis-application-panel" aria-labelledby="project-hiring-heading">
+                    <div class="gis-application-head"><span>Hire Our Team</span><h2 id="project-hiring-heading">Project-Based Hiring Request</h2><p>Tell us what you need and our team will contact you with the right engagement plan.</p></div>
+                    <div id="project-hiring-message" class="alert d-none" role="alert"></div>
+                    <form id="project-hiring-form" enctype="multipart/form-data" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label">Full Name *</label><input class="form-control" name="full_name" required></div>
+                            <div class="col-md-6"><label class="form-label">Email *</label><input type="email" class="form-control" name="email" required></div>
+                            <div class="col-md-6"><label class="form-label">Phone / WhatsApp *</label><input class="form-control" name="phone" required></div>
+                            <div class="col-md-6"><label class="form-label">Company</label><input class="form-control" name="company_name"></div>
+                            <div class="col-md-6"><label class="form-label">Country / City *</label><input class="form-control" name="country_city" required></div>
+                            <div class="col-md-6"><label class="form-label">Project Title *</label><input class="form-control" name="project_title" required></div>
+                            <div class="col-md-4"><label class="form-label">Required Service *</label><select class="form-control" name="project_category" required><option value="">Select service</option><option>Web Development</option><option>Mobile App Development</option><option>Backend Development</option><option>UI/UX Design</option><option>AI / Automation</option><option>Dedicated Developer</option><option>Other</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Budget Range *</label><input class="form-control" name="budget_range" placeholder="e.g. USD 2,000–5,000" required></div>
+                            <div class="col-md-4"><label class="form-label">Expected Timeline *</label><input class="form-control" name="expected_timeline" placeholder="e.g. 2 months" required></div>
+                            <div class="col-12"><label class="form-label">Project Description *</label><textarea class="form-control" name="project_description" rows="5" minlength="20" required></textarea></div>
+                            <div class="col-12"><label class="form-label">Attachment</label><input type="file" class="form-control" name="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp"></div>
+                            <div class="col-12"><label><input type="checkbox" name="agreement" value="yes" required> I agree to be contacted about this request.</label></div>
+                        </div>
+                        <div class="apply-button-row mt-4"><button type="submit" id="project-hiring-submit" class="theme-btn">Submit Project Request</button></div>
+                    </form>
+                </section>
+            </div>
+        </section>
     </main>
 
     <script src="/assets/js/pages/project-bidding.js" defer></script>
+    <script src="/assets/js/pages/project-based-hiring.js" defer></script>
     <script src="/assets/js/premium.js" defer></script>
 </body>
 

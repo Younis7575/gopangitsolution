@@ -1,5 +1,5 @@
 const API_BASE_URL = "";
-const STATUSES = ["Pending", "Approved", "Reject"];
+const STATUSES = ["New", "Under Review", "Contacted", "Approved", "Rejected", "Closed"];
 
 if (localStorage.getItem("isAdminLoggedIn") !== "true") {
 	window.location.replace("/admin-login");
@@ -121,7 +121,7 @@ function renderProposals(items) {
 					<td>${escapeHtml(item.budget || "")}</td>
 					<td>${escapeHtml(item.timeline || "")}</td>
 					<td>${escapeHtml(contact)}</td>
-					<td>${escapeHtml(item.attachment_names || "")}</td>
+					<td>${item.attachment_url ? `<button type="button" class="admin-action-btn" data-download-proposal="${escapeHtml(item.id)}" data-file-name="${escapeHtml(item.attachment_file_name || "proposal-attachment")}">Download</button>` : escapeHtml(item.attachment_names || "")}</td>
 					<td>
 						<span class="admin-status-pill ${statusClass(item.status)}">${escapeHtml(item.status || "Pending")}</span>
 						${statusSelect("proposal", item.id, item.status || "Pending")}
@@ -150,7 +150,7 @@ async function loadPartners() {
 async function loadProposals() {
 	elements.proposalsLoading.classList.remove("d-none");
 	try {
-		const result = await fetchJson("/api/project-proposals", {
+		const result = await fetchJson("/api/proposals", {
 			headers: { Accept: "application/json" },
 		});
 		renderProposals(result.data || []);
@@ -164,7 +164,7 @@ async function loadProposals() {
 async function updateStatus(type, id, status) {
 	const path = type === "partner"
 		? "/api/partner-applications/" + id + "/status"
-		: "/api/project-proposals/" + id + "/status";
+		: "/api/proposals/" + id + "/status";
 
 	clearMessage();
 
@@ -191,6 +191,16 @@ document.addEventListener("change", function (event) {
 	}
 
 	void updateStatus(select.getAttribute("data-type"), select.getAttribute("data-id"), select.value);
+});
+
+document.addEventListener("click", async function (event) {
+	const button = event.target.closest("[data-download-proposal]");
+	if (!button) return;
+	try {
+		const response = await fetch(API_BASE_URL + "/api/proposals/" + button.dataset.downloadProposal + "/attachment", { headers: { Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") } });
+		if (!response.ok) throw new Error("Unable to download attachment.");
+		const url = URL.createObjectURL(await response.blob()); const link = document.createElement("a"); link.href = url; link.download = button.dataset.fileName; link.click(); URL.revokeObjectURL(url);
+	} catch (error) { showMessage("error", error.message); }
 });
 
 elements.refreshPartners.addEventListener("click", loadPartners);

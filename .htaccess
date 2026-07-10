@@ -1,0 +1,41 @@
+# Gopang IT Solution — clean URL routing for descriptively named HTML files.
+# Existing public URLs stay unchanged after replacing generic index.html files.
+
+Options -MultiViews
+DirectoryIndex home.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^$ home.html [L]
+    RewriteRule ^about/?$ about/about.html [L]
+    RewriteRule ^admin-applications/?$ admin-applications/applications.html [L]
+    RewriteRule ^admin-dashboard/?$ admin-dashboard/dashboard.html [L]
+    RewriteRule ^admin-jobs/?$ admin-jobs/jobs.html [L]
+    RewriteRule ^admin-login/?$ admin-login/login.html [L]
+    RewriteRule ^admin-news/?$ admin-news/news-management.html [L]
+    RewriteRule ^admin-project-hiring/?$ admin-project-hiring/project-hiring-requests.html [L]
+    RewriteRule ^admin-projects/?$ admin-projects/projects-management.html [L]
+    RewriteRule ^admin-submissions/?$ admin-submissions/submissions.html [L]
+    RewriteRule ^apply-job/?$ apply-job/job-application.html [L]
+    RewriteRule ^apply-partner/?$ apply-partner/partner-application.html [L]
+    RewriteRule ^apply-project/?$ apply-project/project-proposal.html [L]
+    RewriteRule ^contact/?$ contact/contact.html [L]
+    RewriteRule ^faq/?$ faq/faq.html [L]
+    RewriteRule ^index-2/?$ index-2/home-variant-two.html [L]
+    RewriteRule ^index-3/?$ index-3/home-variant-three.html [L]
+    RewriteRule ^news/?$ news/news.html [L]
+    RewriteRule ^news-detail/?$ news-detail/news-detail.html [L]
+    RewriteRule ^news-details/?$ news-details/news-details.html [L]
+    RewriteRule ^pricing/?$ pricing/pricing.html [L]
+    RewriteRule ^privacy-policy/?$ privacy-policy/privacy-policy.html [L]
+    RewriteRule ^project-based-hiring/?$ project-based-hiring/project-based-hiring.html [L]
+    RewriteRule ^project-details/?$ project-details/project-details.html [L]
+    RewriteRule ^projects/?$ projects/projects.html [L]
+    RewriteRule ^services/?$ services/services.html [L]
+    RewriteRule ^services-details/?$ services-details/service-details.html [L]
+    RewriteRule ^submission-status/?$ submission-status/submission-status.html [L]
+    RewriteRule ^team/?$ team/team.html [L]
+    RewriteRule ^team-details/?$ team-details/team-details.html [L]
+</IfModule>
+

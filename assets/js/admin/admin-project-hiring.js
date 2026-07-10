@@ -2,13 +2,15 @@ const API_BASE_URL =
 	window.JOB_API_BASE_URL ||
 	localStorage.getItem("JOB_API_BASE_URL") ||
 	"";
-const STATUSES = ["pending", "reviewed", "contacted", "proposal_sent", "approved", "rejected"];
+const STATUSES = ["new", "reviewing", "contacted", "quotation_sent", "approved", "in_progress", "completed", "rejected"];
 const STATUS_LABELS = {
-	pending: "Pending",
-	reviewed: "Reviewed",
+	new: "New",
+	reviewing: "Reviewing",
 	contacted: "Contacted",
-	proposal_sent: "Proposal Sent",
+	quotation_sent: "Quotation Sent",
 	approved: "Approved",
+	in_progress: "In Progress",
+	completed: "Completed",
 	rejected: "Rejected",
 };
 
@@ -128,7 +130,7 @@ function statusLabel(status) {
 }
 
 function statusClass(status) {
-	return String(status || "pending").replace(/_/g, "-");
+	return String(status || "new").replace(/_/g, "-");
 }
 
 function formatDate(value) {
@@ -244,7 +246,7 @@ function renderDetail(item) {
 			<p>${escapeHtml(item.project_description)}</p>
 		</div>
 	`;
-	elements.detailStatus.value = item.status || "pending";
+	elements.detailStatus.value = item.status || "new";
 	elements.detailNotes.value = item.admin_notes || "";
 	elements.downloadAttachment.disabled = !item.attachment_url;
 }

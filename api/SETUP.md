@@ -89,10 +89,10 @@ action sends it as `Authorization: Bearer <token>`.
 | GET  | `/api/jobs` (`?type=`, `?department=`, `?search=`, `?admin=1`) | public / admin(`admin=1`) |
 | GET  | `/api/jobs/{id}` | public |
 | POST/PUT/DELETE | `/api/jobs` `/api/jobs/{id}` | admin |
-| POST | `/api/apply` (multipart, CV upload) | public |
-| GET  | `/api/applications` | admin |
+| POST | `/api/apply` or `/api/applications` (multipart, CV upload) | public |
+| GET/PUT/DELETE | `/api/applications`, `/api/applications/{id}` | admin |
 | PATCH| `/api/applications/{id}/status` | admin |
-| GET  | `/api/applications/{id}/resume` | public link |
+| GET  | `/api/applications/{id}/resume` | admin |
 | GET/POST/PUT/DELETE | `/api/news` … | GET public, writes admin |
 | GET/POST | `/api/partner-applications`, `/api/project-proposals` | POST public, list admin |
 | POST | `/api/project-hiring/apply` (multipart) | public |

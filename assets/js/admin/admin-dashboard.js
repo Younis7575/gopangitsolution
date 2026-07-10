@@ -201,7 +201,7 @@ async function loadDashboard() {
 
 	const [jobs, apps, news, partners, proposals, projects, bids] = await Promise.all([
 		fetchData("/api/jobs?admin=1"),
-		fetchData("/api/applications"),
+		fetchData("/api/applications?limit=100"),
 		fetchData("/api/news"),
 		fetchData("/api/partner-applications"),
 		fetchData("/api/project-proposals"),
