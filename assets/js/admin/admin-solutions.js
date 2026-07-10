@@ -406,8 +406,14 @@ if (questionForm) {
                 fd.append("error_message", el("q-error").value.trim());
                 fd.append("code_snippet", el("q-code").value.trim());
                 fd.append("tags", el("q-tags").value.trim());
-                await fetchJson("/api/solutions?admin=1", { method: "POST", body: fd });
-                showMessage("success", "Question published.");
+                const created = await fetchJson("/api/solutions?admin=1", { method: "POST", body: fd });
+                const createdStatus = created.data && created.data.status;
+                if (createdStatus === "approved") {
+                    showMessage("success", "Question published and is now live on the site.");
+                } else {
+                    /* Old backend (or non-admin mode) saved it as pending — tell the truth. */
+                    showMessage("error", "Saved as \"" + (createdStatus || "pending") + "\". It will NOT appear on the site until approved. Open it below and click \"Approve / Publish\" (and re-deploy api/index.php so admin posts publish automatically).");
+                }
             }
             resetQuestionForm();
             loadQuestions();
