@@ -47,6 +47,7 @@ jobs:
             --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
             --exclude "api/uploads/" \
+            --exclude "api/data/" \
             --exclude-glob "api/config.local.php" \
             . .
 

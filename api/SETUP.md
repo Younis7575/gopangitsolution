@@ -5,6 +5,11 @@ news, partners, proposals, project hiring, admin login) now runs from **your own
 cPanel server** using PHP + MySQL. The frontend calls the API on the **same
 domain** at `/api/...`, so there is no external service to configure.
 
+If no cPanel MySQL database is configured, the API automatically creates a
+protected SQLite database at `api/data/gopang.sqlite`. This zero-configuration
+fallback supports the complete admin, projects, bids, applications and proposal
+flows; visitors never need an account.
+
 ## 1. Create the MySQL database (cPanel)
 
 1. cPanel → **MySQL Databases**.

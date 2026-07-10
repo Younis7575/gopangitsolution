@@ -30,6 +30,9 @@ if (!defined('DB_NAME'))    define('DB_NAME', getenv('DB_NAME') ?: 'gopang_jobs'
 if (!defined('DB_USER'))    define('DB_USER', getenv('DB_USER') ?: 'root');
 if (!defined('DB_PASS'))    define('DB_PASS', getenv('DB_PASS') ?: '');
 if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');
+/* Zero-configuration fallback when a cPanel MySQL database is not provisioned. */
+if (!defined('SQLITE_FALLBACK')) define('SQLITE_FALLBACK', true);
+if (!defined('SQLITE_PATH')) define('SQLITE_PATH', __DIR__ . '/data/gopang.sqlite');
 
 /* ------------------------------------------------------------------ */
 /* Admin login (server-side auth)                                     */

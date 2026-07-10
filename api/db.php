@@ -15,18 +15,54 @@ function db()
         return $pdo;
     }
 
-    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
-    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+    $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
-    ]);
+    ];
+
+    try {
+        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+        $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+    } catch (Throwable $mysqlError) {
+        if (!SQLITE_FALLBACK || !in_array('sqlite', PDO::getAvailableDrivers(), true)) {
+            throw $mysqlError;
+        }
+
+        $directory = dirname(SQLITE_PATH);
+        if (!is_dir($directory) && !mkdir($directory, 0750, true) && !is_dir($directory)) {
+            throw new RuntimeException('Unable to create the local database directory');
+        }
+        $sqliteOptions = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
+        $pdo = new PDO('sqlite:' . SQLITE_PATH, null, null, $sqliteOptions);
+        $pdo->exec('PRAGMA journal_mode = WAL');
+        $pdo->exec('PRAGMA busy_timeout = 5000');
+        $pdo->exec('PRAGMA foreign_keys = ON');
+        @chmod(SQLITE_PATH, 0640);
+        error_log('MySQL is unavailable; using protected SQLite database storage.');
+    }
 
     return $pdo;
 }
 
+function is_sqlite()
+{
+    return db()->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+}
+
 function column_exists($table, $column)
 {
+    if (is_sqlite()) {
+        $safeTable = preg_replace('/[^a-z0-9_]/i', '', $table);
+        $stmt = db()->query("PRAGMA table_info(`{$safeTable}`)");
+        foreach ($stmt->fetchAll() as $field) {
+            if (strcasecmp((string) $field['name'], (string) $column) === 0) { return true; }
+        }
+        return false;
+    }
     $stmt = db()->prepare(
         'SELECT COUNT(*) FROM information_schema.columns
          WHERE table_schema = ? AND table_name = ? AND column_name = ?'
@@ -38,6 +74,9 @@ function column_exists($table, $column)
 function ensure_column($table, $column, $definition)
 {
     if (!column_exists($table, $column)) {
+        if (is_sqlite()) {
+            $definition = preg_replace('/\s+AFTER\s+`?[a-z0-9_]+`?/i', '', $definition);
+        }
         db()->exec("ALTER TABLE `$table` ADD COLUMN $column $definition");
     }
 }
@@ -51,11 +90,27 @@ function safely_ensure_column($table, $column, $definition)
     }
 }
 
+function safely_exec_schema($name, $sql)
+{
+    try {
+        if (is_sqlite()) {
+            $sql = preg_replace('/\bINT\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+            $sql = preg_replace('/,\s*INDEX\s*\([^)]*\)/i', '', $sql);
+            $sql = preg_replace('/\)\s*ENGINE\s*=\s*InnoDB\s+DEFAULT\s+CHARSET\s*=\s*utf8mb4\s*$/i', ')', trim($sql));
+        }
+        db()->exec($sql);
+        return true;
+    } catch (Throwable $e) {
+        error_log("Schema bootstrap failed for {$name}: " . $e->getMessage());
+        return false;
+    }
+}
+
 function init_schema()
 {
     $pdo = db();
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS jobs (
+    safely_exec_schema('jobs', "CREATE TABLE IF NOT EXISTS jobs (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(220) NOT NULL,
         company VARCHAR(180) NOT NULL DEFAULT 'Gopang IT Solution',
@@ -77,7 +132,7 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS applications (
+    safely_exec_schema('applications', "CREATE TABLE IF NOT EXISTS applications (
         id INT AUTO_INCREMENT PRIMARY KEY,
         job_id INT NOT NULL,
         full_name VARCHAR(180) NOT NULL,
@@ -103,7 +158,7 @@ function init_schema()
         INDEX (job_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS news (
+    safely_exec_schema('news', "CREATE TABLE IF NOT EXISTS news (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         slug VARCHAR(255) NOT NULL UNIQUE,
@@ -116,7 +171,7 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS partner_applications (
+    safely_exec_schema('partner_applications', "CREATE TABLE IF NOT EXISTS partner_applications (
         id INT AUTO_INCREMENT PRIMARY KEY,
         company VARCHAR(200) NOT NULL,
         contact_person VARCHAR(180) NOT NULL,
@@ -129,7 +184,7 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS project_proposals (
+    safely_exec_schema('project_proposals', "CREATE TABLE IF NOT EXISTS project_proposals (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(220) NOT NULL,
         description TEXT NOT NULL,
@@ -152,7 +207,7 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS project_hiring_requests (
+    safely_exec_schema('project_hiring_requests', "CREATE TABLE IF NOT EXISTS project_hiring_requests (
         id INT AUTO_INCREMENT PRIMARY KEY,
         full_name VARCHAR(180) NOT NULL,
         email VARCHAR(200) NOT NULL,
@@ -176,7 +231,7 @@ function init_schema()
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     /* Bidding marketplace: admin posts projects, freelancers bid (Upwork-style). */
-    $pdo->exec("CREATE TABLE IF NOT EXISTS bid_projects (
+    safely_exec_schema('bid_projects', "CREATE TABLE IF NOT EXISTS bid_projects (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(240) NOT NULL,
         category VARCHAR(120) NOT NULL,
@@ -193,7 +248,7 @@ function init_schema()
         updated_at TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $pdo->exec("CREATE TABLE IF NOT EXISTS project_bids (
+    safely_exec_schema('project_bids', "CREATE TABLE IF NOT EXISTS project_bids (
         id INT AUTO_INCREMENT PRIMARY KEY,
         project_id INT NOT NULL,
         full_name VARCHAR(180) NOT NULL,

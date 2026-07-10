@@ -1,0 +1,9 @@
+# Runtime data and server-only configuration
+api/config.local.php
+api/data/*.sqlite
+api/data/*.sqlite-shm
+api/data/*.sqlite-wal
+api/uploads/*
+!api/uploads/.htaccess
+!api/data/.htaccess
+
