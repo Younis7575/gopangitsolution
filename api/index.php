@@ -301,6 +301,131 @@ function validate_job($job)
     return null;
 }
 
+function normalize_solution_status($status)
+{
+    $status = trim((string) $status);
+    if ($status === '') {
+        return 'pending';
+    }
+    $status = strtolower($status);
+    $allowed = ['pending', 'approved', 'rejected'];
+    return in_array($status, $allowed, true) ? $status : 'pending';
+}
+
+function solution_sort_clause($sort)
+{
+    switch (trim((string) $sort)) {
+        case 'oldest':
+            return 'q.created_at ASC';
+        case 'most_viewed':
+            return 'q.views_count DESC';
+        case 'most_commented':
+            return 'q.comments_count DESC';
+        case 'unanswered':
+            return 'q.comments_count ASC';
+        case 'featured':
+            return 'q.is_pinned DESC, q.is_featured DESC, q.created_at DESC';
+        default:
+            return 'q.is_pinned DESC, q.is_featured DESC, q.created_at DESC';
+    }
+}
+
+function question_payload($body)
+{
+    $tags = trim((string) ($body['tags'] ?? ''));
+    $tagNames = [];
+    foreach (array_filter(array_map('trim', explode(',', $tags))) as $tag) {
+        if ($tag !== '') {
+            $tagNames[] = $tag;
+        }
+    }
+
+    return [
+        'title' => trim((string) ($body['title'] ?? '')),
+        'description' => trim((string) ($body['description'] ?? '')),
+        'short_description' => trim((string) ($body['short_description'] ?? '')) ?: mb_substr(trim((string) ($body['description'] ?? '')), 0, 500),
+        'category_id' => (int) ($body['category_id'] ?? 0),
+        'visitor_name' => trim((string) ($body['visitor_name'] ?? '')),
+        'visitor_email' => trim((string) ($body['visitor_email'] ?? '')),
+        'visitor_phone' => trim((string) ($body['visitor_phone'] ?? '')) ?: null,
+        'company_name' => trim((string) ($body['company_name'] ?? '')) ?: null,
+        'website_url' => trim((string) ($body['website_url'] ?? '')) ?: null,
+        'technologies' => trim((string) ($body['technologies'] ?? '')) ?: null,
+        'code_snippet' => trim((string) ($body['code_snippet'] ?? '')) ?: null,
+        'error_message' => trim((string) ($body['error_message'] ?? '')) ?: null,
+        'expected_result' => trim((string) ($body['expected_result'] ?? '')) ?: null,
+        'actual_result' => trim((string) ($body['actual_result'] ?? '')) ?: null,
+        'source' => trim((string) ($body['source'] ?? 'visitor')),
+        'slug' => trim((string) ($body['slug'] ?? '')),
+        'tags' => $tagNames,
+    ];
+}
+
+function validate_solution($question)
+{
+    if ($question['title'] === '') {
+        return 'title is required';
+    }
+    if ($question['description'] === '') {
+        return 'description is required';
+    }
+    if ($question['visitor_name'] === '') {
+        return 'visitor_name is required';
+    }
+    if (!is_valid_email($question['visitor_email'])) {
+        return 'A valid visitor_email is required';
+    }
+    if ($question['category_id'] <= 0) {
+        return 'category_id is required';
+    }
+    return null;
+}
+
+function insert_question_tag($questionId, $tagId)
+{
+    $pdo = db();
+    if (is_sqlite()) {
+        $stmt = $pdo->prepare('INSERT OR IGNORE INTO solutions_question_tags (question_id, tag_id) VALUES (?, ?)');
+    } else {
+        $stmt = $pdo->prepare('INSERT IGNORE INTO solutions_question_tags (question_id, tag_id) VALUES (?, ?)');
+    }
+    $stmt->execute([$questionId, $tagId]);
+}
+
+function ensure_solution_tags(array $tagNames)
+{
+    $pdo = db();
+    $tagIds = [];
+    foreach ($tagNames as $tagName) {
+        $name = trim((string) $tagName);
+        if ($name === '') {
+            continue;
+        }
+        $slug = slugify($name);
+        $stmt = $pdo->prepare('SELECT id FROM solutions_tags WHERE slug = ?');
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+        if ($row) {
+            $tagIds[] = (int) $row['id'];
+            $pdo->prepare('UPDATE solutions_tags SET usage_count = usage_count + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$row['id']]);
+            continue;
+        }
+        $stmt = $pdo->prepare('INSERT INTO solutions_tags (name, slug, is_active, usage_count) VALUES (?, ?, 1, 1)');
+        $stmt->execute([$name, $slug]);
+        $tagIds[] = (int) $pdo->lastInsertId();
+    }
+    return array_values(array_unique($tagIds));
+}
+
+function attach_question_tags($questionId, array $tagIds)
+{
+    $pdo = db();
+    $pdo->prepare('DELETE FROM solutions_question_tags WHERE question_id = ?')->execute([$questionId]);
+    foreach ($tagIds as $tagId) {
+        insert_question_tag($questionId, $tagId);
+    }
+}
+
 /* ================================================================== */
 /* Router                                                             */
 /* ================================================================== */
@@ -674,6 +799,317 @@ try {
             $pdo->prepare('DELETE FROM news WHERE id = ?')->execute([$newsId]);
             json_response(['success' => true, 'message' => 'News deleted successfully', 'data' => ['id' => $newsId]]);
         }
+    }
+
+    if ($method === 'GET' && $path === '/api/solutions/categories') {
+        $stmt = $pdo->query('SELECT id, name, slug, description, icon FROM solutions_categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC');
+        json_response(['success' => true, 'message' => 'Solution categories fetched successfully', 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'GET' && $path === '/api/solutions/tags') {
+        $stmt = $pdo->query('SELECT id, name, slug, usage_count FROM solutions_tags WHERE is_active = 1 ORDER BY usage_count DESC, name ASC');
+        json_response(['success' => true, 'message' => 'Solution tags fetched successfully', 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'GET' && $path === '/api/solutions') {
+        $includeAll = isset($_GET['admin']) && $_GET['admin'] === '1';
+        if ($includeAll) {
+            require_admin();
+        }
+
+        $page = max((int) ($_GET['page'] ?? 1), 1);
+        $limit = min(max((int) ($_GET['limit'] ?? 10), 1), 100);
+        $offset = ($page - 1) * $limit;
+
+        $where = ['q.deleted_at IS NULL'];
+        $params = [];
+        if (!$includeAll) {
+            $where[] = "q.status = 'approved'";
+        }
+
+        $search = trim((string) ($_GET['search'] ?? ''));
+        if ($search !== '') {
+            $where[] = '(q.title LIKE ? OR q.description LIKE ? OR q.short_description LIKE ?)';
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+
+        $category = trim((string) ($_GET['category'] ?? ''));
+        if ($category !== '') {
+            $where[] = 'c.slug = ?';
+            $params[] = $category;
+        }
+
+        $status = trim((string) ($_GET['status'] ?? ''));
+        if ($status === 'solved') {
+            $where[] = "q.solved_status = 'solved'";
+        } elseif ($status === 'unsolved') {
+            $where[] = "q.solved_status = 'unsolved'";
+        }
+
+        $tag = trim((string) ($_GET['tag'] ?? ''));
+        $joinTag = false;
+        if ($tag !== '') {
+            $joinTag = true;
+            $where[] = 't.slug = ?';
+            $params[] = $tag;
+        }
+
+        $joinSql = ' LEFT JOIN solutions_categories c ON c.id = q.category_id';
+        if ($joinTag) {
+            $joinSql .= ' INNER JOIN solutions_question_tags qt ON qt.question_id = q.id INNER JOIN solutions_tags t ON t.id = qt.tag_id';
+        }
+
+        $whereSql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+        $order = solution_sort_clause($_GET['sort'] ?? 'newest');
+
+        $countSql = 'SELECT COUNT(DISTINCT q.id) FROM solutions_questions q' . $joinSql . $whereSql;
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        $sql = 'SELECT q.*, c.name AS category_name, c.slug AS category_slug FROM solutions_questions q' . $joinSql . $whereSql . ' ORDER BY ' . $order . ' LIMIT ' . (int) $limit . ' OFFSET ' . (int) $offset;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $questions = $stmt->fetchAll();
+
+        if ($questions) {
+            $questionIds = array_map('intval', array_column($questions, 'id'));
+            $in = implode(',', array_fill(0, count($questionIds), '?'));
+            $tagStmt = $pdo->prepare('SELECT qt.question_id, t.name, t.slug FROM solutions_question_tags qt JOIN solutions_tags t ON t.id = qt.tag_id WHERE qt.question_id IN (' . $in . ') ORDER BY t.usage_count DESC, t.name ASC');
+            $tagStmt->execute($questionIds);
+            $tagRows = $tagStmt->fetchAll();
+            $tagsByQuestion = [];
+            foreach ($tagRows as $tagRow) {
+                $tagsByQuestion[$tagRow['question_id']][] = ['name' => $tagRow['name'], 'slug' => $tagRow['slug']];
+            }
+            foreach ($questions as &$question) {
+                $question['tags'] = $tagsByQuestion[$question['id']] ?? [];
+            }
+            unset($question);
+        }
+
+        json_response(['success' => true, 'message' => 'Solutions fetched successfully', 'data' => $questions, 'meta' => pagination_meta($page, $limit, $total)]);
+    }
+
+    if ($method === 'GET' && preg_match('#^/api/solutions/slug/(.+)$#', $path, $m)) {
+        $slug = urldecode($m[1]);
+        $includeAll = isset($_GET['admin']) && $_GET['admin'] === '1';
+        if ($includeAll) {
+            require_admin();
+        }
+        $sql = 'SELECT q.*, c.name AS category_name, c.slug AS category_slug FROM solutions_questions q LEFT JOIN solutions_categories c ON c.id = q.category_id WHERE q.slug = ? AND q.deleted_at IS NULL';
+        if (!$includeAll) {
+            $sql .= " AND q.status = 'approved'";
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+        if (!$row) { error_response('Solution not found', 404); }
+
+        if (!$includeAll) {
+            $pdo->prepare('UPDATE solutions_questions SET views_count = views_count + 1 WHERE id = ?')->execute([$row['id']]);
+            $row['views_count'] = (int) $row['views_count'] + 1;
+        }
+
+        $tagStmt = $pdo->prepare('SELECT t.name, t.slug FROM solutions_question_tags qt JOIN solutions_tags t ON t.id = qt.tag_id WHERE qt.question_id = ? ORDER BY t.usage_count DESC, t.name ASC');
+        $tagStmt->execute([$row['id']]);
+        $row['tags'] = $tagStmt->fetchAll();
+
+        json_response(['success' => true, 'message' => 'Solution fetched successfully', 'data' => $row]);
+    }
+
+    if ($method === 'GET' && preg_match('#^/api/solutions/(\d+)/attachment$#', $path, $m)) {
+        $questionId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT attachment_key, attachment_file_name, attachment_file_type FROM solutions_questions WHERE id = ? AND deleted_at IS NULL');
+        $stmt->execute([$questionId]);
+        $row = $stmt->fetch();
+        if (!$row || !$row['attachment_key']) {
+            error_response('Attachment not found', 404);
+        }
+        stream_upload($row['attachment_key'], $row['attachment_file_name'], $row['attachment_file_type']);
+    }
+
+    if ($method === 'POST' && $path === '/api/solutions') {
+        $honeypot = trim((string) ($_POST['hp_address'] ?? ''));
+        if ($honeypot !== '') {
+            error_response('Spam detected', 400);
+        }
+
+        $payload = question_payload($_POST);
+        $payload['slug'] = slugify($payload['title']);
+        if ($payload['slug'] === '') {
+            error_response('Unable to generate a valid slug from the title', 422);
+        }
+        $payload['status'] = 'pending';
+        $payload['source'] = 'visitor';
+
+        $validationError = validate_solution($payload);
+        if ($validationError) {
+            error_response($validationError, 400);
+        }
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM solutions_categories WHERE id = ? AND is_active = 1');
+        $stmt->execute([$payload['category_id']]);
+        if ((int) $stmt->fetchColumn() === 0) {
+            error_response('Selected category is invalid', 400);
+        }
+
+        $stored = store_upload('attachment', 'solutions', ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg', '.gif', '.txt', '.log'], [], MAX_ATTACHMENT_SIZE, false);
+        if (isset($stored['error'])) { error_response($stored['error'], 400); }
+        $attachment = $stored['value'];
+
+        $insert = $pdo->prepare('INSERT INTO solutions_questions (title, slug, description, short_description, category_id, visitor_name, visitor_email, visitor_phone, company_name, website_url, technologies, code_snippet, error_message, expected_result, actual_result, attachment_key, attachment_file_name, attachment_file_type, source, status, published_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+        $insert->execute([
+            $payload['title'], $payload['slug'], $payload['description'], $payload['short_description'], $payload['category_id'],
+            $payload['visitor_name'], $payload['visitor_email'], $payload['visitor_phone'], $payload['company_name'], $payload['website_url'],
+            $payload['technologies'], $payload['code_snippet'], $payload['error_message'], $payload['expected_result'], $payload['actual_result'],
+            $attachment['key'] ?? null, $attachment['fileName'] ?? null, $attachment['fileType'] ?? null, $payload['source'], $payload['status'], null,
+        ]);
+
+        $questionId = (int) $pdo->lastInsertId();
+        if ($payload['tags']) {
+            $tagIds = ensure_solution_tags($payload['tags']);
+            attach_question_tags($questionId, $tagIds);
+        }
+
+        $stmt = $pdo->prepare('SELECT q.*, c.name AS category_name, c.slug AS category_slug FROM solutions_questions q LEFT JOIN solutions_categories c ON c.id = q.category_id WHERE q.id = ?');
+        $stmt->execute([$questionId]);
+        $row = $stmt->fetch();
+        json_response(['success' => true, 'message' => 'Your question has been submitted and is pending approval', 'data' => $row], 201);
+    }
+
+    if (preg_match('#^/api/solutions/(\d+)$#', $path, $m)) {
+        $questionId = (int) $m[1];
+        require_admin();
+        $stmt = $pdo->prepare('SELECT q.*, c.name AS category_name, c.slug AS category_slug FROM solutions_questions q LEFT JOIN solutions_categories c ON c.id = q.category_id WHERE q.id = ?');
+        $stmt->execute([$questionId]);
+        $question = $stmt->fetch();
+        if (!$question) { error_response('Solution question not found', 404); }
+
+        if ($method === 'GET') {
+            $tagStmt = $pdo->prepare('SELECT t.name, t.slug FROM solutions_question_tags qt JOIN solutions_tags t ON t.id = qt.tag_id WHERE qt.question_id = ? ORDER BY t.name ASC');
+            $tagStmt->execute([$questionId]);
+            $question['tags'] = $tagStmt->fetchAll();
+            json_response(['success' => true, 'message' => 'Solution question fetched successfully', 'data' => $question]);
+        }
+
+        if ($method === 'PUT') {
+            $body = read_json_body();
+            if (!$body) { error_response('Invalid JSON body', 400); }
+            $payload = question_payload($body);
+            $payload['slug'] = slugify($payload['slug'] ?: $payload['title']);
+            $validationError = validate_solution($payload);
+            if ($validationError) {
+                error_response($validationError, 400);
+            }
+            $stmt = $pdo->prepare('UPDATE solutions_questions SET title=?, slug=?, description=?, short_description=?, category_id=?, visitor_name=?, visitor_email=?, visitor_phone=?, company_name=?, website_url=?, technologies=?, code_snippet=?, error_message=?, expected_result=?, actual_result=?, updated_at=CURRENT_TIMESTAMP WHERE id=?');
+            $stmt->execute([
+                $payload['title'], $payload['slug'], $payload['description'], $payload['short_description'], $payload['category_id'],
+                $payload['visitor_name'], $payload['visitor_email'], $payload['visitor_phone'], $payload['company_name'], $payload['website_url'],
+                $payload['technologies'], $payload['code_snippet'], $payload['error_message'], $payload['expected_result'], $payload['actual_result'],
+                $questionId,
+            ]);
+            if ($payload['tags']) {
+                $tagIds = ensure_solution_tags($payload['tags']);
+                attach_question_tags($questionId, $tagIds);
+            }
+            $stmt = $pdo->prepare('SELECT q.*, c.name AS category_name, c.slug AS category_slug FROM solutions_questions q LEFT JOIN solutions_categories c ON c.id = q.category_id WHERE q.id = ?');
+            $stmt->execute([$questionId]);
+            $updated = $stmt->fetch();
+            $tagStmt = $pdo->prepare('SELECT t.name, t.slug FROM solutions_question_tags qt JOIN solutions_tags t ON t.id = qt.tag_id WHERE qt.question_id = ? ORDER BY t.name ASC');
+            $tagStmt->execute([$questionId]);
+            $updated['tags'] = $tagStmt->fetchAll();
+            json_response(['success' => true, 'message' => 'Solution question updated successfully', 'data' => $updated]);
+        }
+
+        if ($method === 'PATCH' && isset($_GET['status'])) {
+            $status = normalize_solution_status($_GET['status']);
+            $pdo->prepare('UPDATE solutions_questions SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$status, $questionId]);
+            $stmt = $pdo->prepare('SELECT * FROM solutions_questions WHERE id = ?');
+            $stmt->execute([$questionId]);
+            json_response(['success' => true, 'message' => 'Solution question status updated successfully', 'data' => $stmt->fetch()]);
+        }
+
+        if ($method === 'DELETE') {
+            $pdo->prepare('UPDATE solutions_questions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$questionId]);
+            json_response(['success' => true, 'message' => 'Solution question deleted successfully', 'data' => ['id' => $questionId]]);
+        }
+    }
+
+    if ($method === 'GET' && preg_match('#^/api/solutions/(\d+)/comments$#', $path, $m)) {
+        $questionId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT id FROM solutions_questions WHERE id = ? AND deleted_at IS NULL');
+        $stmt->execute([$questionId]);
+        if (!$stmt->fetch()) { error_response('Solution question not found', 404); }
+        $stmt = $pdo->prepare('SELECT id, parent_id, visitor_name, comment, code_snippet, is_official_solution, is_accepted_solution, helpful_count, created_at FROM solutions_comments WHERE question_id = ? AND status = ? ORDER BY is_accepted_solution DESC, created_at ASC');
+        $stmt->execute([$questionId, 'approved']);
+        json_response(['success' => true, 'message' => 'Comments fetched successfully', 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'POST' && preg_match('#^/api/solutions/(\d+)/comments$#', $path, $m)) {
+        $questionId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT id FROM solutions_questions WHERE id = ? AND deleted_at IS NULL');
+        $stmt->execute([$questionId]);
+        if (!$stmt->fetch()) { error_response('Solution question not found', 404); }
+        $body = read_json_body();
+        if (!$body) { error_response('Invalid JSON body', 400); }
+        $comment = [
+            'visitor_name' => trim((string) ($body['visitor_name'] ?? '')),
+            'visitor_email' => trim((string) ($body['visitor_email'] ?? '')),
+            'comment' => trim((string) ($body['comment'] ?? '')),
+            'code_snippet' => trim((string) ($body['code_snippet'] ?? '')) ?: null,
+        ];
+        if ($comment['visitor_name'] === '' || !is_valid_email($comment['visitor_email']) || $comment['comment'] === '') {
+            error_response('visitor_name, visitor_email and comment are required', 400);
+        }
+        $status = 'pending';
+        $stmt = $pdo->prepare('INSERT INTO solutions_comments (question_id, visitor_name, visitor_email, comment, code_snippet, status) VALUES (?,?,?,?,?,?)');
+        $stmt->execute([$questionId, $comment['visitor_name'], $comment['visitor_email'], $comment['comment'], $comment['code_snippet'], $status]);
+        $commentId = (int) $pdo->lastInsertId();
+        $pdo->prepare('UPDATE solutions_questions SET comments_count = comments_count + 1 WHERE id = ?')->execute([$questionId]);
+        json_response(['success' => true, 'message' => 'Comment submitted for review', 'data' => ['id' => $commentId]], 201);
+    }
+
+    if ($method === 'PATCH' && preg_match('#^/api/solutions/comments/(\d+)/status$#', $path, $m)) {
+        require_admin();
+        $body = read_json_body();
+        if (!$body) { error_response('Invalid JSON body', 400); }
+        $status = normalize_solution_status($body['status'] ?? 'pending');
+        if (!in_array($status, ['pending', 'approved', 'rejected'], true)) {
+            error_response('Invalid comment status', 422);
+        }
+        $commentId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT id FROM solutions_comments WHERE id = ?');
+        $stmt->execute([$commentId]);
+        if (!$stmt->fetch()) { error_response('Comment not found', 404); }
+        $pdo->prepare('UPDATE solutions_comments SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$status, $commentId]);
+        $stmt = $pdo->prepare('SELECT * FROM solutions_comments WHERE id = ?');
+        $stmt->execute([$commentId]);
+        json_response(['success' => true, 'message' => 'Comment status updated successfully', 'data' => $stmt->fetch()]);
+    }
+
+    if ($method === 'PATCH' && preg_match('#^/api/solutions/comments/(\d+)/accept$#', $path, $m)) {
+        require_admin();
+        $commentId = (int) $m[1];
+        $stmt = $pdo->prepare('SELECT question_id FROM solutions_comments WHERE id = ?');
+        $stmt->execute([$commentId]);
+        $row = $stmt->fetch();
+        if (!$row) { error_response('Comment not found', 404); }
+        $questionId = (int) $row['question_id'];
+        $pdo->prepare('UPDATE solutions_comments SET is_accepted_solution = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$commentId]);
+        $pdo->prepare('UPDATE solutions_questions SET accepted_comment_id = ?, solved_status = ? WHERE id = ?')->execute([$commentId, 'solved', $questionId]);
+        $stmt = $pdo->prepare('SELECT * FROM solutions_comments WHERE id = ?');
+        $stmt->execute([$commentId]);
+        json_response(['success' => true, 'message' => 'Comment marked as accepted solution', 'data' => $stmt->fetch()]);
+    }
+
+    if ($method === 'GET' && $path === '/api/solutions/comments') {
+        require_admin();
+        $stmt = $pdo->query('SELECT * FROM solutions_comments ORDER BY created_at DESC');
+        json_response(['success' => true, 'message' => 'Solution comments fetched successfully', 'data' => $stmt->fetchAll()]);
     }
 
     /* ---- Partner applications ---- */

@@ -274,6 +274,58 @@ function init_schema()
         INDEX (project_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+    safely_exec_schema('solutions_categories', "CREATE TABLE IF NOT EXISTS solutions_categories (
+        id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(120) NOT NULL, slug VARCHAR(140) NOT NULL UNIQUE,
+        description TEXT NULL, icon VARCHAR(80) NULL, sort_order INT NOT NULL DEFAULT 0,
+        is_active INT NOT NULL DEFAULT 1, seo_title VARCHAR(220) NULL, meta_description VARCHAR(320) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_tags', "CREATE TABLE IF NOT EXISTS solutions_tags (
+        id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(80) NOT NULL, slug VARCHAR(100) NOT NULL UNIQUE,
+        is_active INT NOT NULL DEFAULT 1, usage_count INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_questions', "CREATE TABLE IF NOT EXISTS solutions_questions (
+        id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(220) NOT NULL, slug VARCHAR(250) NOT NULL UNIQUE,
+        description TEXT NOT NULL, short_description VARCHAR(500) NOT NULL, category_id INT NOT NULL,
+        visitor_name VARCHAR(180) NOT NULL, visitor_email VARCHAR(200) NOT NULL, visitor_phone VARCHAR(60) NULL,
+        company_name VARCHAR(200) NULL, website_url VARCHAR(400) NULL, technologies TEXT NULL,
+        code_snippet TEXT NULL, error_message TEXT NULL, expected_result TEXT NULL, actual_result TEXT NULL,
+        attachment_key VARCHAR(400) NULL, attachment_file_name VARCHAR(255) NULL, attachment_file_type VARCHAR(120) NULL,
+        source VARCHAR(20) NOT NULL DEFAULT 'visitor', status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        solved_status VARCHAR(20) NOT NULL DEFAULT 'unsolved', accepted_comment_id INT NULL,
+        is_featured INT NOT NULL DEFAULT 0, is_pinned INT NOT NULL DEFAULT 0, allow_comments INT NOT NULL DEFAULT 1,
+        views_count INT NOT NULL DEFAULT 0, comments_count INT NOT NULL DEFAULT 0, helpful_count INT NOT NULL DEFAULT 0,
+        seo_title VARCHAR(220) NULL, meta_description VARCHAR(320) NULL, published_at TIMESTAMP NULL DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL, deleted_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_question_tags', "CREATE TABLE IF NOT EXISTS solutions_question_tags (
+        question_id INT NOT NULL, tag_id INT NOT NULL, PRIMARY KEY (question_id, tag_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_comments', "CREATE TABLE IF NOT EXISTS solutions_comments (
+        id INT AUTO_INCREMENT PRIMARY KEY, question_id INT NOT NULL, parent_id INT NULL,
+        visitor_name VARCHAR(180) NOT NULL, visitor_email VARCHAR(200) NOT NULL, comment TEXT NOT NULL,
+        code_snippet TEXT NULL, attachment_key VARCHAR(400) NULL, attachment_file_name VARCHAR(255) NULL,
+        attachment_file_type VARCHAR(120) NULL, status VARCHAR(20) NOT NULL DEFAULT 'pending', is_admin INT NOT NULL DEFAULT 0,
+        is_official_solution INT NOT NULL DEFAULT 0, is_accepted_solution INT NOT NULL DEFAULT 0,
+        is_pinned INT NOT NULL DEFAULT 0, helpful_count INT NOT NULL DEFAULT 0, report_count INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL, deleted_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_comment_votes', "CREATE TABLE IF NOT EXISTS solutions_comment_votes (
+        id INT AUTO_INCREMENT PRIMARY KEY, comment_id INT NOT NULL, visitor_identifier VARCHAR(64) NOT NULL,
+        vote_type VARCHAR(20) NOT NULL DEFAULT 'helpful', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (comment_id, visitor_identifier, vote_type)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_views', "CREATE TABLE IF NOT EXISTS solutions_views (
+        id INT AUTO_INCREMENT PRIMARY KEY, question_id INT NOT NULL, visitor_identifier VARCHAR(64) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE (question_id, visitor_identifier)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    safely_exec_schema('solutions_reports', "CREATE TABLE IF NOT EXISTS solutions_reports (
+        id INT AUTO_INCREMENT PRIMARY KEY, question_id INT NULL, comment_id INT NULL, reporter_name VARCHAR(180) NOT NULL,
+        reporter_email VARCHAR(200) NOT NULL, reason VARCHAR(160) NOT NULL, description TEXT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, reviewed_at TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     /* Backfill for older installs. */
     safely_ensure_column('jobs', 'department', 'VARCHAR(120) NULL AFTER company');
     safely_ensure_column('applications', 'admin_notes', 'TEXT NULL AFTER status');
@@ -329,6 +381,19 @@ function init_schema()
     } catch (Throwable $e) {
         error_log('Optional sample data seed failed: ' . $e->getMessage());
     }
+
+    $categoryCount = (int) $pdo->query('SELECT COUNT(*) FROM solutions_categories')->fetchColumn();
+    if ($categoryCount === 0) {
+        $categories = ['Web Development','Mobile App Development','Flutter','Backend Development','APIs','Database','UI/UX','DevOps','Cloud','Cybersecurity','General Technology'];
+        $stmt = $pdo->prepare('INSERT INTO solutions_categories (name,slug,sort_order,is_active) VALUES (?,?,?,1)');
+        foreach ($categories as $position => $name) { $stmt->execute([$name, slugify_db($name), $position + 1]); }
+    }
+}
+
+function slugify_db($value)
+{
+    $value = strtolower(trim((string) $value));
+    return trim(preg_replace('/[^a-z0-9]+/', '-', $value), '-');
 }
 
 function seed_sample_data()
