@@ -1,274 +1,94 @@
-/**
- * Public technology-news listing.
- * Consumes GET /api/news/technology (merged company + external NewsAPI feed).
- * The NewsAPI key lives ONLY on the server; this file never sees it.
- */
+/** Public news listing powered only by NewsData.io. */
 (function () {
 	"use strict";
 
-	var API_BASE_URL = window.JOB_API_BASE_URL || localStorage.getItem("JOB_API_BASE_URL") || "";
+	var API_URL = "https://newsdata.io/api/1/latest";
+	var API_KEY = "pub_9c9bf29845024ac7bbd61fa16844c489";
 	var PLACEHOLDER = "/assets/img/blog/p1.jpg";
-	var PAGE_SIZE = 9;
-	var SEARCH_DEBOUNCE = 450;
-
 	var listEl = document.getElementById("news-list");
 	var searchEl = document.getElementById("news-search");
 	var sortEl = document.getElementById("news-sort");
 	var loadMoreEl = document.getElementById("news-load-more");
 	var loadMoreWrap = document.getElementById("news-load-more-wrap");
 	var countEl = document.getElementById("news-result-count");
+	var articles = [];
+	var nextPage = null;
+	var loading = false;
 
-	if (!listEl) {
-		return;
-	}
-
-	var state = {
-		page: 1,
-		search: "",
-		sort: "latest",
-		loading: false,
-		hasNext: false,
-		total: 0,
-		requestSeq: 0,
-	};
-	var debounceTimer = null;
+	if (!listEl) return;
 
 	function escapeHtml(value) {
-		return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
-			return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char];
+		return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+			return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c];
 		});
 	}
 
-	function escapeAttr(value) {
-		return escapeHtml(value).replace(/`/g, "&#096;");
+	function validHttpUrl(value) {
+		try { var url = new URL(value); return url.protocol === "http:" || url.protocol === "https:"; }
+		catch (error) { return false; }
 	}
 
 	function formatDate(value) {
-		if (!value) {
-			return "";
-		}
-		var d = new Date(value);
-		if (isNaN(d.getTime())) {
-			return "";
-		}
-		return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+		if (!value) return "";
+		var date = new Date(String(value).replace(" ", "T") + (String(value).indexOf("Z") < 0 ? "Z" : ""));
+		return isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 	}
 
-	function skeletonMarkup(count) {
-		var cards = "";
-		for (var i = 0; i < count; i++) {
-			cards +=
-				'<article class="gis-news-card gis-news-skeleton" aria-hidden="true">' +
-				'<div class="gis-news-card-image gis-skel"></div>' +
-				'<div class="gis-news-card-body">' +
-				'<div class="gis-skel gis-skel-line" style="width:40%"></div>' +
-				'<div class="gis-skel gis-skel-line gis-skel-title"></div>' +
-				'<div class="gis-skel gis-skel-line"></div>' +
-				'<div class="gis-skel gis-skel-line" style="width:80%"></div>' +
-				'<div class="gis-skel gis-skel-btn"></div>' +
-				"</div></article>";
-		}
-		return cards;
+	function card(item) {
+		var link = validHttpUrl(item.link) ? item.link : "#";
+		var image = validHttpUrl(item.image_url) ? item.image_url : PLACEHOLDER;
+		var category = Array.isArray(item.category) && item.category.length ? item.category[0] : "Latest";
+		var author = Array.isArray(item.creator) ? item.creator.join(", ") : (item.creator || "");
+		return '<article class="gis-news-card"><div class="gis-news-card-image">' +
+			'<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(item.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\';">' +
+			'<span class="gis-news-badge">' + escapeHtml(category) + '</span></div><div class="gis-news-card-body">' +
+			'<div class="gis-news-flags"><span class="gis-news-flag external"><i class="fas fa-globe"></i> News API</span></div>' +
+			'<h2>' + escapeHtml(item.title || "Untitled article") + '</h2><p>' + escapeHtml(item.description || "") + '</p>' +
+			'<div class="gis-news-meta"><span>' + escapeHtml(item.source_name || item.source_id || "News") + '</span>' +
+			(author ? '<span>' + escapeHtml(author) + '</span>' : '') + '<span>' + escapeHtml(formatDate(item.pubDate)) + '</span></div>' +
+			'<a href="' + escapeHtml(link) + '" class="theme-btn gis-news-readmore" target="_blank" rel="noopener noreferrer">Read More <i class="fas fa-arrow-up-right-from-square"></i></a></div></article>';
 	}
 
-	function cardMarkup(item) {
-		var isExternal = !!item.isExternal;
-		var image = item.imageUrl || PLACEHOLDER;
-		var href = isExternal
-			? "/news-external?id=" + encodeURIComponent(item.id)
-			: "/news-detail?slug=" + encodeURIComponent(item.slug);
-		var sourceLabelClass = isExternal ? "gis-news-flag external" : "gis-news-flag company";
-		var readTime = item.readingTime ? item.readingTime + " min read" : "";
-		var authorBit = item.author ? "<span>" + escapeHtml(item.author) + "</span>" : "";
-
-		return (
-			'<article class="gis-news-card">' +
-			'<div class="gis-news-card-image">' +
-			'<img src="' + escapeAttr(image) + '" alt="' + escapeAttr(item.title) + '" loading="lazy" ' +
-			"onerror=\"this.onerror=null;this.src='" + PLACEHOLDER + "';\">" +
-			'<span class="gis-news-badge">Technology</span>' +
-			"</div>" +
-			'<div class="gis-news-card-body">' +
-			'<div class="gis-news-flags">' +
-			'<span class="' + sourceLabelClass + '">' +
-			(isExternal ? '<i class="fas fa-globe"></i> ' : '<i class="fas fa-building"></i> ') +
-			escapeHtml(item.sourceLabel || (isExternal ? "External Technology News" : "Company News")) +
-			"</span>" +
-			"</div>" +
-			"<h2>" + escapeHtml(item.title) + "</h2>" +
-			"<p>" + escapeHtml(item.description || "") + "</p>" +
-			'<div class="gis-news-meta">' +
-			"<span>" + escapeHtml(item.sourceName || "") + "</span>" +
-			authorBit +
-			"<span>" + escapeHtml(formatDate(item.publishedAt)) + "</span>" +
-			(readTime ? "<span>" + escapeHtml(readTime) + "</span>" : "") +
-			"</div>" +
-			'<a href="' + escapeAttr(href) + '" class="theme-btn gis-news-readmore"' +
-			(isExternal ? "" : "") +
-			">Read More" +
-			(isExternal ? ' <i class="fas fa-arrow-up-right-from-square"></i>' : ' <i class="fas fa-arrow-right"></i>') +
-			"</a>" +
-			"</div></article>"
-		);
-	}
-
-	function renderEmpty() {
-		listEl.innerHTML =
-			'<div class="gis-news-empty"><i class="fas fa-newspaper"></i><h3>No technology news found.</h3>' +
-			"<p>" + (state.search ? "Try a different search term." : "Please check back soon.") + "</p>" +
-			(state.search ? '<button type="button" class="theme-btn" id="news-clear-search">Clear Search</button>' : "") +
-			"</div>";
-		var clearBtn = document.getElementById("news-clear-search");
-		if (clearBtn) {
-			clearBtn.addEventListener("click", function () {
-				if (searchEl) {
-					searchEl.value = "";
-				}
-				state.search = "";
-				reload();
-			});
-		}
-	}
-
-	function renderError(message) {
-		listEl.innerHTML =
-			'<div class="gis-news-empty gis-news-error"><i class="fas fa-triangle-exclamation"></i>' +
-			"<h3>Unable to load news.</h3><p>" + escapeHtml(message || "Something went wrong.") + "</p>" +
-			'<button type="button" class="theme-btn" id="news-retry">Retry</button></div>';
-		var retry = document.getElementById("news-retry");
-		if (retry) {
-			retry.addEventListener("click", reload);
-		}
-	}
-
-	function updateCount() {
-		if (!countEl) {
-			return;
-		}
-		if (state.total > 0) {
-			countEl.textContent = state.total + (state.total === 1 ? " article" : " articles");
-		} else {
-			countEl.textContent = "";
-		}
-	}
-
-	function toggleLoadMore() {
-		if (!loadMoreWrap) {
-			return;
-		}
-		loadMoreWrap.style.display = state.hasNext ? "" : "none";
-		if (loadMoreEl) {
-			loadMoreEl.disabled = state.loading;
-			loadMoreEl.textContent = state.loading ? "Loading..." : "Load More Articles";
-		}
-	}
-
-	function buildUrl() {
-		var params = new URLSearchParams();
-		params.set("page", String(state.page));
-		params.set("pageSize", String(PAGE_SIZE));
-		params.set("sort", state.sort);
-		if (state.search) {
-			params.set("search", state.search);
-		}
-		return API_BASE_URL + "/api/news/technology?" + params.toString();
-	}
-
-	function fetchFeed(append) {
-		if (state.loading) {
-			return;
-		}
-		state.loading = true;
-		var seq = ++state.requestSeq;
-
-		if (!append) {
-			listEl.innerHTML = skeletonMarkup(PAGE_SIZE);
-		} else {
-			toggleLoadMore();
-		}
-
-		fetch(buildUrl(), { headers: { Accept: "application/json" } })
-			.then(function (response) {
-				return response.json().then(function (body) {
-					return { ok: response.ok, body: body };
-				});
-			})
-			.then(function (result) {
-				if (seq !== state.requestSeq) {
-					return; // a newer request superseded this one
-				}
-				state.loading = false;
-				var body = result.body || {};
-				if (!result.ok || body.success === false) {
-					throw new Error(body.message || "Unable to load news.");
-				}
-				var items = Array.isArray(body.data) ? body.data : [];
-				var pagination = body.pagination || {};
-				state.hasNext = !!pagination.hasNextPage;
-				state.total = pagination.totalResults || items.length;
-
-				if (!append) {
-					if (items.length === 0) {
-						renderEmpty();
-						toggleLoadMore();
-						updateCount();
-						return;
-					}
-					listEl.innerHTML = items.map(cardMarkup).join("");
-				} else {
-					listEl.insertAdjacentHTML("beforeend", items.map(cardMarkup).join(""));
-				}
-				updateCount();
-				toggleLoadMore();
-			})
-			.catch(function (error) {
-				if (seq !== state.requestSeq) {
-					return;
-				}
-				state.loading = false;
-				if (!append) {
-					renderError(error.message);
-				}
-				state.hasNext = false;
-				toggleLoadMore();
-			});
-	}
-
-	function reload() {
-		state.page = 1;
-		fetchFeed(false);
-	}
-
-	if (searchEl) {
-		searchEl.addEventListener("input", function () {
-			window.clearTimeout(debounceTimer);
-			var value = searchEl.value.trim();
-			debounceTimer = window.setTimeout(function () {
-				if (value === state.search) {
-					return;
-				}
-				state.search = value;
-				reload();
-			}, SEARCH_DEBOUNCE);
+	function visibleArticles() {
+		var query = searchEl ? searchEl.value.trim().toLowerCase() : "";
+		var result = articles.filter(function (item) {
+			return !query || [item.title, item.description, item.source_name].join(" ").toLowerCase().indexOf(query) !== -1;
 		});
-	}
-
-	if (sortEl) {
-		sortEl.addEventListener("change", function () {
-			state.sort = sortEl.value === "oldest" ? "oldest" : "latest";
-			reload();
+		result.sort(function (a, b) {
+			var difference = new Date(b.pubDate || 0) - new Date(a.pubDate || 0);
+			return sortEl && sortEl.value === "oldest" ? -difference : difference;
 		});
+		return result;
 	}
 
-	if (loadMoreEl) {
-		loadMoreEl.addEventListener("click", function () {
-			if (state.loading || !state.hasNext) {
-				return;
-			}
-			state.page += 1;
-			fetchFeed(true);
-		});
+	function render() {
+		var items = visibleArticles();
+		listEl.innerHTML = items.length ? items.map(card).join("") : '<div class="gis-news-empty"><i class="fas fa-newspaper"></i><h3>No news found.</h3><p>Try a different search term.</p></div>';
+		if (countEl) countEl.textContent = items.length + (items.length === 1 ? " article" : " articles");
+		if (loadMoreWrap) loadMoreWrap.style.display = nextPage ? "" : "none";
 	}
 
-	reload();
+	function load(append) {
+		if (loading) return;
+		loading = true;
+		if (!append) listEl.innerHTML = '<div class="gis-news-loading"><p>Loading latest news...</p></div>';
+		if (loadMoreEl) { loadMoreEl.disabled = true; loadMoreEl.textContent = "Loading..."; }
+		var url = API_URL + "?apikey=" + encodeURIComponent(API_KEY) + (append && nextPage ? "&page=" + encodeURIComponent(nextPage) : "");
+		fetch(url, { headers: { Accept: "application/json" } }).then(function (response) {
+			return response.json().then(function (body) { if (!response.ok || body.status !== "success") throw new Error(body.results && body.results.message || body.message || "Unable to load news."); return body; });
+		}).then(function (body) {
+			var incoming = Array.isArray(body.results) ? body.results : [];
+			articles = append ? articles.concat(incoming.filter(function (item) { return !articles.some(function (old) { return old.article_id === item.article_id; }); })) : incoming;
+			nextPage = body.nextPage || null;
+			render();
+		}).catch(function (error) {
+			if (!append) listEl.innerHTML = '<div class="gis-news-empty gis-news-error"><h3>Unable to load news.</h3><p>' + escapeHtml(error.message) + '</p><button class="theme-btn" id="news-retry">Retry</button></div>';
+			var retry = document.getElementById("news-retry"); if (retry) retry.onclick = function () { load(false); };
+		}).finally(function () { loading = false; if (loadMoreEl) { loadMoreEl.disabled = false; loadMoreEl.textContent = "Load More Articles"; } });
+	}
+
+	if (searchEl) searchEl.addEventListener("input", render);
+	if (sortEl) sortEl.addEventListener("change", render);
+	if (loadMoreEl) loadMoreEl.addEventListener("click", function () { load(true); });
+	load(false);
 })();
