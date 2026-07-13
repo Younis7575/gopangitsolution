@@ -99,6 +99,15 @@
         return '<div><dt>' + esc(label) + '</dt><dd>' + val + '</dd></div>';
     }
 
+    function whatsappRow(a) {
+        var raw = (a.fields && (a.fields.whatsapp_number || a.fields.whatsapp || a.fields.whatsapp_no)) || a.whatsapp_number;
+        if (!raw) return "";
+        var digits = String(raw).replace(/[^0-9]/g, "");
+        var href = "https://wa.me/" + digits;
+        return '<div><dt>WhatsApp</dt><dd><a href="' + esc(href) + '" target="_blank" rel="noopener" style="color:#12b76a">' +
+            '<i class="fab fa-whatsapp" aria-hidden="true"></i> ' + esc(raw) + '</a></dd></div>';
+    }
+
     function section(title, icon, innerRows) {
         innerRows = innerRows.filter(Boolean).join("");
         if (!innerRows) return "";
@@ -144,7 +153,7 @@
 
     function renderExtraFields(fields) {
         if (!fields || typeof fields !== "object") return "";
-        var skip = { full_name: 1, email: 1, phone: 1, country: 1, city: 1, applicant_type: 1, current_designation: 1, total_experience: 1, relevant_experience: 1, expected_salary_or_budget: 1, availability: 1, university: 1, degree: 1, semester: 1, company_name: 1, website: 1, linkedin_url: 1, portfolio_url: 1, cover_letter: 1, proposal: 1, agreement: 1 };
+        var skip = { full_name: 1, email: 1, phone: 1, country: 1, city: 1, applicant_type: 1, current_designation: 1, total_experience: 1, relevant_experience: 1, expected_salary_or_budget: 1, availability: 1, university: 1, degree: 1, semester: 1, company_name: 1, website: 1, linkedin_url: 1, portfolio_url: 1, cover_letter: 1, proposal: 1, agreement: 1, whatsapp_number: 1, whatsapp: 1, whatsapp_no: 1 };
         var rows = Object.keys(fields).filter(function (k) { return !skip[k] && fields[k] !== "" && fields[k] != null; })
             .map(function (k) { return row(pretty(k), fields[k]); });
         return section("Additional Details", "fa-list", rows);
@@ -165,6 +174,7 @@
             row("Full name", a.applicant_name),
             row("Email", a.email),
             row("Phone", a.phone),
+            whatsappRow(a),
             row("Applicant type", a.applicant_type && pretty(a.applicant_type)),
             row("City", a.city),
             row("Country", a.country)
