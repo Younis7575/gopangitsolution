@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Applicants | Gopang IT Solution Admin</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-apply.css?v=1">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/jobs" class="admin-link">View Careers</a>
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SHARED ADMIN SIDEBAR -->
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-apply"><i class="fal fa-layer-group" aria-hidden="true"></i> Opportunities</a>
+            <a href="/admin-applicants" class="active"><i class="fal fa-file-user" aria-hidden="true"></i> Applicants</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
+            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Recruitment</span>
+                <h1>Applicants</h1>
+                <p>Every person who applied — across jobs, internships, partnerships, projects and project-based hiring. Click any row to see their full submission and download their CV.</p>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <div id="toast" class="aa-toast is-hidden" role="alert"></div>
+
+                <section class="admin-panel">
+                    <div class="aa-panel-tools">
+                        <div class="admin-panel-heading" style="margin:0;">
+                            <div>
+                                <span class="admin-kicker">Inbox</span>
+                                <h2>All Applications</h2>
+                            </div>
+                        </div>
+                        <span class="aa-count-pill" id="app-count">0 applicants</span>
+                    </div>
+
+                    <form id="app-filters" class="aa-filters">
+                        <label>Search
+                            <input name="search" type="search" placeholder="Name, email or reference">
+                        </label>
+                        <label>Category
+                            <select name="opportunity_category">
+                                <option value="">All categories</option>
+                                <option value="job">Jobs</option>
+                                <option value="internship">Internships</option>
+                                <option value="partnership">Partnerships</option>
+                                <option value="project">Projects</option>
+                                <option value="project_based_hiring">Project-Based Hiring</option>
+                            </select>
+                        </label>
+                        <label>Status
+                            <select name="status">
+                                <option value="">All statuses</option>
+                                <option value="new">New</option>
+                                <option value="under_review">Under Review</option>
+                                <option value="shortlisted">Shortlisted</option>
+                                <option value="interview_scheduled">Interview Scheduled</option>
+                                <option value="approved">Approved</option>
+                                <option value="selected">Selected</option>
+                                <option value="hired">Hired</option>
+                                <option value="awarded">Awarded</option>
+                                <option value="on_hold">On Hold</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </label>
+                        <div class="aa-filter-actions">
+                            <button type="submit" class="theme-btn">Filter</button>
+                            <button type="button" id="clear-filters" class="aa-btn-secondary">Clear</button>
+                        </div>
+                    </form>
+
+                    <div id="app-loading" class="admin-loading">Loading applicants...</div>
+                    <div class="admin-table-wrap">
+                        <table class="aa-table" id="app-table" hidden>
+                            <thead>
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Opportunity</th>
+                                    <th>Category</th>
+                                    <th>CV</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody id="app-list"></tbody>
+                        </table>
+                    </div>
+                    <div id="app-empty" class="admin-empty" hidden>No applicants match your filters yet.</div>
+
+                    <div class="admin-pagination" id="pagination" hidden>
+                        <button type="button" id="prev-page" class="admin-ghost-btn">&larr; Prev</button>
+                        <span id="page-info">Page 1</span>
+                        <button type="button" id="next-page" class="admin-ghost-btn">Next &rarr;</button>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- APPLICANT DETAIL DRAWER -->
+    <div id="drawer" class="aa-drawer" aria-hidden="true">
+        <div class="aa-drawer-backdrop" data-drawer-close></div>
+        <aside class="aa-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-name">
+            <div class="aa-drawer-head">
+                <div>
+                    <span class="aa-ref" id="drawer-ref">—</span>
+                    <h2 id="drawer-name">Applicant</h2>
+                    <div class="aa-drawer-sub" id="drawer-opp">—</div>
+                </div>
+                <button type="button" class="aa-drawer-close" data-drawer-close aria-label="Close">&times;</button>
+            </div>
+            <div class="aa-drawer-body" id="drawer-body">
+                <!-- filled by JS -->
+            </div>
+        </aside>
+    </div>
+
+    <script src="/assets/js/admin/admin-applicants.js?v=1" defer></script>
+</body>
+
+</html>

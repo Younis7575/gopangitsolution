@@ -1,5 +1,187 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply Management | Admin</title><link rel="icon" href="/assets/img/favicon.png"><link rel="stylesheet" href="/assets/css/bootstrap.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="/assets/css/admin/admin-jobs.css"><link rel="stylesheet" href="/assets/css/pages/opportunities.css"></head><body class="admin-jobs-page"><header class="opp-header"><a href="/admin-dashboard" class="opp-logo"><img src="/assets/img/logo.svg" alt="Gopang IT Solution"></a><nav><a href="/admin-dashboard">Dashboard</a><a href="/admin-apply">Apply Management</a><button id="logout" class="admin-ghost-btn">Logout</button></nav></header><main class="opp-shell"><div class="admin-page-heading"><div><span class="admin-kicker">Admin</span><h1>Apply Management</h1><p>Manage all five opportunity categories and their applications.</p></div><button id="new-post" class="theme-btn">Add opportunity</button></div><div id="admin-message" class="opp-message" role="alert"></div>
-<section class="admin-panel"><div class="admin-panel-heading"><h2>Opportunities</h2></div><form id="post-filters" class="opp-filters"><label>Search<input name="search" type="search"></label><label>Category<select name="category"><option value="">All categories</option><option value="job">Job Posts</option><option value="internship">Internship Posts</option><option value="partnership">Partnership Opportunities</option><option value="project">Project Opportunities</option><option value="project_based_hiring">Project Based Hiring</option></select></label><label>Status<select name="status"><option value="">All statuses</option><option>draft</option><option>published</option><option>inactive</option><option>closed</option><option>archived</option></select></label><button>Filter</button></form><div id="post-list" class="admin-card-list"></div></section>
-<section class="admin-panel"><div class="admin-panel-heading"><h2>Applications</h2></div><form id="app-filters" class="opp-filters"><label>Search<input name="search" type="search" placeholder="Name, email, reference"></label><label>Category<select name="opportunity_category"><option value="">All categories</option><option value="job">Jobs</option><option value="internship">Internships</option><option value="partnership">Partners</option><option value="project">Projects</option><option value="project_based_hiring">Project Hiring</option></select></label><label>Status<select name="status"><option value="">All statuses</option><option value="new">New</option><option value="under_review">Under Review</option><option value="shortlisted">Shortlisted</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="on_hold">On Hold</option><option value="awarded">Awarded</option></select></label><button>Filter</button></form><div class="table-responsive"><table class="admin-table"><thead><tr><th>Reference</th><th>Applicant</th><th>Opportunity</th><th>Category</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead><tbody id="app-list"></tbody></table></div></section></main>
-<dialog id="post-dialog"><form id="post-form" class="opp-apply"><input type="hidden" name="id"><h2 id="post-form-title">Add opportunity</h2><div class="opp-form-grid"><label>Category *<select name="category" required><option value="job">Job</option><option value="internship">Internship</option><option value="partnership">Partnership</option><option value="project">Project</option><option value="project_based_hiring">Project Based Hiring</option></select></label><label>Title *<input name="title" required></label><label>Department<input name="department"></label><label>Type<input name="opportunity_type"></label><label>Work mode<select name="work_mode"><option value="">Select</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select></label><label>Location<input name="location"></label><label>Duration<input name="duration"></label><label>Experience level<input name="experience_level"></label><label>Deadline<input name="application_deadline" type="date"></label><label>Status<select name="status"><option value="published" selected>published</option><option value="draft">draft</option><option>inactive</option><option>closed</option><option>archived</option></select></label><label>Budget/salary min<input name="budget_min" type="number" min="0"></label><label>Budget/salary max<input name="budget_max" type="number" min="0"></label><label class="wide">Short description *<textarea name="short_description" required></textarea></label><label class="wide">Full description *<textarea name="full_description" required></textarea></label><label class="wide">Responsibilities<textarea name="responsibilities"></textarea></label><label class="wide">Requirements<textarea name="requirements"></textarea></label><label class="wide">Eligibility<textarea name="eligibility"></textarea></label><label class="wide">Skills<input name="skills"></label><label class="wide">Benefits<textarea name="benefits"></textarea></label><label class="check"><input type="checkbox" name="is_featured"> Featured</label></div><button type="submit">Save opportunity</button><button type="button" data-close>Cancel</button></form></dialog>
-<dialog id="app-dialog"><section class="opp-apply"><button type="button" data-close>Close</button><div id="app-detail"></div><form id="status-form"><label>Status<select name="status"><option value="new">New</option><option value="under_review">Under Review</option><option value="shortlisted">Shortlisted</option><option value="interview_scheduled">Interview Scheduled</option><option value="approved">Approved</option><option value="hired">Hired</option><option value="selected">Selected</option><option value="rejected">Rejected</option><option value="on_hold">On Hold</option><option value="closed">Closed</option><option value="under_evaluation">Under Evaluation</option><option value="negotiation">Negotiation</option><option value="awarded">Awarded</option></select></label><label>Internal notes<textarea name="admin_notes"></textarea></label><button>Update status</button></form></section></dialog><script src="/assets/js/admin/admin-apply.js" defer></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Opportunities | Gopang IT Solution Admin</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-apply.css?v=1">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/jobs" class="admin-link">View Careers</a>
+                    <button type="button" id="logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SHARED ADMIN SIDEBAR -->
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-apply" class="active"><i class="fal fa-layer-group" aria-hidden="true"></i> Opportunities</a>
+            <a href="/admin-applicants"><i class="fal fa-file-user" aria-hidden="true"></i> Applicants</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
+            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Recruitment</span>
+                <h1>Opportunities</h1>
+                <p>Create and manage all five listing types — jobs, internships, partnerships, projects and project-based hiring. Published listings appear instantly on the website.</p>
+                <div class="dash-toolbar">
+                    <button type="button" id="new-post" class="theme-btn"><i class="fal fa-plus"></i> Add opportunity</button>
+                    <a href="/admin-applicants" class="admin-ghost-btn"><i class="fal fa-file-user"></i> View applicants</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <div id="toast" class="aa-toast is-hidden" role="alert"></div>
+
+                <section class="admin-panel">
+                    <div class="aa-panel-tools">
+                        <div class="admin-panel-heading" style="margin:0;">
+                            <div>
+                                <span class="admin-kicker">Listings</span>
+                                <h2>All Opportunities</h2>
+                            </div>
+                        </div>
+                        <span class="aa-count-pill" id="post-count">0 listings</span>
+                    </div>
+
+                    <form id="post-filters" class="aa-filters">
+                        <label>Search
+                            <input name="search" type="search" placeholder="Title, skills, location">
+                        </label>
+                        <label>Category
+                            <select name="category">
+                                <option value="">All categories</option>
+                                <option value="job">Jobs</option>
+                                <option value="internship">Internships</option>
+                                <option value="partnership">Partnerships</option>
+                                <option value="project">Projects</option>
+                                <option value="project_based_hiring">Project-Based Hiring</option>
+                            </select>
+                        </label>
+                        <label>Status
+                            <select name="status">
+                                <option value="">All statuses</option>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="closed">Closed</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </label>
+                        <div class="aa-filter-actions">
+                            <button type="submit" class="theme-btn">Filter</button>
+                            <button type="button" id="clear-filters" class="aa-btn-secondary">Clear</button>
+                        </div>
+                    </form>
+
+                    <div id="post-loading" class="admin-loading">Loading opportunities...</div>
+                    <div id="post-list" class="aa-opp-grid"></div>
+                    <div id="post-empty" class="admin-empty" hidden>No opportunities found. Click "Add opportunity" to create one.</div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- ADD / EDIT OPPORTUNITY MODAL -->
+    <div id="post-modal" class="aa-modal" aria-hidden="true">
+        <div class="aa-modal-backdrop" data-modal-close></div>
+        <div class="aa-modal-panel" role="dialog" aria-modal="true" aria-labelledby="post-form-title">
+            <div class="aa-modal-head">
+                <h2 id="post-form-title">Add opportunity</h2>
+                <button type="button" class="aa-drawer-close" data-modal-close aria-label="Close" style="background:#f2f4f7;color:#475467">&times;</button>
+            </div>
+            <form id="post-form">
+                <input type="hidden" name="id">
+                <div class="aa-modal-body">
+                    <div class="aa-form-grid">
+                        <label>Category *
+                            <select name="category" required>
+                                <option value="job">Job</option>
+                                <option value="internship">Internship</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="project">Project</option>
+                                <option value="project_based_hiring">Project-Based Hiring</option>
+                            </select>
+                        </label>
+                        <label>Title *<input name="title" required></label>
+                        <label>Department<input name="department"></label>
+                        <label>Type<input name="opportunity_type" placeholder="Full Time, Contract..."></label>
+                        <label>Work mode
+                            <select name="work_mode">
+                                <option value="">Select</option>
+                                <option>Remote</option>
+                                <option>Hybrid</option>
+                                <option>On-site</option>
+                            </select>
+                        </label>
+                        <label>Location<input name="location"></label>
+                        <label>Duration<input name="duration"></label>
+                        <label>Experience level<input name="experience_level"></label>
+                        <label>Deadline<input name="application_deadline" type="date"></label>
+                        <label>Status
+                            <select name="status">
+                                <option value="published" selected>Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="closed">Closed</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </label>
+                        <label data-pay>Budget / salary min<input name="budget_min" type="number" min="0"></label>
+                        <label data-pay>Budget / salary max<input name="budget_max" type="number" min="0"></label>
+                        <label class="aa-wide">Short description *<textarea name="short_description" required></textarea></label>
+                        <label class="aa-wide">Full description *<textarea name="full_description" required></textarea></label>
+                        <label class="aa-wide">Responsibilities<textarea name="responsibilities"></textarea></label>
+                        <label class="aa-wide">Requirements<textarea name="requirements"></textarea></label>
+                        <label class="aa-wide">Eligibility<textarea name="eligibility"></textarea></label>
+                        <label class="aa-wide">Skills<input name="skills" placeholder="Comma separated"></label>
+                        <label class="aa-wide">Benefits<textarea name="benefits"></textarea></label>
+                        <label class="aa-check"><input type="checkbox" name="is_featured"> Feature this listing</label>
+                    </div>
+                </div>
+                <div class="aa-modal-foot">
+                    <button type="button" class="aa-btn-secondary" data-modal-close>Cancel</button>
+                    <button type="submit" class="theme-btn">Save opportunity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/admin/admin-apply.js?v=2" defer></script>
+</body>
+
+</html>

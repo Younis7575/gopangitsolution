@@ -10,6 +10,7 @@ DirectoryIndex home.html index.html
     RewriteRule ^$ home.html [L]
     RewriteRule ^about/?$ about/about.html [L]
     RewriteRule ^admin-applications/?$ admin-applications/applications.html [L]
+    RewriteRule ^admin-applicants/?$ admin-applicants/index.html [L]
     RewriteRule ^admin-apply/?$ admin-apply/index.html [L]
     RewriteRule ^admin-dashboard/?$ admin-dashboard/dashboard.html [L]
     RewriteRule ^admin-jobs/?$ admin-jobs/jobs.html [L]

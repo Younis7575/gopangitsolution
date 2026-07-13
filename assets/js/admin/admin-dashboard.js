@@ -200,7 +200,7 @@ function renderRecentApplications(apps) {
 	elements.recentApps.innerHTML = apps.slice(0, 6).map(function (app) {
 		const bucket = bucketFor(app.status);
 		return (
-			'<a class="dash-recent-item" href="/admin-apply">' +
+			'<a class="dash-recent-item" href="/admin-applicants">' +
 			'<span class="dash-avatar">' + escapeHtml(initials(app.applicant_name)) + "</span>" +
 			'<span class="dash-recent-main"><strong>' + escapeHtml(app.applicant_name) + "</strong>" +
 			"<span>" + escapeHtml(app.opportunity_title || prettyCategory(app.opportunity_category)) + "</span></span>" +
