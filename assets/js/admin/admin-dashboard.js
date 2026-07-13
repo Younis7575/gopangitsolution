@@ -1,28 +1,44 @@
+/* Admin Dashboard — powered by the dynamic Apply/Recruitment module. */
 const API_BASE_URL =
 	window.JOB_API_BASE_URL ||
 	localStorage.getItem("JOB_API_BASE_URL") ||
 	"";
 
-if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+if (localStorage.getItem("isAdminLoggedIn") !== "true" || !localStorage.getItem("adminToken")) {
 	window.location.replace("/admin-login");
 }
 
-const STATUS_ORDER = ["New", "Reviewed", "Shortlisted", "Hired", "Rejected"];
+/* Category slug -> display label (matches the five Apply categories). */
+const CATEGORY_LABELS = {
+	job: "Jobs",
+	internship: "Internships",
+	partnership: "Partners",
+	project: "Projects",
+	project_based_hiring: "Project-Based Hiring",
+};
+
+/* Application status -> pipeline bucket + pill class. */
+const STATUS_BUCKETS = [
+	{ key: "New", pill: "new", match: ["new", "proposal_received"] },
+	{ key: "Under Review", pill: "reviewed", match: ["under_review", "under_evaluation", "on_hold", "negotiation"] },
+	{ key: "Shortlisted", pill: "shortlisted", match: ["shortlisted", "interview_scheduled"] },
+	{ key: "Selected", pill: "hired", match: ["approved", "hired", "selected", "awarded"] },
+	{ key: "Rejected", pill: "rejected", match: ["rejected", "closed"] },
+];
 
 const elements = {
 	logout: document.getElementById("admin-logout"),
 	refresh: document.getElementById("refresh-dashboard"),
 	message: document.getElementById("global-message"),
-	totalJobs: document.getElementById("stat-total-jobs"),
-	activeJobs: document.getElementById("stat-active-jobs"),
+	totalListings: document.getElementById("stat-total-listings"),
+	activeListings: document.getElementById("stat-active-listings"),
 	totalApps: document.getElementById("stat-total-apps"),
-	newApps: document.getElementById("stat-new-apps"),
-	newTrend: document.getElementById("stat-new-trend"),
+	pendingApps: document.getElementById("stat-pending-apps"),
+	todayTrend: document.getElementById("stat-today-trend"),
+	selected: document.getElementById("stat-selected"),
+	today: document.getElementById("stat-today"),
 	news: document.getElementById("stat-news"),
-	partners: document.getElementById("stat-partners"),
-	proposals: document.getElementById("stat-proposals"),
-	hired: document.getElementById("stat-hired"),
-	projects: document.getElementById("stat-projects"),
+	solutions: document.getElementById("stat-solutions"),
 	bids: document.getElementById("stat-bids"),
 	recentApps: document.getElementById("recent-apps"),
 	recentAppsLoading: document.getElementById("recent-apps-loading"),
@@ -33,66 +49,64 @@ const elements = {
 };
 
 function escapeHtml(value) {
-	return String(value || "").replace(/[&<>"']/g, function (char) {
-		return {
-			"&": "&amp;",
-			"<": "&lt;",
-			">": "&gt;",
-			'"': "&quot;",
-			"'": "&#039;",
-		}[char];
+	return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+		return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char];
 	});
 }
 
 function showMessage(type, text) {
+	if (!elements.message) return;
 	elements.message.className = "admin-alert " + type;
 	elements.message.textContent = text;
 }
 
 function clearMessage() {
+	if (!elements.message) return;
 	elements.message.className = "admin-alert d-none";
 	elements.message.textContent = "";
 }
 
-async function fetchData(path) {
+function authHeaders() {
+	return { Accept: "application/json", Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") };
+}
+
+/* Returns the full parsed body ({success,data,meta,...}) or null on failure. */
+async function apiGet(path) {
 	try {
-		const response = await fetch(API_BASE_URL + path, {
-			headers: {
-				Accept: "application/json",
-				Authorization: "Bearer " + (localStorage.getItem("adminToken") || ""),
-			},
-		});
+		const response = await fetch(API_BASE_URL + path, { headers: authHeaders() });
 		if (response.status === 401) {
 			localStorage.removeItem("isAdminLoggedIn");
 			localStorage.removeItem("adminToken");
 			window.location.replace("/admin-login");
-			return [];
+			return null;
 		}
 		const result = await response.json();
-		if (!response.ok || result.success === false) {
-			return [];
-		}
-		return Array.isArray(result.data) ? result.data : [];
+		if (!response.ok || result.success === false) return null;
+		return result;
 	} catch (error) {
-		return [];
+		return null;
 	}
 }
 
-function normalizeStatus(status) {
+function set(el, value) {
+	if (el) el.textContent = value;
+}
+
+function bucketFor(status) {
 	const value = String(status || "").trim().toLowerCase();
-	if (!value || value === "pending" || value === "new") {
-		return "New";
+	for (const b of STATUS_BUCKETS) {
+		if (b.match.indexOf(value) !== -1) return b;
 	}
-	if (value === "reviewed") return "Reviewed";
-	if (value === "shortlisted") return "Shortlisted";
-	if (value === "hired") return "Hired";
-	if (value === "rejected") return "Rejected";
-	return "New";
+	return STATUS_BUCKETS[0];
 }
 
 function initials(name) {
 	const parts = String(name || "?").trim().split(/\s+/);
-	return ((parts[0] || "")[0] || "?") + ((parts[1] || "")[0] || "");
+	return (((parts[0] || "")[0] || "?") + ((parts[1] || "")[0] || "")).toUpperCase();
+}
+
+function prettyCategory(slug) {
+	return CATEGORY_LABELS[slug] || String(slug || "").replace(/_/g, " ");
 }
 
 function timeAgo(value) {
@@ -108,174 +122,164 @@ function timeAgo(value) {
 	return String(value).slice(0, 10);
 }
 
-function isWithinLastWeek(value) {
-	if (!value) return false;
-	const clean = String(value).replace(" ", "T");
-	const then = Date.parse(clean.endsWith("Z") ? clean : clean + "Z");
-	if (Number.isNaN(then)) return false;
-	return Date.now() - then <= 7 * 86400000;
-}
-
 function stopLoading() {
 	elements.statCards.forEach(function (card) {
 		card.classList.remove("is-loading");
 	});
 }
 
+/* --- Aggregate stats from /api/admin/apply/dashboard ------------------- */
+function applyAggregate(body) {
+	const data = (body && body.data) || {};
+	const opportunities = Array.isArray(data.opportunities) ? data.opportunities : [];
+	const applications = Array.isArray(data.applications) ? data.applications : [];
+
+	let totalListings = 0;
+	let publishedListings = 0;
+	opportunities.forEach(function (row) {
+		const n = Number(row.total) || 0;
+		totalListings += n;
+		if (String(row.status) === "published") publishedListings += n;
+	});
+
+	let totalApps = 0;
+	let pending = 0;
+	let selected = 0;
+	const perCategory = {};
+	const bucketCounts = {};
+	STATUS_BUCKETS.forEach(function (b) { bucketCounts[b.key] = 0; });
+
+	applications.forEach(function (row) {
+		const n = Number(row.total) || 0;
+		totalApps += n;
+		perCategory[row.category] = (perCategory[row.category] || 0) + n;
+		const bucket = bucketFor(row.status);
+		bucketCounts[bucket.key] += n;
+		if (bucket.key === "New") pending += n;
+		if (bucket.key === "Selected") selected += n;
+	});
+
+	set(elements.totalListings, totalListings);
+	set(elements.activeListings, publishedListings);
+	set(elements.totalApps, totalApps);
+	set(elements.pendingApps, pending);
+	set(elements.selected, selected);
+	set(elements.today, Number(data.today) || 0);
+	if (elements.todayTrend) elements.todayTrend.textContent = (Number(data.today) || 0) + " today";
+
+	Object.keys(CATEGORY_LABELS).forEach(function (slug) {
+		set(document.getElementById("stat-cat-" + slug), perCategory[slug] || 0);
+	});
+
+	renderStatusBreakdown(bucketCounts, totalApps);
+}
+
+function renderStatusBreakdown(bucketCounts, total) {
+	if (!elements.statusBreakdown) return;
+	const denom = total || 1;
+	elements.statusBreakdown.innerHTML = STATUS_BUCKETS.map(function (b) {
+		const count = bucketCounts[b.key] || 0;
+		const percent = Math.round((count / denom) * 100);
+		return (
+			'<div class="dash-bar-row">' +
+			'<div class="dash-bar-top"><span>' + b.key + "</span><span>" + count + "</span></div>" +
+			'<div class="dash-bar-track"><div class="dash-bar-fill ' + b.pill + '" style="width:' + percent + '%"></div></div>' +
+			"</div>"
+		);
+	}).join("");
+}
+
+/* --- Recent applications ----------------------------------------------- */
 function renderRecentApplications(apps) {
-	elements.recentAppsLoading.classList.add("d-none");
+	if (elements.recentAppsLoading) elements.recentAppsLoading.classList.add("d-none");
+	if (!elements.recentApps) return;
 	if (!apps.length) {
 		elements.recentApps.innerHTML = '<div class="admin-empty">No applications yet.</div>';
 		return;
 	}
-
-	elements.recentApps.innerHTML = apps
-		.slice(0, 6)
-		.map(function (app) {
-			const status = normalizeStatus(app.status);
-			return `
-				<a class="dash-recent-item" href="/admin-applications">
-					<span class="dash-avatar">${escapeHtml(initials(app.full_name))}</span>
-					<span class="dash-recent-main">
-						<strong>${escapeHtml(app.full_name)}</strong>
-						<span>${escapeHtml(app.position || app.job_title || "Applicant")}</span>
-					</span>
-					<span class="admin-status-pill ${status.toLowerCase()}">${escapeHtml(status)}</span>
-					<span class="dash-recent-time">${escapeHtml(timeAgo(app.created_at))}</span>
-				</a>
-			`;
-		})
-		.join("");
+	elements.recentApps.innerHTML = apps.slice(0, 6).map(function (app) {
+		const bucket = bucketFor(app.status);
+		return (
+			'<a class="dash-recent-item" href="/admin-apply">' +
+			'<span class="dash-avatar">' + escapeHtml(initials(app.applicant_name)) + "</span>" +
+			'<span class="dash-recent-main"><strong>' + escapeHtml(app.applicant_name) + "</strong>" +
+			"<span>" + escapeHtml(app.opportunity_title || prettyCategory(app.opportunity_category)) + "</span></span>" +
+			'<span class="admin-status-pill ' + bucket.pill + '">' + escapeHtml(bucket.key) + "</span>" +
+			'<span class="dash-recent-time">' + escapeHtml(timeAgo(app.created_at)) + "</span>" +
+			"</a>"
+		);
+	}).join("");
 }
 
-function renderRecentJobs(jobs) {
-	elements.recentJobsLoading.classList.add("d-none");
-	if (!jobs.length) {
-		elements.recentJobs.innerHTML = '<div class="admin-empty">No jobs posted yet.</div>';
+/* --- Recent listings --------------------------------------------------- */
+function renderRecentListings(listings) {
+	if (elements.recentJobsLoading) elements.recentJobsLoading.classList.add("d-none");
+	if (!elements.recentJobs) return;
+	if (!listings.length) {
+		elements.recentJobs.innerHTML = '<div class="admin-empty">No listings yet. Add one from Apply Management.</div>';
 		return;
 	}
-
-	elements.recentJobs.innerHTML = jobs
-		.slice(0, 5)
-		.map(function (job) {
-			const open = String(job.status || "Open") === "Open";
-			return `
-				<a class="dash-recent-item" href="/admin-jobs">
-					<span class="dash-avatar"><i class="fal fa-briefcase" aria-hidden="true"></i></span>
-					<span class="dash-recent-main">
-						<strong>${escapeHtml(job.title)}</strong>
-						<span>${escapeHtml(job.location || "")}${job.type ? " • " + escapeHtml(job.type) : ""}</span>
-					</span>
-					<span class="admin-status-pill ${open ? "approved" : "reject"}">${escapeHtml(job.status || "Open")}</span>
-				</a>
-			`;
-		})
-		.join("");
+	elements.recentJobs.innerHTML = listings.slice(0, 5).map(function (o) {
+		const published = String(o.status) === "published";
+		const meta = [prettyCategory(o.category), o.location].filter(Boolean).join(" • ");
+		return (
+			'<a class="dash-recent-item" href="/admin-apply">' +
+			'<span class="dash-avatar"><i class="fal fa-briefcase" aria-hidden="true"></i></span>' +
+			'<span class="dash-recent-main"><strong>' + escapeHtml(o.title) + "</strong>" +
+			"<span>" + escapeHtml(meta) + "</span></span>" +
+			'<span class="admin-status-pill ' + (published ? "approved" : "reviewed") + '">' + escapeHtml(o.status) + "</span>" +
+			"</a>"
+		);
+	}).join("");
 }
 
-function renderStatusBreakdown(apps) {
-	const counts = { New: 0, Reviewed: 0, Shortlisted: 0, Hired: 0, Rejected: 0 };
-	apps.forEach(function (app) {
-		counts[normalizeStatus(app.status)] += 1;
-	});
-	const total = apps.length || 1;
+/* --- Secondary module counts (non-blocking) ---------------------------- */
+async function loadSecondaryCounts() {
+	const news = await apiGet("/api/news");
+	if (news && Array.isArray(news.data)) set(elements.news, news.data.length);
 
-	elements.statusBreakdown.innerHTML = STATUS_ORDER.map(function (status) {
-		const count = counts[status];
-		const percent = Math.round((count / total) * 100);
-		return `
-			<div class="dash-bar-row">
-				<div class="dash-bar-top"><span>${status}</span><span>${count}</span></div>
-				<div class="dash-bar-track">
-					<div class="dash-bar-fill ${status.toLowerCase()}" style="width:${percent}%"></div>
-				</div>
-			</div>
-		`;
-	}).join("");
+	const solutions = await apiGet("/api/solutions?admin=1&limit=1");
+	if (solutions) set(elements.solutions, (solutions.meta && solutions.meta.total_records) || 0);
 
-	return counts;
+	const bids = await apiGet("/api/bid-projects?admin=1");
+	if (bids && Array.isArray(bids.data)) set(elements.bids, bids.data.length);
 }
 
 async function loadDashboard() {
 	clearMessage();
-
-	const [jobs, apps, news, partners, proposals, projects, bids] = await Promise.all([
-		fetchData("/api/jobs?admin=1"),
-		fetchData("/api/applications?limit=100"),
-		fetchData("/api/news"),
-		fetchData("/api/partner-applications"),
-		fetchData("/api/project-proposals"),
-		fetchData("/api/bid-projects?admin=1"),
-		fetchData("/api/bids"),
+	const [aggregate, recentApps, recentListings] = await Promise.all([
+		apiGet("/api/admin/apply/dashboard"),
+		apiGet("/api/admin/apply/applications?limit=6"),
+		apiGet("/api/admin/opportunities?limit=6"),
 	]);
 
-	// Primary stats
-	const activeJobs = jobs.filter(function (job) {
-		return String(job.status || "Open") === "Open";
-	}).length;
-	const newThisWeek = apps.filter(function (app) {
-		return isWithinLastWeek(app.created_at);
-	}).length;
-	const unprocessed = apps.filter(function (app) {
-		return normalizeStatus(app.status) === "New";
-	}).length;
-
-	elements.totalJobs.textContent = jobs.length;
-	elements.activeJobs.textContent = activeJobs;
-	elements.totalApps.textContent = apps.length;
-	elements.newApps.textContent = unprocessed;
-	elements.newTrend.textContent = "+" + newThisWeek + " this week";
-
-	// Secondary stats
-	elements.news.textContent = news.length;
-	elements.partners.textContent = partners.length;
-	elements.proposals.textContent = proposals.length;
-
-	const counts = renderStatusBreakdown(apps);
-	elements.hired.textContent = counts.Hired;
-
-	const openProjects = projects.filter(function (p) {
-		return String(p.status || "Open") === "Open";
-	}).length;
-	elements.projects.textContent = openProjects;
-	elements.bids.textContent = bids.length;
-
-	renderRecentApplications(apps);
-	renderRecentJobs(jobs);
-	stopLoading();
-	loadSolutionStats();
-}
-
-/* Community Solutions counts (read pagination meta for accurate totals). */
-async function loadSolutionStats() {
-	async function total(query) {
-		try {
-			const response = await fetch(API_BASE_URL + "/api/solutions?admin=1&limit=1" + query, {
-				headers: { Accept: "application/json", Authorization: "Bearer " + (localStorage.getItem("adminToken") || "") },
-			});
-			const result = await response.json();
-			if (!response.ok || result.success === false) return 0;
-			return (result.meta && result.meta.total_records) || 0;
-		} catch (e) { return 0; }
+	if (!aggregate) {
+		showMessage("error", "Could not load dashboard data. Please refresh or log in again.");
+	} else {
+		applyAggregate(aggregate);
 	}
-	const totalEl = document.getElementById("stat-solutions");
-	const pendingEl = document.getElementById("stat-solutions-pending");
-	if (totalEl) totalEl.textContent = await total("");
-	if (pendingEl) pendingEl.textContent = await total("&moderation=pending");
+
+	renderRecentApplications((recentApps && Array.isArray(recentApps.data)) ? recentApps.data : []);
+	renderRecentListings((recentListings && Array.isArray(recentListings.data)) ? recentListings.data : []);
+	stopLoading();
+	loadSecondaryCounts();
 }
 
-elements.refresh.addEventListener("click", function () {
-	elements.statCards.forEach(function (card) {
-		card.classList.add("is-loading");
+if (elements.refresh) {
+	elements.refresh.addEventListener("click", function () {
+		elements.statCards.forEach(function (card) { card.classList.add("is-loading"); });
+		if (elements.recentAppsLoading) elements.recentAppsLoading.classList.remove("d-none");
+		if (elements.recentJobsLoading) elements.recentJobsLoading.classList.remove("d-none");
+		void loadDashboard();
 	});
-	elements.recentAppsLoading.classList.remove("d-none");
-	elements.recentJobsLoading.classList.remove("d-none");
-	void loadDashboard();
-});
+}
 
-elements.logout.addEventListener("click", function () {
-	localStorage.removeItem("isAdminLoggedIn");
-	window.location.href = "/admin-login";
-});
+if (elements.logout) {
+	elements.logout.addEventListener("click", function () {
+		localStorage.removeItem("isAdminLoggedIn");
+		localStorage.removeItem("adminToken");
+		window.location.href = "/admin-login";
+	});
+}
 
 loadDashboard();

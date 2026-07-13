@@ -30,7 +30,7 @@
                     <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
                 </a>
                 <div class="admin-header-actions">
-                    <a href="/apply-job" class="admin-link">View Careers</a>
+                    <a href="/jobs" class="admin-link">View Careers</a>
                     <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
                     <a href="/" class="theme-btn">Back to Site</a>
                 </div>
@@ -41,14 +41,10 @@
     <aside class="admin-sidebar" aria-label="Admin navigation">
         <nav>
             <a href="/admin-dashboard" class="active"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
-            <a href="/admin-jobs"><i class="fal fa-briefcase" aria-hidden="true"></i> Jobs</a>
-            <a href="/admin-applications"><i class="fal fa-file-user" aria-hidden="true"></i> Applications</a>
-            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+            <a href="/admin-apply"><i class="fal fa-briefcase" aria-hidden="true"></i> Apply Management</a>
             <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
             <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
-            <a href="/admin-submissions#partners"><i class="fal fa-handshake" aria-hidden="true"></i> Apply as Partner</a>
-            <a href="/admin-submissions#proposals"><i class="fal fa-file-alt" aria-hidden="true"></i> Proposals</a>
-            <a href="/admin-project-hiring"><i class="fal fa-users-cog" aria-hidden="true"></i> Project Hiring Requests</a>
+            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
         </nav>
     </aside>
 
@@ -57,12 +53,12 @@
             <div class="container">
                 <span class="admin-kicker">Overview</span>
                 <h1>Admin Dashboard</h1>
-                <p>Live snapshot of jobs, applications, and inbound requests across Gopang IT Solution.</p>
+                <p>Live snapshot of listings and applications across all five Apply categories.</p>
                 <div class="dash-toolbar">
                     <button type="button" id="refresh-dashboard" class="admin-ghost-btn">
                         <i class="fal fa-sync" aria-hidden="true"></i> Refresh data
                     </button>
-                    <a href="/admin-jobs" class="admin-ghost-btn">+ Post a new job</a>
+                    <a href="/admin-apply" class="admin-ghost-btn">+ Post a new opportunity</a>
                 </div>
                 <div id="global-message" class="admin-alert d-none" role="alert"></div>
             </div>
@@ -70,22 +66,23 @@
 
         <section class="admin-content">
             <div class="container">
-                <!-- Primary stat cards -->
+                <!-- Primary stat cards (Recruitment / Apply module) -->
                 <div class="dash-stats">
                     <article class="dash-stat-card is-loading" style="--accent:#0f62fe">
                         <div class="dash-stat-top">
-                            <span class="dash-stat-icon"><i class="fal fa-briefcase" aria-hidden="true"></i></span>
+                            <span class="dash-stat-icon"><i class="fal fa-layer-group" aria-hidden="true"></i></span>
                         </div>
-                        <div class="dash-stat-value" id="stat-total-jobs">0</div>
-                        <div class="dash-stat-label">Total Jobs</div>
+                        <div class="dash-stat-value" id="stat-total-listings">0</div>
+                        <div class="dash-stat-label">Total Listings</div>
                     </article>
 
                     <article class="dash-stat-card is-loading" style="--accent:#12b76a">
                         <div class="dash-stat-top">
                             <span class="dash-stat-icon"><i class="fal fa-bolt" aria-hidden="true"></i></span>
+                            <span class="dash-stat-trend" id="stat-featured-trend">Live</span>
                         </div>
-                        <div class="dash-stat-value" id="stat-active-jobs">0</div>
-                        <div class="dash-stat-label">Active (Open) Jobs</div>
+                        <div class="dash-stat-value" id="stat-active-listings">0</div>
+                        <div class="dash-stat-label">Published Listings</div>
                     </article>
 
                     <article class="dash-stat-card is-loading" style="--accent:#7c3aed">
@@ -99,47 +96,61 @@
                     <article class="dash-stat-card is-loading" style="--accent:#f79009">
                         <div class="dash-stat-top">
                             <span class="dash-stat-icon"><i class="fal fa-inbox-in" aria-hidden="true"></i></span>
-                            <span class="dash-stat-trend" id="stat-new-trend">This week</span>
+                            <span class="dash-stat-trend" id="stat-today-trend">Today</span>
                         </div>
-                        <div class="dash-stat-value" id="stat-new-apps">0</div>
-                        <div class="dash-stat-label">New Applications</div>
+                        <div class="dash-stat-value" id="stat-pending-apps">0</div>
+                        <div class="dash-stat-label">Pending Applications</div>
                     </article>
                 </div>
 
-                <!-- Secondary mini stats -->
+                <!-- Applications by category -->
+                <h2 class="dash-section-title">Applications by category</h2>
+                <div class="dash-mini-stats">
+                    <a class="dash-mini-card" href="/admin-apply">
+                        <i class="fal fa-briefcase" aria-hidden="true"></i>
+                        <div><strong id="stat-cat-job">0</strong><span>Job Applications</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-apply">
+                        <i class="fal fa-user-graduate" aria-hidden="true"></i>
+                        <div><strong id="stat-cat-internship">0</strong><span>Internship Applications</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-apply">
+                        <i class="fal fa-handshake" aria-hidden="true"></i>
+                        <div><strong id="stat-cat-partnership">0</strong><span>Partner Applications</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-apply">
+                        <i class="fal fa-diagram-project" aria-hidden="true"></i>
+                        <div><strong id="stat-cat-project">0</strong><span>Project Applications</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-apply">
+                        <i class="fal fa-users-cog" aria-hidden="true"></i>
+                        <div><strong id="stat-cat-project_based_hiring">0</strong><span>Project-Based Hiring</span></div>
+                    </a>
+                </div>
+
+                <!-- Other modules -->
+                <h2 class="dash-section-title">At a glance</h2>
                 <div class="dash-mini-stats">
                     <div class="dash-mini-card">
-                        <i class="fal fa-newspaper" aria-hidden="true"></i>
-                        <div><strong id="stat-news">0</strong><span>News Articles</span></div>
-                    </div>
-                    <div class="dash-mini-card">
-                        <i class="fal fa-handshake" aria-hidden="true"></i>
-                        <div><strong id="stat-partners">0</strong><span>Partner Requests</span></div>
-                    </div>
-                    <div class="dash-mini-card">
-                        <i class="fal fa-file-alt" aria-hidden="true"></i>
-                        <div><strong id="stat-proposals">0</strong><span>Project Proposals</span></div>
-                    </div>
-                    <div class="dash-mini-card">
                         <i class="fal fa-check-circle" aria-hidden="true"></i>
-                        <div><strong id="stat-hired">0</strong><span>Hired Candidates</span></div>
-                    </div>
-                    <div class="dash-mini-card">
-                        <i class="fal fa-gavel" aria-hidden="true"></i>
-                        <div><strong id="stat-projects">0</strong><span>Open Projects</span></div>
-                    </div>
-                    <div class="dash-mini-card">
-                        <i class="fal fa-hand-holding-usd" aria-hidden="true"></i>
-                        <div><strong id="stat-bids">0</strong><span>Total Bids</span></div>
-                    </div>
-                    <div class="dash-mini-card">
-                        <i class="fal fa-lightbulb" aria-hidden="true"></i>
-                        <div><strong id="stat-solutions">0</strong><span>Community Questions</span></div>
+                        <div><strong id="stat-selected">0</strong><span>Selected Candidates</span></div>
                     </div>
                     <div class="dash-mini-card">
                         <i class="fal fa-clock" aria-hidden="true"></i>
-                        <div><strong id="stat-solutions-pending">0</strong><span>Pending Questions</span></div>
+                        <div><strong id="stat-today">0</strong><span>Today's Applications</span></div>
                     </div>
+                    <a class="dash-mini-card" href="/admin-news">
+                        <i class="fal fa-newspaper" aria-hidden="true"></i>
+                        <div><strong id="stat-news">0</strong><span>News Articles</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-solutions">
+                        <i class="fal fa-lightbulb" aria-hidden="true"></i>
+                        <div><strong id="stat-solutions">0</strong><span>Community Questions</span></div>
+                    </a>
+                    <a class="dash-mini-card" href="/admin-projects">
+                        <i class="fal fa-gavel" aria-hidden="true"></i>
+                        <div><strong id="stat-bids">0</strong><span>Bid Projects</span></div>
+                    </a>
                 </div>
 
                 <!-- Two column: recent applications + side panels -->
@@ -150,7 +161,7 @@
                                 <span class="admin-kicker">Latest</span>
                                 <h2 id="recent-apps-title">Recent Applications</h2>
                             </div>
-                            <a href="/admin-applications" class="dash-panel-heading-link">View all &rarr;</a>
+                            <a href="/admin-apply" class="dash-panel-heading-link">View all &rarr;</a>
                         </div>
                         <div id="recent-apps-loading" class="admin-loading">Loading applications...</div>
                         <div id="recent-apps" class="dash-recent-list"></div>
@@ -171,9 +182,9 @@
                             <div class="admin-panel-heading">
                                 <div>
                                     <span class="admin-kicker">Postings</span>
-                                    <h2 id="recent-jobs-title">Recent Jobs</h2>
+                                    <h2 id="recent-jobs-title">Recent Listings</h2>
                                 </div>
-                                <a href="/admin-jobs" class="dash-panel-heading-link">Manage &rarr;</a>
+                                <a href="/admin-apply" class="dash-panel-heading-link">Manage &rarr;</a>
                             </div>
                             <div id="recent-jobs-loading" class="admin-loading">Loading jobs...</div>
                             <div id="recent-jobs" class="dash-recent-list"></div>
