@@ -49,6 +49,38 @@ function init_apply_schema()
         email_hash VARCHAR(64) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX(ip_hash, created_at), INDEX(opportunity_id, email_hash, created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    apply_seed_standing();
+}
+
+/**
+ * Project and Partnership are NOT admin-posted listings — visitors submit them
+ * directly from the website (/projects, /partnerships) and admins only VIEW the
+ * submissions. To make the public apply endpoints work with zero admin setup we
+ * seed one permanent, published "container" opportunity for each. Idempotent:
+ * only inserts when the fixed slug is missing.
+ */
+function apply_seed_standing()
+{
+    $pdo = db();
+    $standing = [
+        ['project', 'submit-your-project', 'Submit Your Project',
+            'Tell us about the project you want us to build and our team will reach out to you.',
+            "Have a project in mind? Share your requirements, budget and timeline below. Our team reviews every request and gets back to you — usually within one business day — to discuss the details and next steps."],
+        ['partnership', 'become-a-partner', 'Become a Partner',
+            'Partner with Gopang IT Solution and grow together.',
+            "Interested in collaborating with us? Tell us about yourself and how you would like to work together. Our partnerships team will get back to you to explore the opportunity."],
+    ];
+    foreach ($standing as $s) {
+        try {
+            $chk = $pdo->prepare('SELECT COUNT(*) FROM opportunities WHERE slug=?');
+            $chk->execute([$s[1]]);
+            if ((int) $chk->fetchColumn() > 0) continue;
+            $pdo->prepare('INSERT INTO opportunities (category,title,slug,short_description,full_description,status,is_featured,created_by,published_at) VALUES (?,?,?,?,?,?,0,?,CURRENT_TIMESTAMP)')
+                ->execute([$s[0], $s[2], $s[1], $s[3], $s[4], 'published', 'system']);
+        } catch (Throwable $e) {
+            error_log('Standing opportunity seed failed: ' . $e->getMessage());
+        }
+    }
 }
 
 function apply_category_from_path($segment) { $all=apply_categories(); return $all[$segment] ?? null; }

@@ -46,9 +46,9 @@
         $("#post-list").innerHTML = "";
         try {
             var body = await req("/api/admin/opportunities?" + query($("#post-filters")));
-            var rows = body.data || [];
-            var meta = body.meta || {};
-            $("#post-count").textContent = (meta.total != null ? meta.total : rows.length) + " listing" + ((meta.total || rows.length) === 1 ? "" : "s");
+            // Project & Partnership are website-only submissions (see Applicants), not admin-managed listings.
+            var rows = (body.data || []).filter(function (o) { return o.category !== "project" && o.category !== "partnership"; });
+            $("#post-count").textContent = rows.length + " listing" + (rows.length === 1 ? "" : "s");
             $("#post-loading").hidden = true;
 
             if (!rows.length) { $("#post-empty").hidden = false; return; }
