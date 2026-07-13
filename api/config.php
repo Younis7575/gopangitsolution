@@ -50,6 +50,9 @@ if (!defined('ADMIN_TOKEN_TTL')) define('ADMIN_TOKEN_TTL', 60 * 60 * 8);
 if (!defined('UPLOAD_DIR'))           define('UPLOAD_DIR', __DIR__ . '/uploads');
 if (!defined('MAX_CV_SIZE'))          define('MAX_CV_SIZE', 5 * 1024 * 1024);
 if (!defined('MAX_ATTACHMENT_SIZE'))  define('MAX_ATTACHMENT_SIZE', 8 * 1024 * 1024);
+if (!defined('APPLY_MAX_FILE_SIZE'))  define('APPLY_MAX_FILE_SIZE', (int) (getenv('APPLY_MAX_FILE_SIZE') ?: (8 * 1024 * 1024)));
+if (!defined('APPLY_RATE_LIMIT'))     define('APPLY_RATE_LIMIT', (int) (getenv('APPLY_RATE_LIMIT') ?: 5));
+if (!defined('APPLY_RATE_WINDOW'))    define('APPLY_RATE_WINDOW', (int) (getenv('APPLY_RATE_WINDOW') ?: 3600));
 /* Marketplace projects must be created by an admin; keep demo projects disabled. */
 if (!defined('SEED_SAMPLE_PROJECTS')) define('SEED_SAMPLE_PROJECTS', false);
 

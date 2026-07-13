@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/apply_module.php';
 require_once __DIR__ . '/news_service.php';
 
 /* ------------------------------------------------------------------ */
@@ -24,9 +25,11 @@ function json_response($body, $status = 200)
     exit;
 }
 
-function error_response($message, $status = 400)
+function error_response($message, $status = 400, $errors = null)
 {
-    json_response(['success' => false, 'message' => $message], $status);
+    $body = ['success' => false, 'message' => $message];
+    if (is_array($errors) && $errors) { $body['errors'] = $errors; }
+    json_response($body, $status);
 }
 
 function read_json_body()
@@ -644,6 +647,8 @@ try {
     /* Everything below needs the database — create/seed it on first use. */
     init_schema();
     $pdo = db();
+    init_apply_schema();
+    handle_apply_module($method, $path, $pdo);
 
     /* Public status lookup returns only non-sensitive summary fields. */
     if ($method === 'GET' && $path === '/api/submission-status') {
