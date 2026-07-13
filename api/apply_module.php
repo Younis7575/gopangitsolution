@@ -69,6 +69,7 @@ function apply_opportunity_payload($body, $existing=[])
     foreach($textKeys as $k) $p[$k]=clean_text($get($k,''),in_array($k,['full_description','responsibilities','requirements','eligibility','benefits'],true)?20000:600) ?: null;
     foreach(['salary_min','salary_max','stipend','budget_min','budget_max','investment_required'] as $k){$v=$get($k,null);$p[$k]=($v===''||$v===null)?null:(is_numeric($v)?(float)$v:null);}
     $meta=$get('metadata',[]); $p['metadata']=json_encode(is_array($meta)?$meta:apply_json($meta),JSON_UNESCAPED_UNICODE);
+    if($p['category']==='internship'){foreach(['salary_min','salary_max','stipend','budget_min','budget_max','investment_required'] as $k)$p[$k]=null;}
     return $p;
 }
 

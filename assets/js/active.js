@@ -311,22 +311,3 @@
 
 })(jQuery); // End jQuery
 
-/* Keep the global Apply navigation synchronized with the dynamic module. */
-(function () {
-    "use strict";
-    function updateApplyNavigation() {
-        var links = [["/jobs", "Apply for Job"], ["/internships", "Apply for Internship"],
-            ["/partnerships", "Apply as Partner"], ["/projects", "Apply for Project"],
-            ["/project-based-hiring", "Apply for Project Based Hiring"]];
-        document.querySelectorAll("nav li > a").forEach(function (anchor) {
-            var label = (anchor.textContent || "").trim().toLowerCase();
-            if (label.indexOf("careers") === 0) { anchor.parentElement.hidden = true; return; }
-            if (label.indexOf("apply") !== 0 || !anchor.parentElement.querySelector("ul")) return;
-            anchor.parentElement.querySelector("ul").innerHTML = links.map(function (item) {
-                return '<li><a href="' + item[0] + '">' + item[1] + "</a></li>";
-            }).join("");
-        });
-    }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateApplyNavigation);
-    else updateApplyNavigation();
-})();
