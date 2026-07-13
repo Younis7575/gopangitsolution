@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Website Analytics | Gopang IT Solution</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/custom/site.css">
+    <link rel="stylesheet" href="/assets/css/premium.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-dashboard.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-analytics.css">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/" class="admin-link">View Site</a>
+                    <button type="button" id="admin-logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-apply"><i class="fal fa-layer-group" aria-hidden="true"></i> Opportunities</a>
+            <a href="/admin-applicants"><i class="fal fa-file-user" aria-hidden="true"></i> Applicants</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
+            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+            <a href="/admin-analytics" class="active"><i class="fal fa-chart-line" aria-hidden="true"></i> Analytics</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Website Analytics</span>
+                <h1>Traffic &amp; Visitor Analytics</h1>
+                <p>Real-time visitor insights across your entire website — traffic, sources, geography, devices and pages.</p>
+
+                <!-- Filter / toolbar -->
+                <div class="an-toolbar">
+                    <div class="an-filter">
+                        <label>Range</label>
+                        <select id="an-range">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="7d">Last 7 Days</option>
+                            <option value="30d" selected>Last 30 Days</option>
+                            <option value="this_month">This Month</option>
+                            <option value="last_month">Last Month</option>
+                            <option value="this_year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="an-filter an-custom d-none">
+                        <label>From</label>
+                        <input type="date" id="an-from">
+                    </div>
+                    <div class="an-filter an-custom d-none">
+                        <label>To</label>
+                        <input type="date" id="an-to">
+                    </div>
+                    <div class="an-filter">
+                        <label>Country</label>
+                        <select id="an-country"><option value="">All</option></select>
+                    </div>
+                    <div class="an-filter">
+                        <label>Device</label>
+                        <select id="an-device"><option value="">All</option></select>
+                    </div>
+                    <div class="an-filter">
+                        <label>Browser</label>
+                        <select id="an-browser"><option value="">All</option></select>
+                    </div>
+                    <div class="an-filter">
+                        <label>OS</label>
+                        <select id="an-os"><option value="">All</option></select>
+                    </div>
+                    <div class="an-filter">
+                        <label>Source</label>
+                        <select id="an-source"><option value="">All</option></select>
+                    </div>
+                    <div class="an-filter">
+                        <label>Applied?</label>
+                        <select id="an-applied">
+                            <option value="">All Visitors</option>
+                            <option value="1">Applied only</option>
+                            <option value="0">Just visited</option>
+                        </select>
+                    </div>
+                    <div class="an-toolbar-actions">
+                        <button type="button" id="an-apply" class="theme-btn an-apply-btn">Apply</button>
+                        <button type="button" id="an-reset" class="admin-ghost-btn">Reset</button>
+                        <button type="button" id="an-refresh" class="admin-ghost-btn"><i class="fal fa-sync" aria-hidden="true"></i> Refresh</button>
+                        <div class="an-export">
+                            <button type="button" class="admin-ghost-btn" data-export="csv"><i class="fal fa-file-csv" aria-hidden="true"></i> CSV</button>
+                            <button type="button" class="admin-ghost-btn" data-export="excel"><i class="fal fa-file-excel" aria-hidden="true"></i> Excel</button>
+                            <button type="button" class="admin-ghost-btn" data-export="pdf"><i class="fal fa-file-pdf" aria-hidden="true"></i> PDF</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="global-message" class="admin-alert d-none" role="alert"></div>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <!-- Tabs -->
+                <nav class="an-tabs" role="tablist">
+                    <button class="an-tab active" data-tab="overview"><i class="fal fa-gauge-high"></i> Dashboard</button>
+                    <button class="an-tab" data-tab="live"><i class="fal fa-signal-stream"></i> Live <span id="an-live-badge" class="an-badge">0</span></button>
+                    <button class="an-tab" data-tab="visitors"><i class="fal fa-users"></i> Visitors</button>
+                    <button class="an-tab" data-tab="sources"><i class="fal fa-diagram-project"></i> Traffic Sources</button>
+                    <button class="an-tab" data-tab="geo"><i class="fal fa-earth-americas"></i> Geography</button>
+                    <button class="an-tab" data-tab="tech"><i class="fal fa-desktop"></i> Devices &amp; Tech</button>
+                    <button class="an-tab" data-tab="pages"><i class="fal fa-file-lines"></i> Pages</button>
+                    <button class="an-tab" data-tab="settings"><i class="fal fa-gear"></i> Settings</button>
+                </nav>
+
+                <!-- ============ OVERVIEW ============ -->
+                <section class="an-panel active" data-panel="overview">
+                    <div class="dash-stats an-stats">
+                        <article class="dash-stat-card" style="--accent:#0f62fe">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-user-clock"></i></span><span class="dash-stat-trend an-live-pill"><i class="fal fa-circle"></i> Live</span></div>
+                            <div class="dash-stat-value" id="s-live">0</div><div class="dash-stat-label">Live Visitors</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#12b76a">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-calendar-day"></i></span></div>
+                            <div class="dash-stat-value" id="s-today">0</div><div class="dash-stat-label">Visitors Today</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#7c3aed">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-calendar-minus"></i></span></div>
+                            <div class="dash-stat-value" id="s-yesterday">0</div><div class="dash-stat-label">Visitors Yesterday</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#f79009">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-calendar-week"></i></span></div>
+                            <div class="dash-stat-value" id="s-week">0</div><div class="dash-stat-label">This Week</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#0891b2">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-calendar"></i></span></div>
+                            <div class="dash-stat-value" id="s-month">0</div><div class="dash-stat-label">This Month</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#ec4899">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-calendar-star"></i></span></div>
+                            <div class="dash-stat-value" id="s-year">0</div><div class="dash-stat-label">This Year</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#2563eb">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-users"></i></span></div>
+                            <div class="dash-stat-value" id="s-total">0</div><div class="dash-stat-label">Total Visitors</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#059669">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-eye"></i></span></div>
+                            <div class="dash-stat-value" id="s-pageviews">0</div><div class="dash-stat-label">Total Page Views</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#d97706">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-user-plus"></i></span></div>
+                            <div class="dash-stat-value" id="s-new">0</div><div class="dash-stat-label">New Visitors</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#65a30d">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-user-check"></i></span></div>
+                            <div class="dash-stat-value" id="s-returning">0</div><div class="dash-stat-label">Returning Visitors</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#f04438">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-arrow-right-from-bracket"></i></span></div>
+                            <div class="dash-stat-value" id="s-bounce">0%</div><div class="dash-stat-label">Bounce Rate</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#0f62fe">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-stopwatch"></i></span></div>
+                            <div class="dash-stat-value" id="s-avg">0s</div><div class="dash-stat-label">Avg. Session</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#12b76a">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-paper-plane"></i></span></div>
+                            <div class="dash-stat-value" id="s-applied">0</div><div class="dash-stat-label">Applied Visitors</div>
+                        </article>
+                        <article class="dash-stat-card" style="--accent:#7c3aed">
+                            <div class="dash-stat-top"><span class="dash-stat-icon"><i class="fal fa-percent"></i></span></div>
+                            <div class="dash-stat-value" id="s-conversion">0%</div><div class="dash-stat-label">Conversion Rate</div>
+                        </article>
+                    </div>
+
+                    <div class="an-charts">
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Trend</span><h2>Daily Visitors</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-daily"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Sources</span><h2>Traffic Sources</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-sources"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">By hour</span><h2>Hourly Traffic</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-hourly"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Devices</span><h2>Device Distribution</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-devices"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Applied vs Visitors</span><h2>Applications</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-conversions"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Top pages</span><h2>Most Visited Pages</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-toppages"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Monthly</span><h2>Monthly Visitors</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-monthly"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Yearly</span><h2>Yearly Visitors</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-yearly"></canvas></div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- ============ LIVE ============ -->
+                <section class="an-panel" data-panel="live">
+                    <section class="admin-panel">
+                        <div class="admin-panel-heading">
+                            <div><span class="admin-kicker">Auto-refresh · 10s</span><h2>Live Visitors <span id="an-live-count">0</span> active</h2></div>
+                            <label class="an-switch"><input type="checkbox" id="an-live-toggle" checked> <span>Auto refresh</span></label>
+                        </div>
+                        <div class="an-table-wrap">
+                            <table class="an-table">
+                                <thead><tr><th>Country</th><th>City</th><th>Current Page</th><th>Device</th><th>OS</th><th>Browser</th><th>Source</th><th>Pages</th><th>Time on Site</th><th>Last Activity</th></tr></thead>
+                                <tbody id="an-live-rows"><tr><td colspan="10" class="an-empty">Loading…</td></tr></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ============ VISITORS ============ -->
+                <section class="an-panel" data-panel="visitors">
+                    <section class="admin-panel">
+                        <div class="admin-panel-heading">
+                            <div><span class="admin-kicker">Detailed log</span><h2>All Visitors</h2></div>
+                            <input type="search" id="an-visitor-search" class="an-search" placeholder="Search country, city, page, IP…">
+                        </div>
+                        <div class="an-table-wrap">
+                            <table class="an-table">
+                                <thead><tr><th>Date/Time</th><th>Type</th><th>Applied</th><th>Country</th><th>City</th><th>Device</th><th>OS</th><th>Browser</th><th>Source</th><th>Landing</th><th>Pages</th><th>Duration</th></tr></thead>
+                                <tbody id="an-visitor-rows"><tr><td colspan="12" class="an-empty">Loading…</td></tr></tbody>
+                            </table>
+                        </div>
+                        <div class="an-pagination" id="an-visitor-pagination"></div>
+                    </section>
+                </section>
+
+                <!-- ============ SOURCES ============ -->
+                <section class="an-panel" data-panel="sources">
+                    <div class="an-charts">
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Where visitors come from</span><h2>Traffic Sources</h2></div></div>
+                            <div class="an-canvas-wrap an-canvas-tall"><canvas id="chart-sources-full"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Breakdown</span><h2>Source Details</h2></div></div>
+                            <div id="an-sources-list" class="an-rank-list"></div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- ============ GEOGRAPHY ============ -->
+                <section class="an-panel" data-panel="geo">
+                    <div class="an-charts">
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Top countries</span><h2>Country Distribution</h2></div></div>
+                            <div class="an-canvas-wrap an-canvas-tall"><canvas id="chart-countries"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Top cities</span><h2>City Distribution</h2></div></div>
+                            <div class="an-canvas-wrap an-canvas-tall"><canvas id="chart-cities"></canvas></div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- ============ TECH ============ -->
+                <section class="an-panel" data-panel="tech">
+                    <div class="an-charts">
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Browsers</span><h2>Browser Distribution</h2></div></div>
+                            <div class="an-canvas-wrap an-canvas-tall"><canvas id="chart-browsers"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Operating systems</span><h2>OS Distribution</h2></div></div>
+                            <div class="an-canvas-wrap an-canvas-tall"><canvas id="chart-os"></canvas></div>
+                        </section>
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Devices</span><h2>Device Types</h2></div></div>
+                            <div class="an-canvas-wrap"><canvas id="chart-devices-full"></canvas></div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- ============ PAGES ============ -->
+                <section class="an-panel" data-panel="pages">
+                    <div class="an-charts">
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Most visited</span><h2>Top Pages</h2></div></div>
+                            <div id="an-most-visited" class="an-rank-list"></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Entry points</span><h2>Top Landing Pages</h2></div></div>
+                            <div id="an-landing" class="an-rank-list"></div>
+                        </section>
+                        <section class="admin-panel an-chart-card">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Exit points</span><h2>Top Exit Pages</h2></div></div>
+                            <div id="an-exit" class="an-rank-list"></div>
+                        </section>
+                        <section class="admin-panel an-chart-card an-col-2">
+                            <div class="admin-panel-heading"><div><span class="admin-kicker">Least visited</span><h2>Least Visited Pages</h2></div></div>
+                            <div id="an-least-visited" class="an-rank-list"></div>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- ============ SETTINGS ============ -->
+                <section class="an-panel" data-panel="settings">
+                    <section class="admin-panel an-settings-panel">
+                        <div class="admin-panel-heading"><div><span class="admin-kicker">Configuration</span><h2>Analytics Settings</h2></div></div>
+                        <form id="an-settings-form" class="admin-form">
+                            <div class="an-settings-grid">
+                                <label class="an-setting"><span>Enable Tracking</span>
+                                    <select id="set-tracking_enabled"><option value="1">Enabled</option><option value="0">Disabled</option></select></label>
+                                <label class="an-setting"><span>Exclude Admin Visits</span>
+                                    <select id="set-exclude_admin"><option value="1">Yes</option><option value="0">No</option></select></label>
+                                <label class="an-setting"><span>Bot Detection</span>
+                                    <select id="set-bot_detection"><option value="1">On</option><option value="0">Off</option></select></label>
+                                <label class="an-setting"><span>Geo Location Lookup</span>
+                                    <select id="set-geo_lookup"><option value="1">On</option><option value="0">Off</option></select></label>
+                                <label class="an-setting"><span>Session Timeout (seconds)</span>
+                                    <input type="number" id="set-session_timeout" min="60" max="86400" value="1800"></label>
+                                <label class="an-setting"><span>Auto Cleanup — keep records for (days, 0 = forever)</span>
+                                    <input type="number" id="set-cleanup_days" min="0" max="3650" value="90"></label>
+                            </div>
+                            <label class="an-setting an-setting-wide"><span>Excluded IP Addresses <span class="admin-hint">(comma or space separated)</span></span>
+                                <textarea id="set-excluded_ips" rows="2" placeholder="127.0.0.1, 203.0.113.5"></textarea></label>
+                            <div class="an-settings-actions">
+                                <button type="submit" class="theme-btn admin-submit-btn">Save Settings</button>
+                                <button type="button" id="an-run-cleanup" class="admin-ghost-btn"><i class="fal fa-broom"></i> Run cleanup now</button>
+                            </div>
+                        </form>
+                    </section>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/admin/analytics-charts.js"></script>
+    <script src="/assets/js/admin/admin-analytics.js"></script>
+</body>
+
+</html>

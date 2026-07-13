@@ -243,6 +243,11 @@ async function loadSecondaryCounts() {
 
 	const bids = await apiGet("/api/bid-projects?admin=1");
 	if (bids && Array.isArray(bids.data)) set(elements.bids, bids.data.length);
+
+	const analytics = await apiGet("/api/admin/analytics/summary?range=today");
+	if (analytics && analytics.data) {
+		set(document.getElementById("stat-analytics-live"), Number(analytics.data.live) || 0);
+	}
 }
 
 async function loadDashboard() {

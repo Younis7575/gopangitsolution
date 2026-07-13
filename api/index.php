@@ -8,6 +8,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/apply_module.php';
 require_once __DIR__ . '/news_service.php';
+require_once __DIR__ . '/analytics.php';
 
 /* ------------------------------------------------------------------ */
 /* CORS + response helpers                                            */
@@ -648,6 +649,13 @@ try {
     init_schema();
     $pdo = db();
     init_apply_schema();
+
+    /* Website analytics schema first, so conversion marking during an
+       application submission (handled below) always has its columns ready. */
+    init_analytics_schema();
+    handle_analytics_tracking($method, $path); // POST /api/track (public, exits if matched)
+    handle_analytics($method, $path);          // /api/admin/analytics/* (exits if matched)
+
     handle_apply_module($method, $path, $pdo);
 
     /* Public status lookup returns only non-sensitive summary fields. */
@@ -823,6 +831,7 @@ try {
         $resumeUrl = '/api/applications/' . $id . '/resume';
         $pdo->prepare('UPDATE applications SET resume_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
             ->execute([$resumeUrl, $id]);
+        analytics_mark_conversion('job'); // flag this visitor as "applied" in analytics
 
         json_response([
             'success' => true,
@@ -1775,6 +1784,7 @@ try {
         $id = (int) $pdo->lastInsertId();
         $stmt = $pdo->prepare('SELECT * FROM partner_applications WHERE id = ?');
         $stmt->execute([$id]);
+        analytics_mark_conversion('partnership');
         json_response(['success' => true, 'message' => 'Partner application submitted successfully', 'data' => $stmt->fetch()], 201);
     }
     if ($method === 'PUT' && preg_match('#^/api/partner-applications/(\d+)/status$#', $path, $m)) {
@@ -1832,6 +1842,7 @@ try {
         $pdo->prepare('UPDATE project_proposals SET attachment_url=? WHERE id=?')->execute([$url,$id]);
         $stmt = $pdo->prepare('SELECT * FROM project_proposals WHERE id = ?');
         $stmt->execute([$id]);
+        analytics_mark_conversion('project');
         json_response(['success' => true, 'message' => 'Project proposal submitted successfully', 'data' => $stmt->fetch()], 201);
     }
     if (($method === 'PUT' || $method === 'PATCH') && preg_match('#^/api/(?:project-proposals|proposals)/(\d+)/status$#', $path, $m)) {
@@ -1911,6 +1922,7 @@ try {
             project_category, budget_range, expected_timeline, project_description, attachment_url, status, created_at, updated_at
             FROM project_hiring_requests WHERE id = ?');
         $stmt->execute([$id]);
+        analytics_mark_conversion('project_hiring');
         json_response(['success' => true, 'message' => 'Project hiring request submitted successfully', 'data' => $stmt->fetch()], 201);
     }
 
@@ -2145,6 +2157,7 @@ try {
         $attachmentUrl = ($att && !empty($att['key'])) ? '/api/bids/' . $id . '/attachment' : null;
         $pdo->prepare('UPDATE project_bids SET attachment_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
             ->execute([$attachmentUrl, $id]);
+        analytics_mark_conversion('bid');
         json_response(['success' => true, 'message' => 'Your bid has been submitted successfully',
             'data' => ['id' => $id, 'project_id' => $projectId, 'status' => 'New']], 201);
     }

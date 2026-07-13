@@ -12,6 +12,7 @@ DirectoryIndex home.html index.html
     RewriteRule ^admin-applications/?$ admin-applications/applications.html [L]
     RewriteRule ^admin-applicants/?$ admin-applicants/index.html [L]
     RewriteRule ^admin-apply/?$ admin-apply/index.html [L]
+    RewriteRule ^admin-analytics/?$ admin-analytics/index.html [L]
     RewriteRule ^admin-dashboard/?$ admin-dashboard/dashboard.html [L]
     RewriteRule ^admin-jobs/?$ admin-jobs/jobs.html [L]
     RewriteRule ^admin-login/?$ admin-login/login.html [L]
