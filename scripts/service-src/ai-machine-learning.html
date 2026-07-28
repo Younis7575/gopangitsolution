@@ -1,0 +1,89 @@
+<h3>First we check whether you need AI at all</h3>
+
+<p>A large share of the requests we receive are better served by ordinary software. If a task follows rules, arithmetic and a script will be cheaper, faster, auditable and correct every time &mdash; three properties a probabilistic model does not offer. We would rather tell you that in the first call than bill you for discovering it.</p>
+
+<p>The tasks that genuinely suit these systems are language- and image-shaped and repetitive: reading, classifying, extracting, summarising, drafting. Beyond that we apply two more tests. Is an occasional wrong answer survivable or catchable &mdash; is there a reviewer, or a natural verification step? And do you have the data: examples for extraction, documents for search, history for forecasting? Inconsistent records produce a system that is confidently wrong in ways nobody notices, which is worse than no system.</p>
+
+<h3>Rules, retrieval, or fine-tuning</h3>
+
+<p>Three approaches, and the order matters because each is more expensive than the last:</p>
+
+<div class="gis-table-scroll">
+    <table>
+        <thead>
+            <tr><th>Approach</th><th>Use when</th><th>Cost profile</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Rules / classical code</td><td>The task is deterministic</td><td>Cheapest, fully auditable</td></tr>
+            <tr><td>Retrieval over your documents</td><td>Answers must come from your own content</td><td>Moderate build, low running cost</td></tr>
+            <tr><td>Fine-tuning a model</td><td>You need a consistent format or tone at volume, with labelled examples</td><td>Highest, and needs maintaining</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<p>In practice, retrieval solves most business problems that look like they need a custom model. If the requirement is "answer questions from our policies" or "draft a reply using our documentation", fine-tuning is usually the wrong tool &mdash; it teaches style, not facts, and it goes stale the moment the underlying documents change.</p>
+
+<h3>Retrieval done properly</h3>
+
+<p>Retrieval systems are easy to demo and easy to get subtly wrong. What we insist on:</p>
+
+<ul>
+    <li><strong>Citations, always.</strong> Every answer links to the source passage. An answer nobody can verify is worse than no answer, and users learn very quickly whether to trust a system that shows its working.</li>
+    <li><strong>Permissions enforced at retrieval time.</strong> Filter the documents a user is allowed to see <em>before</em> they reach the model. Asking a model to be discreet about content you handed it is not access control.</li>
+    <li><strong>Freshness handled deliberately.</strong> Index documents with dates and prefer current versions. A superseded policy retrieved confidently is a real operational risk, not a cosmetic one.</li>
+    <li><strong>Honest refusal.</strong> When nothing relevant is retrieved, the system says so and hands off, rather than filling the gap from general knowledge.</li>
+</ul>
+
+<h3>Human-in-the-loop is a design pattern, not a compromise</h3>
+
+<p>The implementations that succeed put a person at the point where being wrong would cost something. For document extraction that means a review queue showing the original document beside the extracted fields, with low-confidence values highlighted &mdash; a few seconds to confirm instead of minutes to type. For support that means a drafted reply an agent edits and sends, never an auto-send.</p>
+
+<p>Then the automation is earned rather than assumed: we ship with review mandatory, measure accuracy per field over several weeks, and raise the auto-approve threshold only on the fields and sources that have demonstrated they deserve it. You get most of the time saving immediately, and you never get a silent bad record.</p>
+
+<h3>Evaluation, or you are guessing</h3>
+
+<p>The step that separates a system you can trust from a demo is a small evaluation set: perhaps 50 to 200 real examples with known correct answers, assembled from your own data. Every prompt change, model change or version upgrade runs against it before going live.</p>
+
+<p>Without this, you cannot tell improvement from luck, and you certainly cannot tell whether switching to a newer model made things better or quietly worse on the cases you care about. Building the set is unglamorous work, usually a few days, and it is the difference between engineering and hoping. We also keep a small adversarial set &mdash; the awkward, ambiguous, badly scanned examples &mdash; because average accuracy hides exactly the failures that damage trust.</p>
+
+<h3>Abstract the model, and control the spend</h3>
+
+<p>Model providers change pricing, capabilities and availability on a quarterly rhythm. So we put your application behind your own interface rather than calling a vendor's SDK from thirty places: switching provider or model becomes a configuration change instead of a rewrite, and you can run two models side by side against your evaluation set to compare them honestly.</p>
+
+<p>On cost: per-call charges are small and unbounded retries are not. We set spending alerts from day one, cap retries, cache results for identical inputs, and use a smaller and cheaper model for the easy majority of cases while escalating only the hard ones. For high-volume classification and extraction, running a smaller open model on your own infrastructure is now genuinely viable and sometimes the cheaper answer &mdash; particularly where data cannot leave your control.</p>
+
+<h3>Privacy, and the questions to ask before sending anything</h3>
+
+<p>Before a single document leaves your systems, we establish where it goes, whether the provider trains on it, what the retention period is, and which jurisdiction it is processed in. For sensitive material the options are enterprise terms with a no-training commitment, or a self-hosted model &mdash; and for some clients the second is the only acceptable answer regardless of cost.</p>
+
+<p>We also design for staff trust, which is the risk nobody budgets for. If people believe a tool exists to replace them, they will not report its mistakes, and you lose your best source of quality signal. Introduced as removing the worst part of a job &mdash; and meant sincerely &mdash; these systems get adopted and improved. For five worked examples with build costs and payback periods, see <a href="/blog/ai-for-small-business">AI for small business: five use cases that pay for themselves</a>.</p>
+
+<!--ASIDE-->
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;background:var(--gis-bg-subtle);">
+    <h3 style="font-size:1.05rem;margin-bottom:14px;">How we start</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">One workflow with a measurable baseline</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Numeric success criteria, agreed first</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Two-week pilot on real data</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Run in parallel with the manual process</li>
+        <li style="padding:10px 0;">Then expand, adjust — or stop</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Built in, not optional</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Evaluation set of real examples</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Citations on every answer</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Permissions filtered at retrieval</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Provider behind your own interface</li>
+        <li style="padding:9px 0;">Spending alerts &amp; retry caps</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Related reading</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/ai-for-small-business">Five use cases that pay off</a></li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/cloud-hosting-small-business">Where to run the workload</a></li>
+        <li style="padding:9px 0;"><a href="/blog/software-development-cost-pakistan">Budgeting a build</a></li>
+    </ul>
+</div>

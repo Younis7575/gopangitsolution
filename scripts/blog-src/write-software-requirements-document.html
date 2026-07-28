@@ -1,0 +1,154 @@
+<p>Almost every troubled project we have been asked to rescue was mis-specified rather than mis-coded. The engineering was fine; it was engineering for the wrong thing. A requirements document is the cheapest insurance in software, because it is the only stage where changing your mind costs a conversation instead of a sprint. Here is how to write one that a development team can genuinely quote and build from — with a template you can copy at the end.</p>
+
+<div class="gis-takeaways">
+    <h2>The short version</h2>
+    <ul>
+        <li>Write requirements as <strong>user outcomes with acceptance criteria</strong>, not as a feature wish-list. "User can reset password" is not a requirement; the seven states around it are.</li>
+        <li>The <strong>out-of-scope section is the most valuable part of the document.</strong> It prevents more disputes than the in-scope section.</li>
+        <li>Specify <strong>roles and permissions first</strong>. Everything else — screens, reports, cost — follows from the role matrix.</li>
+        <li>Include <strong>non-functional requirements</strong> (load, response time, browsers, devices, uptime, data residency). These change architecture and therefore price.</li>
+        <li>A good SRS for a mid-size project is <strong>12–25 pages</strong>. A 90-page document nobody reads is worse than a 12-page one everybody does.</li>
+    </ul>
+</div>
+
+<h2 id="why-it-matters">Why the document matters more than the contract</h2>
+
+<p>Contracts allocate blame after something goes wrong. Requirements documents prevent it going wrong. When a client and a studio disagree six weeks into a build, the disagreement is nearly always about something both parties assumed was obvious and neither wrote down.</p>
+
+<p>A real example. A brief said the system should "let managers approve leave requests". Reasonable sentence. It did not say whether approval could be delegated while a manager was on leave, whether a rejected request could be resubmitted, whether HR could override a manager, whether partial-day leave existed, or whether approval triggered a payroll adjustment. Those five unwritten questions were eleven developer-days and a difficult conversation.</p>
+
+<blockquote>
+    <p>Every sentence in a brief that contains "simply", "just", or "obviously" is a sentence that will cost money.</p>
+</blockquote>
+
+<h2 id="structure">The structure that works</h2>
+
+<p>Formal standards exist for this. Most are too heavy for commercial projects. The structure below is what we ask clients for, and what we produce ourselves during a paid discovery phase.</p>
+
+<h3>1. Purpose and success criteria</h3>
+
+<p>Two or three paragraphs: what problem this solves, who has the problem, and how you will know in six months whether it worked. Make the success criteria measurable — "reduce order entry time from 8 minutes to under 2", "handle 400 concurrent users during registration week", "eliminate the weekly manual Excel reconciliation". Teams make better technical decisions when they know what they are optimising for.</p>
+
+<h3>2. Users and roles</h3>
+
+<p>List every distinct type of user, what they can see, and what they can do. Do this as a table. It is the highest-value page in the whole document, because role count drives cost more than screen count does.</p>
+
+<div class="gis-table-scroll">
+    <table>
+        <thead>
+            <tr><th>Role</th><th>Can view</th><th>Can create/edit</th><th>Can approve/delete</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Sales agent</td><td>Own leads only</td><td>Own leads, quotes</td><td>None</td><td>Cannot see pricing margin</td></tr>
+            <tr><td>Branch manager</td><td>All leads in branch</td><td>Reassign leads</td><td>Approve discounts &lt;10%</td><td>Monthly branch report</td></tr>
+            <tr><td>Finance</td><td>All invoices</td><td>Payments, credit notes</td><td>Void invoice</td><td>Needs export to accounting</td></tr>
+            <tr><td>Owner</td><td>Everything</td><td>Nothing</td><td>Nothing</td><td>Read-only dashboard</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<h3>3. Functional requirements, written as outcomes</h3>
+
+<p>The format that survives contact with a development team is: <em>As a [role], I need to [action], so that [outcome]</em> — followed by explicit acceptance criteria. The user story tells the developer why; the acceptance criteria tell them when they are finished.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-check-double"></i>
+    <div>
+        <h3>Example, done properly</h3>
+        <p><strong>Story:</strong> As a sales agent, I need to convert a lead into a customer so that I can raise an invoice against it.</p>
+        <p><strong>Acceptance criteria:</strong></p>
+        <p>1. Conversion requires a phone number and at least one address on the lead.<br>
+        2. On conversion the lead status becomes "Converted" and becomes read-only.<br>
+        3. All notes, files and call history transfer to the customer record.<br>
+        4. If a customer with the same phone number already exists, the agent is shown a merge prompt and cannot create a duplicate.<br>
+        5. Conversion is recorded in the audit log with user and timestamp.<br>
+        6. A converted lead cannot be reverted by an agent; only a branch manager can.</p>
+    </div>
+</div>
+
+<p>Notice that criterion 4 and criterion 6 are the expensive ones, and neither appears in the original sentence. That is the entire point of the exercise.</p>
+
+<h3>4. The states nobody writes down</h3>
+
+<p>For every screen that loads or submits data, decide four things. If your document answers these for each major screen, you have eliminated most of the ambiguity in the project:</p>
+
+<ul>
+    <li><strong>Empty state.</strong> What does a brand-new user with no data see? This is your onboarding, and it is usually forgotten until the week before launch.</li>
+    <li><strong>Loading state.</strong> Spinner, skeleton, or optimistic update?</li>
+    <li><strong>Error state.</strong> What happens on a failed request, a validation error, a lost connection? What exactly does the user read?</li>
+    <li><strong>Permission state.</strong> What does a user who lacks access see — a hidden menu item, or a "no access" message?</li>
+</ul>
+
+<h3>5. Non-functional requirements</h3>
+
+<p>These are the requirements that change the architecture, which is why omitting them is expensive. Be specific:</p>
+
+<ul>
+    <li><strong>Scale:</strong> expected users, concurrent peak, records after three years, file storage volume.</li>
+    <li><strong>Performance:</strong> acceptable page and API response times; which screens must feel instant.</li>
+    <li><strong>Availability:</strong> is overnight downtime acceptable, or is this a 24/7 system? This decides your hosting bill — see our <a href="/blog/cloud-hosting-small-business">hosting comparison</a>.</li>
+    <li><strong>Devices and browsers:</strong> the real ones your users have, not the ones you wish they had. Include minimum Android version and screen size.</li>
+    <li><strong>Security and compliance:</strong> data residency, retention periods, audit requirements, two-factor authentication, encryption of specific fields.</li>
+    <li><strong>Localisation:</strong> languages, right-to-left support, currency and date formats. Retrofitting Urdu or Arabic RTL support is expensive; planning for it costs little.</li>
+    <li><strong>Backups and recovery:</strong> how much data you can afford to lose, and how fast you must be back up.</li>
+</ul>
+
+<h3>6. Integrations</h3>
+
+<p>For each external system, record: what it is, who owns credentials, whether documentation exists, whether a sandbox environment exists, and whether anyone has successfully integrated with it before. Integrations against undocumented or unstable third-party systems are the single most common source of estimate blowouts, and they need a named owner on the client side who can chase the other vendor.</p>
+
+<h3>7. Explicitly out of scope</h3>
+
+<p>Write this section even if it feels awkward. Especially if it feels awkward. List the things a reasonable reader might assume are included but are not: other languages, other platforms, data migration, content writing, SEO work, training, third-party licence costs, offline mode, a public API. Then list what is deliberately deferred to a later phase.</p>
+
+<p>This section is not defensive paperwork. It is a shared understanding, and it lets both sides talk about phase two without pretending phase one failed.</p>
+
+<h3>8. Deliverables, milestones and acceptance</h3>
+
+<p>What you receive (source code, design files, deployment scripts, documentation, admin credentials), when, and who signs off. Define what "done" means for the project as a whole, and how long the post-launch warranty period is.</p>
+
+<h2 id="mistakes">Seven mistakes we see constantly</h2>
+
+<ol>
+    <li><strong>Specifying the solution instead of the problem.</strong> "Add a dropdown here" forecloses better options. Say what the user is trying to achieve and let the team propose the interface.</li>
+    <li><strong>No priority order.</strong> If everything is essential, nothing can be deferred when the timeline tightens — and it will tighten. Mark each requirement Must / Should / Could.</li>
+    <li><strong>Ignoring reporting until the end.</strong> Reports drive database design. A report requirement discovered in month three can mean restructuring how data was stored.</li>
+    <li><strong>Forgetting the admin side.</strong> Someone has to manage users, edit content, fix bad records and re-send failed emails. Admin tooling is routinely 20–30% of a build and routinely absent from briefs.</li>
+    <li><strong>No decision-maker named.</strong> If four stakeholders can each request changes and none can approve, the project has no steering. Name one person.</li>
+    <li><strong>Treating the document as immutable.</strong> It is a living artefact. Version it, date it, and log changes with who approved them.</li>
+    <li><strong>Skipping wireframes.</strong> Twenty rough wireframes eliminate more ambiguity than eighty pages of prose. They do not need to be pretty; boxes and labels on paper are enough.</li>
+</ol>
+
+<h2 id="template">The template</h2>
+
+<p>Copy this outline into a document and fill it in. If a section genuinely does not apply, write "not applicable" rather than deleting it — the absence is itself information for whoever quotes the work.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-file-lines"></i>
+    <div>
+        <h3>Software Requirements Document — outline</h3>
+        <p><strong>1. Overview</strong> — problem, audience, measurable success criteria, launch deadline and why.<br>
+        <strong>2. Users &amp; roles</strong> — role/permission table.<br>
+        <strong>3. Scope summary</strong> — one-paragraph description of what is being built.<br>
+        <strong>4. Functional requirements</strong> — grouped by module; each with user story, acceptance criteria, priority (Must/Should/Could).<br>
+        <strong>5. Screens</strong> — list with purpose, and empty/loading/error/permission states.<br>
+        <strong>6. Business rules</strong> — calculations, tax, discount logic, approval thresholds, numbering formats, working hours.<br>
+        <strong>7. Notifications</strong> — every email, SMS and push: trigger, recipient, channel, content.<br>
+        <strong>8. Reports &amp; exports</strong> — each report, its filters, its columns, its format.<br>
+        <strong>9. Integrations</strong> — system, owner, credentials, docs, sandbox availability.<br>
+        <strong>10. Non-functional requirements</strong> — scale, performance, availability, devices, security, localisation, backups.<br>
+        <strong>11. Data migration</strong> — sources, volume, quality, who cleans it.<br>
+        <strong>12. Out of scope</strong> — explicit exclusions and deferred phases.<br>
+        <strong>13. Deliverables &amp; milestones</strong> — artefacts, dates, acceptance process, warranty.<br>
+        <strong>14. Open questions</strong> — with an owner and a date needed against each.<br>
+        <strong>15. Change log</strong> — version, date, change, approver.</p>
+    </div>
+</div>
+
+<h2 id="how-long">How much effort is this worth?</h2>
+
+<p>For a project under PKR 500,000, two to four focused hours and a five-page document is proportionate. For a PKR 3M platform, a week of your time — or a paid discovery phase with your development partner — is not just proportionate, it is the highest-return week in the project.</p>
+
+<p>Our own rule: if the document takes more than 5% of the project budget to produce, it is too detailed. If it takes less than 1%, it is too thin. Section 14 — open questions — is the one people skip and the one that matters most; an honest list of what you do not yet know is far more useful to a development team than a confident answer that turns out to be wrong.</p>
+
+<p>If you would rather not write it alone, that is what a discovery phase is for. We run them as a fixed-price piece of work that ends with wireframes, a technical approach and a firm build quote — and the document is yours regardless of whether you then build with us. See our <a href="/blog/software-development-cost-pakistan">cost breakdown</a> for how discovery fits into a budget, or <a href="/contact">start a conversation</a>.</p>

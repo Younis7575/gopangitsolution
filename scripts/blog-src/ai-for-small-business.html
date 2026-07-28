@@ -1,0 +1,127 @@
+<p>Most AI advice aimed at small businesses is either a list of tools or a warning about the future. Neither helps you decide what to fund this quarter. What follows are five implementations we have actually built and run for small and mid-size clients, with rough build cost, monthly running cost, and how long each took to pay for itself. Two of them we now recommend to almost everyone. One we usually talk clients out of.</p>
+
+<div class="gis-takeaways">
+    <h2>The short version</h2>
+    <ul>
+        <li>The reliable wins are <strong>unglamorous</strong>: document extraction, support triage, internal search. Not chatbots on your homepage.</li>
+        <li>Cost has collapsed. Work that needed a research budget three years ago is now an API call costing a fraction of a rupee.</li>
+        <li><strong>Keep a human in the loop</strong> wherever a wrong answer has consequences. Confidence thresholds and review queues are what make these systems safe.</li>
+        <li>Your data quality sets your ceiling. AI on inconsistent records produces confident nonsense.</li>
+        <li>Start with a two-week pilot on one workflow with a measurable baseline. Never a platform-wide rollout.</li>
+    </ul>
+</div>
+
+<h2 id="frame">How to decide whether AI is the right tool</h2>
+
+<p>Before any of the use cases below, apply three tests. If a task fails them, a script, a form or a better process will serve you better and cost far less.</p>
+
+<ol>
+    <li><strong>Is the task repetitive and language- or image-based?</strong> Reading, classifying, summarising, extracting, drafting. If it is arithmetic or rule-following, write rules — they are cheaper, faster and auditable.</li>
+    <li><strong>Is an occasional wrong answer survivable, or catchable?</strong> These systems are probabilistic. Tasks with a human reviewer or a natural verification step are good candidates. Tasks where a silent error becomes a legal or financial fact are not — at least not without a review step.</li>
+    <li><strong>Do you have the data, and is it consistent?</strong> Extraction needs examples. Search needs documents. Forecasting needs history. Inconsistent records produce a system that is wrong in ways nobody notices.</li>
+</ol>
+
+<h2 id="one">1. Document data extraction — the most reliable win</h2>
+
+<p><strong>The problem:</strong> somebody types information from PDFs and photographs into a system. Invoices, purchase orders, delivery notes, CVs, ID documents, insurance forms. It is slow, it is boring, and boredom produces errors.</p>
+
+<p><strong>What we build:</strong> a pipeline where the document is uploaded or pulled from an inbox, a vision-capable model extracts structured fields, and the result lands in a <strong>review queue</strong> with the original document beside it and low-confidence fields highlighted. A human confirms in a few seconds instead of typing for several minutes. Confidence above a chosen threshold on a known supplier can auto-post; everything else is reviewed.</p>
+
+<ul>
+    <li><strong>Build:</strong> PKR 400,000 – 1,200,000 depending on document variety and integration depth.</li>
+    <li><strong>Running:</strong> typically PKR 4,000 – 25,000/month in API costs at moderate volume.</li>
+    <li><strong>Payback:</strong> fastest of anything on this list where someone currently does this full-time.</li>
+</ul>
+
+<p><strong>What makes it work:</strong> the review queue. Clients often ask for full automation on day one. We refuse, and instead ship with review mandatory, measure the accuracy per field over a few weeks, then raise the auto-approve threshold on the fields that have earned it. You get most of the time saving immediately and you never get a silent bad invoice.</p>
+
+<h2 id="two">2. Support triage and drafted replies</h2>
+
+<p><strong>The problem:</strong> a shared inbox where most messages are variations of eight questions, and genuinely urgent messages sit behind them.</p>
+
+<p><strong>What we build:</strong> incoming messages are classified by topic and urgency, routed to the right person, and — for common categories — a draft reply is generated using your own documentation and past responses, then presented to an agent who edits and sends. The agent stays in control; the blank page disappears.</p>
+
+<ul>
+    <li><strong>Build:</strong> PKR 300,000 – 900,000.</li>
+    <li><strong>Running:</strong> PKR 3,000 – 20,000/month.</li>
+    <li><strong>Payback:</strong> typically within a quarter for a team of three or more handling steady volume.</li>
+</ul>
+
+<p><strong>The important design choice:</strong> draft-for-human, not auto-send. Auto-sending is where support automation earns its bad reputation. The measurable benefit is in first-response time and in agents not rewriting the same explanation forty times a week.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-robot"></i>
+    <div>
+        <h3>The one we usually talk clients out of</h3>
+        <p>A general-purpose chatbot on the homepage. Two reasons. First, most visitors are looking for a price, a phone number or a specific page — a clear site and a visible contact number serve them better and cost nothing to run. Second, an ungrounded bot will eventually invent a price, a delivery time or a policy, and you own what it said. If you do want conversational help, scope it tightly: answer questions from your documentation only, and hand off to a human the moment it is out of scope.</p>
+    </div>
+</div>
+
+<h2 id="three">3. Internal knowledge search</h2>
+
+<p><strong>The problem:</strong> the answer exists — in a policy document, an old proposal, a spec, a WhatsApp thread — and finding it takes twenty minutes, so people ask a colleague instead. In a company of thirty, that is a large, invisible daily cost.</p>
+
+<p><strong>What we build:</strong> a retrieval system over your own documents. Files are chunked and embedded into a vector database; a question retrieves the most relevant passages and a model answers <em>using only those passages</em>, with citations linking back to the source document. Permissions are enforced at retrieval time, so people only ever see answers drawn from documents they are allowed to read.</p>
+
+<ul>
+    <li><strong>Build:</strong> PKR 500,000 – 1,500,000 depending on how many systems it must index.</li>
+    <li><strong>Running:</strong> PKR 6,000 – 30,000/month.</li>
+    <li><strong>Payback:</strong> harder to quantify but consistently the implementation staff refuse to give up once they have it.</li>
+</ul>
+
+<p><strong>Non-negotiable:</strong> citations. An answer without a link to its source cannot be verified, and an unverifiable internal answer is worse than no answer. Two practical warnings: permissions must be enforced at retrieval, not by asking the model to be discreet; and stale documents are a real hazard — an outdated policy retrieved confidently is a genuine risk, so index with dates and prefer current versions.</p>
+
+<h2 id="four">4. Content drafting inside an editorial process</h2>
+
+<p><strong>The problem:</strong> five hundred product descriptions, or a first draft of a proposal that follows a familiar structure.</p>
+
+<p><strong>What works:</strong> generation from <em>structured facts you supply</em> — specifications, dimensions, materials, scope items — into your house format, followed by human editing. What does not work is asking a model to write about a subject it has to invent facts about. That produces text which reads well and is subtly wrong, which is the most expensive kind of wrong.</p>
+
+<ul>
+    <li><strong>Build:</strong> PKR 150,000 – 500,000 for a tool integrated into your CMS or catalogue.</li>
+    <li><strong>Running:</strong> low; usually under PKR 8,000/month.</li>
+</ul>
+
+<p><strong>Be clear-eyed about search, though.</strong> Publishing unreviewed generated text at volume is a poor strategy: it is exactly what search engines and ad networks are now filtering for, and thin mass-produced pages can damage a domain's standing. Generated first drafts, edited by someone who knows the subject and adds something a model could not, are fine. Unedited bulk output is a liability — we have seen sites lose advertising eligibility over precisely this.</p>
+
+<h2 id="five">5. Forecasting and anomaly detection</h2>
+
+<p><strong>The problem:</strong> stock-outs, overstock, and spending anomalies nobody catches until the month-end review.</p>
+
+<p><strong>What we build:</strong> classical time-series or gradient-boosted models over your own transaction history — not language models. Demand forecasts per product per location, reorder suggestions, and alerts when a metric leaves its expected range.</p>
+
+<ul>
+    <li><strong>Build:</strong> PKR 600,000 – 2,000,000. Most of the effort is data preparation, not modelling.</li>
+    <li><strong>Running:</strong> low — this can often run on your existing server.</li>
+    <li><strong>Requirement:</strong> at least 18–24 months of clean, consistent transaction history. Without it, do not start; spend the money on fixing data capture instead, which you will need anyway.</li>
+</ul>
+
+<p>Anomaly detection is the underrated half. A simple alert — "this supplier's unit price rose 22% this month", "this branch's wastage is three standard deviations above normal" — is cheap to build and frequently pays for the whole project on its own.</p>
+
+<h2 id="pilot">How to run a pilot that tells you something</h2>
+
+<p>Every implementation above started as a two-week pilot on one workflow. The structure we use:</p>
+
+<ol>
+    <li><strong>Pick one workflow with a measurable baseline.</strong> How long does it take now? How many errors? How many items per day? If you cannot measure the current state, you cannot evaluate the change.</li>
+    <li><strong>Define success numerically before building.</strong> "Cut invoice entry from 4 minutes to under 1, with under 2% field error." Not "see if AI helps".</li>
+    <li><strong>Build the smallest version that touches real data.</strong> Real data, real users, restricted scope. Demos on sample data teach you nothing about your actual document variety.</li>
+    <li><strong>Run in parallel with the manual process.</strong> Same work both ways for a week. This is how you learn the true accuracy, and it removes the risk of the pilot.</li>
+    <li><strong>Then decide.</strong> Expand, adjust, or stop — and stopping after a two-week pilot is a good outcome, not a failure. It cost two weeks instead of a year.</li>
+</ol>
+
+<h2 id="risks">The risks that are worth taking seriously</h2>
+
+<ul>
+    <li><strong>Confident errors.</strong> These systems do not signal uncertainty the way a person does. Design for verification: confidence thresholds, review queues, citations, and a clear escalation path.</li>
+    <li><strong>Data leaving your control.</strong> Know where your data goes, whether the provider trains on it, and what the retention policy is. For sensitive documents, check the enterprise terms — or run a smaller open model on your own infrastructure, which is now realistic for extraction and classification work.</li>
+    <li><strong>Vendor and model dependency.</strong> Abstract the model behind your own interface so switching providers is a configuration change, not a rewrite. Prices and capabilities move quarterly.</li>
+    <li><strong>Cost drift.</strong> Per-call costs are small; unbounded loops and retries are not. Set spending alerts on day one.</li>
+    <li><strong>Staff trust.</strong> If people believe a system is there to replace them, they will not report its errors — and you will lose your best source of quality signal. Introduce these tools as removing the worst part of a job, and mean it.</li>
+</ul>
+
+<blockquote>
+    <p>The best AI project we shipped last year saved one person about three hours a day of typing. Nobody would put it in a case study. It paid for itself in under four months and has never once produced a headline.</p>
+</blockquote>
+
+<p>If you have a workflow in mind, the useful first conversation is about that workflow rather than about AI — what it costs you now, who does it, and what going wrong would mean. That is usually enough for us to say honestly whether this is worth building or whether a form and a rule would do. See our <a href="/ai-machine-learning">AI and machine learning</a> work, or <a href="/contact">bring us the workflow</a>.</p>

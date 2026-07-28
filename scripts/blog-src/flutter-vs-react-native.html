@@ -1,0 +1,133 @@
+<p>We ship in both. That is the only reason this comparison is worth reading — we have no framework to defend. What follows is the decision tree we actually walk through in the first technical call of a mobile project, including the cases where the honest answer is "neither, build native".</p>
+
+<div class="gis-takeaways">
+    <h2>The short version</h2>
+    <ul>
+        <li><strong>Flutter</strong> wins when the interface is custom, animation-heavy, and must look pixel-identical on both platforms. Its rendering model gives you total control.</li>
+        <li><strong>React Native</strong> wins when you already have a React or TypeScript web team, when you need to share business logic with a web app, or when the app leans heavily on native platform UI.</li>
+        <li>Framework choice is roughly a <strong>10–15% swing</strong> in total project cost. Architecture, scope and team quality move it far more.</li>
+        <li>Go <strong>native</strong> for Bluetooth/BLE-heavy hardware apps, serious background audio or video processing, deep OS integration (widgets, watch apps, CarPlay), or anything where a 5MB binary matters.</li>
+        <li>The single most reliable predictor of success is not the framework — it is whether one senior engineer owns the architecture.</li>
+    </ul>
+</div>
+
+<h2 id="how-they-differ">The one architectural difference that explains everything else</h2>
+
+<p>Almost every practical difference between these two frameworks follows from a single design decision: <strong>how they draw the screen.</strong></p>
+
+<p>React Native uses the platform's own components. When you write a <code>&lt;Text&gt;</code>, on iOS you get a real <code>UILabel</code> and on Android a real <code>TextView</code>. Your JavaScript describes what should exist, and a bridge (or, since the New Architecture, a synchronous JSI layer) tells the platform to build it.</p>
+
+<p>Flutter does not use platform components at all. It ships its own rendering engine — Skia, now Impeller on iOS — and paints every pixel itself. A Flutter button is not a <code>UIButton</code> styled to look right; it is a shape Flutter drew.</p>
+
+<p>Consequences, in order of how often they actually matter:</p>
+
+<div class="gis-table-scroll">
+    <table>
+        <thead>
+            <tr><th>Concern</th><th>Flutter</th><th>React Native</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Visual consistency across platforms</td><td>Identical by default</td><td>Diverges; needs per-platform work</td></tr>
+            <tr><td>Feeling "native" to each OS</td><td>Requires deliberate effort</td><td>Free — it <em>is</em> the native control</td></tr>
+            <tr><td>Complex custom animation</td><td>Excellent; full control of the frame</td><td>Good with Reanimated; more constrained</td></tr>
+            <tr><td>New OS design language (e.g. iOS visual refreshes)</td><td>Flutter must reimplement it</td><td>Often inherited automatically</td></tr>
+            <tr><td>Accessibility / screen readers</td><td>Good, but a bridged layer</td><td>Native accessibility tree</td></tr>
+            <tr><td>Binary size (minimal release APK)</td><td>~7–9 MB</td><td>~5–7 MB</td></tr>
+            <tr><td>Text input and platform keyboards</td><td>Occasional edge-case friction</td><td>Native behaviour</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<h2 id="team-question">Question one: what does your team already know?</h2>
+
+<p>This is genuinely the biggest factor, and it is the one most comparison articles ignore because they are written as if teams appear from nowhere.</p>
+
+<p>If you have an existing React or TypeScript web team, React Native is a smaller leap than it appears. The mental model, the tooling, the state management patterns, the testing libraries and often literal validation and API code carry over. We have seen a competent React web developer become productive in React Native in two to three weeks. Getting the same person productive in Dart and Flutter's widget tree is closer to six to eight weeks — not because Dart is hard (it is a pleasant, boring language) but because Flutter's layout model is genuinely unfamiliar.</p>
+
+<p>Conversely, if you are hiring fresh in Pakistan, both pools are healthy, and Flutter's is currently larger at the junior-to-mid level. Flutter has been the default in local bootcamps and university projects for several years, which cuts both ways: more candidates, and more candidates whose only experience is a tutorial to-do app.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-users"></i>
+    <div>
+        <h3>A rule we hold to</h3>
+        <p>Never pick the framework your team will be worse at in order to win a benchmark they will never run. A well-built React Native app by a React team beats a mediocre Flutter app by the same team every single time.</p>
+    </div>
+</div>
+
+<h2 id="ui-question">Question two: how custom is the interface?</h2>
+
+<p>Look at the designs before choosing. Seriously — open Figma and count.</p>
+
+<p><strong>Choose Flutter</strong> if you see: a bespoke design system that ignores platform conventions, shared-element transitions between screens, custom charts or data visualisation, gesture-driven interfaces, canvas drawing, complex scroll effects, or a brand that demands the app look identical to the marketing site on every device.</p>
+
+<p><strong>Choose React Native</strong> if you see: standard navigation patterns, native-looking list and form screens, platform-appropriate date pickers and action sheets, and a design that is happy to look slightly different on iOS and Android because that is what users of each platform expect.</p>
+
+<p>A concrete example from our own work: a fintech dashboard with animated balance cards, a custom radial spending chart and a swipe-driven transaction drawer went to Flutter, and the animation work took about a third of the time it would have taken us in React Native. A logistics app that was essentially forms, lists, camera capture and a map went to React Native, shared 40% of its validation and API layer with the client's existing web portal, and shipped three weeks earlier than the Flutter estimate.</p>
+
+<h2 id="native-modules">Question three: what hardware and OS features do you touch?</h2>
+
+<p>Both frameworks handle the common cases — camera, GPS, push notifications, biometrics, file storage, in-app purchases — through mature packages. The risk is not the common cases. It is the specific one your product depends on.</p>
+
+<p>Before committing, list every device capability the product needs and check the actual state of the package for each. Not whether a package exists — whether it was updated this year, whether it supports the current OS versions, and whether its issue tracker is full of unanswered crash reports. We have lost more days to an abandoned Bluetooth package than to any framework limitation.</p>
+
+<p>Areas where we consistently recommend native, or a native module written by someone who knows the platform:</p>
+
+<ul>
+    <li><strong>BLE / hardware peripherals.</strong> Connection lifecycle, background reconnection and platform quirks are painful enough natively; a wrapper adds a layer you cannot debug.</li>
+    <li><strong>Background audio, VoIP, real-time video processing.</strong> Both platforms have strict, subtle background-execution rules.</li>
+    <li><strong>Widgets, watch apps, CarPlay/Android Auto, Live Activities.</strong> These are written natively regardless of your main framework.</li>
+    <li><strong>On-device ML with custom models.</strong> Possible in both, but the tooling assumes native.</li>
+    <li><strong>Anything where install size is a growth constraint</strong> — emerging markets, low-storage devices. A native app can be under 3 MB.</li>
+</ul>
+
+<h2 id="performance">On performance: the honest answer</h2>
+
+<p>For the apps most businesses build, <strong>both frameworks are fast enough, and your architecture is the bottleneck.</strong> We have profiled slow apps in both. The cause is almost never the framework. It is:</p>
+
+<ol>
+    <li>Fetching the same data three times because no caching layer exists.</li>
+    <li>Rebuilding an entire list when one row changes.</li>
+    <li>Loading full-resolution images into thumbnail slots.</li>
+    <li>Doing JSON parsing or image decoding on the UI thread.</li>
+    <li>A backend endpoint that takes 2.8 seconds and no loading state to hide it.</li>
+</ol>
+
+<p>Where genuine framework differences show up: Flutter holds 60fps more predictably during heavy custom animation, because it controls the whole render pipeline. React Native's New Architecture closed most of the old bridge-latency gap, but very long lists with complex cells still need care. Flutter apps have slightly slower cold start on low-end Android; React Native apps have slightly slower first render when the JS bundle is large. Neither of these will decide your product's success.</p>
+
+<h2 id="cost">Cost and timeline impact</h2>
+
+<p>Compared with building two separate native apps, either cross-platform framework saves roughly <strong>30–40% of the mobile build cost</strong>. It is not 50%, and anyone promising 50% has not accounted for per-platform testing, platform-specific bug fixing, store review differences and the native modules you will inevitably write.</p>
+
+<p>Between Flutter and React Native, the delta is small — usually within 10–15% — and it moves in whichever direction your team's existing skills point. Our published <a href="/blog/software-development-cost-pakistan">cost breakdown</a> uses Flutter numbers; React Native figures land in the same bands.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-triangle-exclamation"></i>
+    <div>
+        <h3>The cost nobody quotes</h3>
+        <p>Both ecosystems move fast. Budget 3–5 developer-days per year purely for dependency and SDK upgrades, plus a mandatory upgrade whenever Apple raises its minimum SDK requirement. An app left untouched for two years is not "stable"; it is a project.</p>
+    </div>
+</div>
+
+<h2 id="decision-tree">The decision tree we actually use</h2>
+
+<ol>
+    <li><strong>Does the product need deep hardware or OS integration?</strong> → Native, or native modules around a cross-platform shell.</li>
+    <li><strong>Do you have an existing React/TypeScript team or a web app to share logic with?</strong> → React Native.</li>
+    <li><strong>Is the UI highly custom, animation-led, or required to be pixel-identical across platforms?</strong> → Flutter.</li>
+    <li><strong>Is this a data-and-forms business app with standard navigation?</strong> → Either. Choose by hiring pool and who will maintain it.</li>
+    <li><strong>Still genuinely undecided?</strong> → Flutter, for its stronger first-party tooling and a single-vendor dependency story. Our default, not our dogma.</li>
+</ol>
+
+<h2 id="what-matters-more">Five things that matter more than this choice</h2>
+
+<p>If you take one thing from this article, take this list. Every one of these has sunk a project we were later called in to rescue — and none of them is a framework problem. We wrote about the pattern in <a href="/blog/why-software-projects-fail">why software projects fail</a>.</p>
+
+<ul>
+    <li><strong>One senior engineer owning the architecture.</strong> Non-negotiable.</li>
+    <li><strong>A state management approach decided on day one</strong> and applied consistently. Mixed patterns in one codebase cost more than any framework difference.</li>
+    <li><strong>An API contract agreed before the mobile build starts.</strong> Mobile teams blocked on backend churn burn weeks.</li>
+    <li><strong>Crash and error reporting from the first internal build</strong>, not after launch.</li>
+    <li><strong>Real devices in testing.</strong> A mid-range Android phone with 3GB of RAM and a poor network will teach you more in an hour than any simulator.</li>
+</ul>
+
+<p>If you are weighing this up for a specific product, we are happy to give you a straight recommendation for free — including "you do not need an app, you need a good mobile web experience", which is the right answer more often than the industry likes to admit. <a href="/contact">Tell us what you are building</a>, or see how we work on our <a href="/mobile-app-development">mobile app development</a> page.</p>

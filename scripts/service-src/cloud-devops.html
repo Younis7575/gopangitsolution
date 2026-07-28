@@ -1,0 +1,75 @@
+<h3>Three environments, and why two is not enough</h3>
+
+<p>A surprising number of live business systems have exactly one environment: production. Changes are tested by deploying them to real users, and the rollback plan is the developer's memory.</p>
+
+<p>We set up three. <strong>Local</strong>, so developers can work without touching anything shared. <strong>Staging</strong>, which mirrors production as closely as budget allows and holds a sanitised copy of real data &mdash; the environment where you review a change before it becomes everyone's problem, and where database restores are tested. <strong>Production</strong>, which nobody edits by hand. The staging environment is the one clients question because it costs a little more per month. It is also the one that pays for itself the first time a migration behaves differently against real data volumes than it did against ten test rows.</p>
+
+<h3>What a deployment pipeline actually does</h3>
+
+<p>"CI/CD" is a vague term for a concrete thing: a script, triggered by a push, that does the same steps in the same order every time so nobody forgets one at 11pm.</p>
+
+<p>Ours typically runs: install dependencies, run the test suite, run a linter and a dependency vulnerability scan, build assets, then on the main branch deploy to staging automatically. Production deployment is one manual approval away &mdash; not automatic, because someone should decide when customers get a change. The deployment itself puts the new release in place, runs migrations, warms caches and switches over, so users are not served a half-updated application. And it can be reversed: a rollback path we have actually exercised, not one we assume works.</p>
+
+<p>The test that matters is simple. Can you deploy twice on a Friday afternoon without anxiety? If not, the pipeline is not finished.</p>
+
+<h3>Backups: the only ones that count are the ones you have restored</h3>
+
+<p>This is the part of infrastructure work we are least willing to compromise on, because it is the difference between a bad afternoon and the end of a business.</p>
+
+<p>Three requirements. Backups must be <strong>automated</strong>, because a manual backup is a backup that stops happening in week three. They must be <strong>off-server and ideally off-provider</strong> &mdash; a backup on the same machine as the data protects you from your own mistakes and nothing else, and a backup in the same account as the thing it protects shares a single point of failure. And they must be <strong>tested</strong>: a backup nobody has restored is a hypothesis, not a safeguard. We restore one into staging on a schedule and confirm the data is complete.</p>
+
+<p>Alongside that we agree two numbers with you explicitly, because they drive the design and the cost: how much data you can afford to lose, and how quickly you must be back up. Most small businesses answer "a day" and "a few hours", which is inexpensive to deliver. Answering "nothing" and "minutes" is also achievable and costs considerably more &mdash; the point is to decide deliberately rather than discover it during an incident.</p>
+
+<h3>Secrets, and the credential nobody rotated</h3>
+
+<p>Database passwords, API keys and payment credentials belong in environment variables or a secret manager &mdash; never in the repository, never in a shared spreadsheet, never pasted into a chat thread. If a secret has ever been committed to Git it is compromised permanently, because it remains in the history, and it must be rotated rather than deleted.</p>
+
+<p>We also separate credentials per environment, so a leak from staging cannot touch production, and we keep a documented list of every credential the system depends on, who owns it, and where it lives. That list is what makes it possible to rotate anything at all when a laptop is lost or a contractor's access ends.</p>
+
+<h3>Monitoring that tells you something before your customers do</h3>
+
+<p>Uptime checks that only ping the homepage miss the most common real failure: the server is up and returning errors to everyone. So we monitor uptime from outside your network, error rate and response time in the application, queue depth so stalled background jobs are visible, disk and memory with alerts well before exhaustion, certificate expiry, and backup success or failure as an explicit signal rather than an assumption.</p>
+
+<p>Two rules about alerts, learned the hard way. They must reach a person &mdash; a phone, not an unread mailbox. And there must be few enough of them to be believed; a channel that fires forty times a day trains everyone to ignore the one that mattered. Tuning alerts down is real work and worth doing.</p>
+
+<h3>Cost control, before the surprise invoice</h3>
+
+<p>Cloud bills grow quietly. The recurring causes we find: environments left running after a project ended, snapshots and backups accumulating with no retention policy, over-provisioned instances sized for a launch spike that never returns, logs retained for years by default, and data-transfer or NAT charges nobody predicted &mdash; usually the first genuine surprise on an AWS invoice.</p>
+
+<p>So we set billing alerts on day one, apply retention policies to logs and snapshots, tag resources so spend can be attributed, and right-size after a month of real traffic rather than guessing up front. For choosing a tier in the first place &mdash; and for the honest case that a VPS beats a major cloud for most small businesses &mdash; see our <a href="/blog/cloud-hosting-small-business">hosting comparison</a>.</p>
+
+<h3>Writing down what to do at 2am</h3>
+
+<p>Incidents are handled badly not because people lack skill but because they are improvising under pressure. A short runbook fixes most of that: how to check whether the problem is the application, the database or the network; how to put the site into maintenance mode; how to roll back the last release; how to restore the database and how long it takes; who to call at the hosting provider and what account details they will ask for; and who on your side must be told.</p>
+
+<p>Two pages, written calmly in advance. We produce it as part of setup and keep it somewhere reachable that is not the server that just went down &mdash; a detail that sounds obvious and is routinely got wrong.</p>
+
+<!--ASIDE-->
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;background:var(--gis-bg-subtle);">
+    <h3 style="font-size:1.05rem;margin-bottom:14px;">Setup includes</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Local / staging / production split</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Scripted deploy + tested rollback</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Off-provider backups, restore verified</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Secrets per environment, documented</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Monitoring + alerts to a phone</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Billing alerts &amp; retention policies</li>
+        <li style="padding:10px 0;">Two-page incident runbook</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Two numbers we agree first</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">How much data can you lose?</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">How fast must you be back up?</li>
+        <li style="padding:9px 0;">They set the design and the cost</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Related reading</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/cloud-hosting-small-business">Shared vs VPS vs AWS</a></li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/website-speed-optimization-checklist">Server-side speed items</a></li>
+        <li style="padding:9px 0;"><a href="/maintenance-support">Ongoing maintenance</a></li>
+    </ul>
+</div>

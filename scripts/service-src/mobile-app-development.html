@@ -1,0 +1,76 @@
+<h3>Half the work is behind the app, not in it</h3>
+
+<p>When a client describes an app, they describe screens. When we estimate one, roughly half the effort lands somewhere the client never pictured: the backend that stores the data, the API the app talks to, and the admin panel someone uses every day to manage users, fix bad records, refund an order and re-send a failed notification.</p>
+
+<p>That admin panel is the single most under-scoped item in mobile projects. It is typically 20&ndash;30% of the build, it appears in almost no brief, and without it your operations team ends up asking a developer to run database queries by hand. If a quote for a two-platform app with accounts and payments contains no admin panel line, the quote is not cheaper &mdash; it is smaller.</p>
+
+<h3>Store submission is a process, not a button</h3>
+
+<p>Apple reviews every build by hand and rejects for things that have nothing to do with your code. In our experience the recurring causes are: an account-deletion path that does not exist inside the app, sign-in required before the user can see any value, a privacy policy URL that returns an error, missing or inaccurate data-collection disclosures, screenshots showing features the build does not have, and any payment for digital content that bypasses in-app purchase. Google's review is lighter but enforces its own target-SDK deadlines annually, and an app that misses one simply stops being updatable until it is raised.</p>
+
+<p>Practically this means two things for your plan. Budget three to five days for submission, review and the near-certain first rejection. And get the developer accounts opened early, <strong>in your own company's name</strong> &mdash; an app published under a vendor's Apple account cannot be transferred without their cooperation, which is the most common way businesses end up locked to an agency.</p>
+
+<h3>Offline behaviour is a product decision, not a technical one</h3>
+
+<p>"Should it work offline?" sounds like a question for engineers. It is not. Answering it properly means deciding what happens when two people edit the same record on two phones with no connection, and which one wins when they reconnect. That is a business rule, and it needs an owner.</p>
+
+<p>The cheap version &mdash; cache what was last fetched so the app shows something useful and clearly says it is stale &mdash; covers most consumer apps and costs a few days. Full offline write support with a sync queue and conflict resolution is a genuinely different product, and it is the right call for field-work apps where staff are in basements, warehouses or rural areas. Deciding this in week one is cheap; discovering it in month three means reworking your data layer.</p>
+
+<h3>Push notifications, honestly</h3>
+
+<p>Push is usually named as a headline feature and then under-used. Worth knowing before you plan around it: on iOS the user must grant permission, and if they decline you cannot ask again from inside the app &mdash; so <em>when</em> you ask matters enormously. Asking on first launch, before the user understands the value, is how apps end up with a permanently unreachable audience. Delivery is also best-effort; notifications are not a reliable transport for anything critical, so anything that must arrive needs a backup channel and an in-app inbox.</p>
+
+<p>Android adds its own layer: aggressive battery optimisation on many manufacturer skins will delay or drop background delivery, and behaviour differs between brands. If notification timing is central to your product, that needs testing on actual devices from the brands your users own, not on an emulator.</p>
+
+<h3>The device matrix that actually matters</h3>
+
+<p>Testing on a recent iPhone and a flagship Android tells you very little about how your app performs for real users, particularly in Pakistan and comparable markets. The devices that expose problems are mid-range Android phones with 3&ndash;4GB of RAM, a crowded storage partition and a poor mobile connection. That is where you discover the images are too large, the list rebuilds on every scroll, the app cold-starts slowly and the sign-up form is unusable because the keyboard covers the submit button.</p>
+
+<p>We keep a small set of real devices for exactly this reason and we test on them before every release. It is unglamorous and it catches more real-world issues than any amount of simulator work.</p>
+
+<h3>Install size is a growth constraint</h3>
+
+<p>Every few megabytes matters more than teams expect. Users on limited storage and metered data abandon large downloads, and the effect is strongest in precisely the markets where growth is cheapest. We keep release builds lean by shipping per-architecture bundles, compressing and right-sizing image assets, dropping unused fonts and icon sets, and removing dependencies pulled in for a single helper function. It is worth an afternoon before launch.</p>
+
+<h3>Versioning, and the ability to force an upgrade</h3>
+
+<p>Once your app is installed on real phones, you no longer control which version people run. Someone will still be on the build from fourteen months ago, calling an API endpoint you want to change.</p>
+
+<p>So we build two things into the first release, because retrofitting them is painful: a <strong>minimum supported version check</strong> that can politely block a dangerously old build and send the user to the store, and <strong>versioned API endpoints</strong> so the backend can evolve without breaking installed apps. Neither takes long. Both save a genuinely bad week later.</p>
+
+<h3>What we watch after launch</h3>
+
+<p>Crash and error reporting goes in from the first internal build, not after release &mdash; you cannot fix what you cannot see, and the first week of real usage is your densest source of information. From there we track crash-free session rate, cold start time on low-end devices, the drop-off point in your sign-up funnel, and API error rates by endpoint. Those four numbers tell you almost everything about whether the app is healthy.</p>
+
+<p>If you are still choosing a framework, our comparison of <a href="/blog/flutter-vs-react-native">Flutter and React Native</a> sets out the decision tree we use, including the cases where the honest answer is native. For budgeting, the phase-by-phase breakdown in <a href="/blog/software-development-cost-pakistan">what software development actually costs</a> uses a two-platform app with payments as its worked example.</p>
+
+<!--ASIDE-->
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;background:var(--gis-bg-subtle);">
+    <h3 style="font-size:1.05rem;margin-bottom:14px;">Included in every app build</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Backend, database &amp; versioned API</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Admin panel for daily operations</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Crash &amp; error reporting from build one</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Real mid-range device testing</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Store accounts in your company name</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">In-app account deletion (Apple requires it)</li>
+        <li style="padding:10px 0;">Minimum-version gate for old installs</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Decide these in week one</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Offline: cache-only or full sync?</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">When do you ask for push permission?</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Which device brands must be tested?</li>
+        <li style="padding:9px 0;">How many user roles, really?</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Related reading</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/flutter-vs-react-native">Flutter vs React Native</a></li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/software-development-cost-pakistan">What an app really costs</a></li>
+        <li style="padding:9px 0;"><a href="/blog/why-software-projects-fail">Why projects fail</a></li>
+    </ul>
+</div>

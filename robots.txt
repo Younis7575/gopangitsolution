@@ -1,4 +1,34 @@
 User-agent: *
 Allow: /
 
+# Admin area — login gated, no public content
+Disallow: /admin-analytics
+Disallow: /admin-applicants
+Disallow: /admin-applications
+Disallow: /admin-apply
+Disallow: /admin-dashboard
+Disallow: /admin-jobs
+Disallow: /admin-login
+Disallow: /admin-news
+Disallow: /admin-project-hiring
+Disallow: /admin-projects
+Disallow: /admin-solutions
+Disallow: /admin-submissions
+
+# Utility endpoints and form-only pages
+Disallow: /api/
+Disallow: /submission-status
+Disallow: /submit-project-bid
+Disallow: /project-bid-detail
+Disallow: /news-external
+Disallow: /test.html
+
+# Template demo variants (duplicates of the homepage)
+Disallow: /index-2
+Disallow: /index-3
+
+# AdSense crawler must still reach every monetised page
+User-agent: Mediapartners-Google
+Allow: /
+
 Sitemap: https://gopangitsolution.com/sitemap.xml

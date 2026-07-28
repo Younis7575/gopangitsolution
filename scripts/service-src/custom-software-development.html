@@ -1,0 +1,78 @@
+<h3>Roles drive cost, not screens</h3>
+
+<p>Clients estimate custom software by counting screens. We estimate it by counting roles, because every additional role multiplies permissions, views, reports and test cases across the whole system.</p>
+
+<p>"It is just for our staff" reliably becomes admin, branch manager, accountant, storekeeper, sales agent, auditor and a read-only owner dashboard. Seven roles. Each one needs its own answer to: what can it see, what can it create, what can it edit, what can it approve, what can it delete, and what happens when it tries something it is not allowed to do. That matrix is the first artefact we produce, before a single screen is drawn, because it determines the database design &mdash; and schema mistakes are the expensive kind. You migrate around them for years.</p>
+
+<h3>Approval chains are where the real complexity hides</h3>
+
+<p>"Managers approve leave requests" is one sentence and roughly two weeks of work once you answer the questions it hides. Can approval be delegated while a manager is themselves on leave? Can a rejected request be resubmitted, and does it go back to the same person? Can HR override a manager, and is that logged differently? Does approval trigger a payroll adjustment, and what happens if payroll for that period is already closed? Is there a value threshold above which a second approver is required?</p>
+
+<p>None of those are technical questions. They are business rules, and they need a decision-maker on your side who can answer them. We surface them during discovery precisely because finding them in month three is what turns a fixed-price project into an argument.</p>
+
+<h3>Reports decide your database design</h3>
+
+<p>Reporting is routinely postponed to the end of a project, which is the most expensive possible sequence. A report is a question asked of your data, and some questions are impossible to answer efficiently unless the data was stored with them in mind.</p>
+
+<p>A concrete example: if you will ever need "stock value by branch at the end of each month", storing only current stock levels is not enough &mdash; you need a movement history you can reconstruct a point in time from. Adding that later means backfilling data that was never recorded. So we ask for the list of reports you need in discovery, even in rough form, and design the schema to serve them.</p>
+
+<h3>Audit trails, and why you want one from day one</h3>
+
+<p>Any system where money, stock or approvals move needs to be able to answer "who changed this, when, and what was the previous value?" Retrofitting that is genuinely hard, because the history you want is precisely the history you did not record.</p>
+
+<p>We build it in from the start: an append-only log of significant actions with actor, timestamp, entity and before/after values. It is inexpensive at build time and it repays itself the first time there is a dispute about a price change or a deleted invoice. It also changes how deletion works &mdash; in most business systems records should be marked inactive rather than removed, so that historical documents referencing them remain intact.</p>
+
+<h3>Data migration is a project inside the project</h3>
+
+<p>"We will just import the Excel file" is the most consistently underestimated sentence in this line of work. Ten years of records entered by different people contain the same customer spelled four ways, phone numbers in six formats, dates as text, negative quantities, blank required fields, and duplicates that are not exact duplicates.</p>
+
+<p>Our approach is to treat migration as its own scoped piece of work with real days attached, run it repeatedly rather than once, and produce a reconciliation report the client's own finance or operations people sign off &mdash; row counts, totals, and a list of records that could not be migrated cleanly and why. That last list is the important one. Somebody has to make decisions about it, and it is not the development team.</p>
+
+<h3>Integrating with systems you do not control</h3>
+
+<p>Most custom systems must talk to something else: an accounting package, a payment gateway, a courier, a government portal, a legacy application whose original developer is unreachable. These are the single most common cause of estimate overruns, because the estimate assumed documentation was accurate, a sandbox existed and someone at the other organisation would answer email.</p>
+
+<p>So we validate every integration in the first two weeks with a throwaway script that makes one real call, before the build depends on it. And we ask you to name a person on your side responsible for chasing that third party &mdash; a development team cannot escalate inside another company on your behalf.</p>
+
+<h3>When we tell you to buy instead of build</h3>
+
+<p>We are a custom software company and we still recommend off-the-shelf products regularly, because for genuinely standard needs a mature product will beat a fresh build on cost, features and reliability. Standard accounting, standard payroll, standard email marketing, standard helpdesk &mdash; these are solved problems with decades of edge cases already handled.</p>
+
+<p>Custom is the right answer when your process is a genuine competitive difference, when no product fits without distorting how you work, when you need several systems to behave as one, or when the licensing cost of a product at your user count exceeds building your own. If none of those is true, we will say so. That answer has cost us work and it remains correct.</p>
+
+<h3>Building it so it can be handed on</h3>
+
+<p>A custom system typically outlives the team that built it, so the real test is whether a competent developer who has never met us can pick it up. Which means migrations in version control and never a manual schema change on production; business rules covered by automated tests, specifically the calculations, permissions and thresholds where being wrong costs money; a documented API contract; structured logging and error tracking; a deployment that runs from a script rather than from memory; and a schema document explaining not just the tables but why they are shaped that way.</p>
+
+<p>You also hold everything from day one &mdash; repository, hosting, credentials, backups &mdash; in your own company's name. For the wider picture on scoping this kind of project, our guide to <a href="/blog/write-software-requirements-document">writing a requirements document</a> includes the exact role-matrix format we use, and <a href="/blog/why-software-projects-fail">why software projects fail</a> covers the nine failure patterns we check for.</p>
+
+<!--ASIDE-->
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;background:var(--gis-bg-subtle);">
+    <h3 style="font-size:1.05rem;margin-bottom:14px;">Discovery deliverables</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Role &amp; permission matrix</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Business rules &amp; approval thresholds</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Required reports list</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Integration inventory + test calls made</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Migration scope &amp; data quality findings</li>
+        <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);">Wireframes &amp; technical approach</li>
+        <li style="padding:10px 0;">Fixed-price build quote</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Built in from day one</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Audit log with before/after values</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Soft delete, so history survives</li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Migrations in version control</li>
+        <li style="padding:9px 0;">Tests on calculations &amp; permissions</li>
+    </ul>
+</div>
+<div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+    <h3 style="font-size:1.05rem;margin-bottom:10px;">Related reading</h3>
+    <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/write-software-requirements-document">The role matrix format</a></li>
+        <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/laravel-vs-node-backend">Laravel or Node?</a></li>
+        <li style="padding:9px 0;"><a href="/blog/software-development-cost-pakistan">What custom software costs</a></li>
+    </ul>
+</div>

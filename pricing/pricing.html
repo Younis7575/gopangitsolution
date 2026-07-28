@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="/assets/css/custom/site.css">
     <link rel="stylesheet" href="/assets/css/premium.css?v=6">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
+    <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">
 
     <style>
         /* Additional custom styles for development company */
@@ -154,7 +155,7 @@
                                         <li><a href="/it-consulting">IT Consulting</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="/projects">Projects</a></li>
+                                <li><a href="/portfolio">Projects</a></li>
                                 <li><a href="#">Pages <i class="fas fa-angle-down" aria-hidden="true"></i></a>
                                     <ul class="sub-menu">
                                         <li><a href="/faq">FAQ</a></li>
@@ -164,7 +165,7 @@
                                         <li><a href="/contact">Contact</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="/news">News</a></li>
+                                <li><a href="/news">News</a></li><li><a href="/blog">Blog</a></li>
                                 <li><a href="/solutions">Solutions</a></li>
                                 <li><a href="#">Apply <i class="fas fa-angle-down" aria-hidden="true"></i></a>
                                     <ul class="sub-menu">
@@ -205,7 +206,7 @@
                                             <li><a href="/it-consulting">IT Consulting</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="/projects">Projects</a></li>
+                                    <li><a href="/portfolio">Projects</a></li>
                                     <li><a href="#">Pages <i class="fas fa-angle-down gis-mm-arrow" aria-hidden="true"></i></a>
                                         <ul>
                                             <li><a href="/faq">FAQ</a></li>
@@ -215,7 +216,7 @@
                                             <li><a href="/contact">Contact</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="/news">News</a></li>
+                                    <li><a href="/news">News</a></li><li><a href="/blog">Blog</a></li>
                                     <li><a href="/solutions">Solutions</a></li>
                                     <li><a href="#">Apply <i class="fas fa-angle-down gis-mm-arrow" aria-hidden="true"></i></a>
                                         <ul>
@@ -500,6 +501,95 @@
         </div>
     </section>
 
+    <section class="section-padding" style="border-top:1px solid var(--gis-border);">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <span style="display:inline-block;color:var(--gis-accent);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;">How Pricing Works</span>
+                    <h2 style="font-size:clamp(1.6rem,3vw,2.1rem);margin-bottom:16px;">What is behind a number on this page</h2>
+                    <p style="font-size:1.08rem;color:var(--gis-ink);margin-bottom:8px;">Packages are a starting point, not a quote. Here is the arithmetic underneath them, so you can tell a fair price from a misleading one — including on quotes that are not ours.</p>
+                    <div class="gis-prose">
+                        <h3>Every honest quote is the same calculation</h3>
+                        <p>Strip away the packaging and almost every price in this industry is <em>estimated hours × blended day rate + third-party costs + risk buffer</em>. Packages, "starter plans" and per-page pricing are that same calculation with the working hidden.</p>
+                        <p>The blended day rate is the average cost of everyone who touches the work: a designer, one or two engineers, a QA tester, and a project manager who is probably splitting time across several accounts. Established studios in Pakistan bill somewhere between roughly PKR 18,000 and PKR 45,000 per developer-day in 2026. Independent freelancers go lower, and the difference is usually not skill — it is what surrounds the code: design review, testing, deployment, documentation, and someone who answers the phone in eighteen months.</p>
+                        <p>Where clients are surprised is the hours, not the rate. A screen described in one sentence — "users can see their order history" — is a list view, an empty state, a loading state, pagination, a detail view, a filter, an error state, a permission check, an API endpoint, a database index and a test. That is two to four developer-days, not two hours.</p>
+
+                        <h3>Fixed price, time and materials, or retainer</h3>
+                        <div class="gis-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr><th>Model</th><th>Best when</th><th>What to watch</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Fixed price</td><td>Scope is genuinely clear and stable</td><td>Carries a 20–30% risk premium, and the scope document is enforced strictly — because it is the only thing protecting our margin</td></tr>
+                                    <tr><td>Time &amp; materials</td><td>The product will evolve and you can stay engaged</td><td>Cheaper per unit of work, but drifts if you cannot give feedback weekly</td></tr>
+                                    <tr><td>Monthly retainer</td><td>Ongoing maintenance and small improvements</td><td>Define included hours and response times, or expectations diverge</td></tr>
+                                    <tr><td>Paid discovery, then fixed price</td><td>Anything ambiguous — our default</td><td>Feels like an extra step; it is the cheapest stage of the project</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>That last row is what we propose most often. Five to ten days producing wireframes, a technical approach and a firm build quote. Clients occasionally resist paying for discovery, and it is genuinely the cheapest money in a project: it is the only phase where changing your mind costs a conversation instead of a sprint. The document is yours either way.</p>
+
+                        <h3>The costs that are missing from most quotes</h3>
+                        <p>Ask about every one of these before signing anything, with us or anyone else:</p>
+                        <ul>
+                            <li><strong>Hosting and infrastructure</strong> — from a few thousand rupees a month for a brochure site to PKR 12,000–60,000 for an application with a database, file storage and backups. Our <a href="/blog/cloud-hosting-small-business">hosting guide</a> sets out where the thresholds are.</li>
+                            <li><strong>Third-party services</strong> — SMS gateways, transactional email, mapping quotas, payment gateway fees (typically 2.5–3.5% per transaction locally), push notification tiers, error monitoring. Individually small, collectively PKR 8,000–50,000 a month.</li>
+                            <li><strong>App store accounts</strong> — USD 99/year for Apple, USD 25 once for Google. Trivial money, but they must be in <em>your</em> company's name. That is a governance issue, not a cost one.</li>
+                            <li><strong>Maintenance</strong> — 15–20% of build cost per year. Operating systems update, dependencies reach end of life, and store requirements change annually. This is the line most quotes omit entirely.</li>
+                            <li><strong>Content and data entry</strong> — someone has to write forty product descriptions and upload four hundred photos. If it is not in the scope, it is your weekend.</li>
+                            <li><strong>Change requests</strong> — every project has them, and that is healthy; you learn things once real users touch the product. Hold back 10–15% of the total as a change budget rather than pretending the first specification was perfect.</li>
+                        </ul>
+
+                        <h3>Why the cheapest quote is usually the most expensive</h3>
+                        <p>When two quotes for the same brief differ by four times, the gap is almost never efficiency. It is one of four things. <strong>Smaller scope</strong> — one platform, no admin panel, no testing, no deployment, with everything else arriving later as change requests at a higher effective rate. <strong>No QA</strong>, which is 15–25% of a professional build; removing it does not remove the bugs, it moves their discovery to your customers. <strong>Junior-only staffing</strong>, which is fine for well-defined work under review and expensive when nobody senior is making the architecture decisions you cannot cheaply reverse. Or <strong>no handover</strong> — no documentation, no repository access, no deployment credentials — so the next team's first month is spent understanding what exists.</p>
+                        <p>The most expensive project we have been involved in was quoted at PKR 400,000. It was abandoned at around 70% and the rebuild cost several times the original, of which a substantial share was spent purely on understanding and untangling the first attempt.</p>
+
+                        <h3>How to compare quotes properly</h3>
+                        <p>Ask all your shortlisted studios for the same five things. The answers separate them faster than the prices will: a breakdown in days per phase rather than a single number; who specifically will do the work, at what seniority, and how much of their week you get; what is explicitly <em>out</em> of scope, since the exclusions list is more informative than the inclusions; the IP and repository terms, where you should own the code and hold admin access from day one; and the post-launch arrangement quoted before you sign rather than after you depend on them.</p>
+                        <p>Our own answers to all five are published — see <a href="/blog/hiring-development-team-pakistan">how to hire a development team without getting burned</a>, and then use every question in it on us.</p>
+
+                        <h3>Getting a real number</h3>
+                        <p>Ranges are useful for budgeting and useless for deciding. The fastest route to an actual figure is a short conversation about what you are building, who uses it, and what has to be true on launch day. We will tell you the range, what drives it, and — genuinely — if we think an off-the-shelf product would serve you better than anything we would build. That answer has cost us work before and it remains the right one.</p>
+                        <p>For the full arithmetic, including a phase-by-phase breakdown of a two-platform app with payments, see <a href="/blog/software-development-cost-pakistan">what software development actually costs in Pakistan</a>.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div style="position:sticky;top:24px;">
+                        <div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;background:var(--gis-bg-subtle);">
+                            <h3 style="font-size:1.05rem;margin-bottom:14px;">Typical ranges (PKR)</h3>
+                            <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+                                <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);"><strong>Landing page</strong><br>60,000 – 140,000</li>
+                                <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);"><strong>Business website</strong><br>180,000 – 400,000</li>
+                                <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);"><strong>Corporate site</strong><br>400,000 – 900,000</li>
+                                <li style="padding:10px 0;border-bottom:1px dashed var(--gis-border);"><strong>Mobile app, first release</strong><br>1.2M – 4.5M</li>
+                                <li style="padding:10px 0;"><strong>Custom business system</strong><br>2.5M upwards</li>
+                            </ul>
+                        </div>
+                        <div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+                            <h3 style="font-size:1.05rem;margin-bottom:10px;">Ask every studio</h3>
+                            <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Breakdown in days per phase</li>
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">Who works on it, at what seniority</li>
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">What is explicitly out of scope</li>
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);">IP and repository terms</li>
+                                <li style="padding:9px 0;">Post-launch support, quoted up front</li>
+                            </ul>
+                        </div>
+                        <div style="border:1px solid var(--gis-border);border-radius:14px;padding:26px;margin-top:24px;">
+                            <h3 style="font-size:1.05rem;margin-bottom:10px;">Related reading</h3>
+                            <ul style="list-style:none;padding:0;margin:0;font-size:.93rem;">
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/software-development-cost-pakistan">The full cost breakdown</a></li>
+                                <li style="padding:9px 0;border-bottom:1px dashed var(--gis-border);"><a href="/blog/hiring-development-team-pakistan">Vetting a studio</a></li>
+                                <li style="padding:9px 0;"><a href="/services#which-service">Which service do you need?</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="cta-banner-wrapper">
         <div class="container">
             <div class="cta-banner-box section-padding bg-cover" style="background-image: url('/assets/img/cta-banner-bg.jpeg')">
@@ -531,11 +621,15 @@
                             <ul>
                                 <li><a href="/services">Our Services</a></li>
                                 <li><a href="/about">About Us</a></li>
-                                <li><a href="/projects">Portfolio</a></li>
+                                <li><a href="/portfolio">Portfolio</a></li>
                                 <li><a href="/team">Our Team</a></li>
                                 <li><a href="/pricing">Pricing</a></li>
                                 <li><a href="/contact">Contact Us</a></li>
                                 <li><a href="/privacy-policy">Privacy Policy</a></li>
+                                <li><a href="/blog">Blog &amp; Insights</a></li>
+                                <li><a href="/terms-of-service">Terms of Service</a></li>
+                                <li><a href="/disclaimer">Disclaimer</a></li>
+                                <li><a href="/cookie-policy">Cookie Policy</a></li>
                             </ul>
                         </div>
                     </div>

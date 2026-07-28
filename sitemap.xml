@@ -1,28 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Only indexable pages with real publisher content are listed here.
+  Deliberately excluded: admin pages, application forms, submission-status,
+  the error page, the third-party news feed (/news, /news-external) and the
+  unmodified template demo pages — all of which are marked noindex.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://gopangitsolution.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://gopangitsolution.com/about</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://gopangitsolution.com/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://gopangitsolution.com/mobile-app-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/web-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/ui-ux-design</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/custom-software-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/ecommerce-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/backend-api-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/cloud-devops</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/ai-machine-learning</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/quality-assurance-testing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/maintenance-support</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/it-consulting</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/faq</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://gopangitsolution.com/team</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://gopangitsolution.com/news</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://gopangitsolution.com/solutions</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://gopangitsolution.com/contact</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://gopangitsolution.com/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://gopangitsolution.com/apply-job</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://gopangitsolution.com/apply-partner</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://gopangitsolution.com/apply-project</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
+  <!-- Core -->
+  <url><loc>https://gopangitsolution.com/</loc><lastmod>2026-07-28</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://gopangitsolution.com/about</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://gopangitsolution.com/services</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://gopangitsolution.com/contact</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://gopangitsolution.com/portfolio</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/pricing</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/team</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gopangitsolution.com/faq</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gopangitsolution.com/solutions</loc><lastmod>2026-07-28</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Blog & Insights — original long-form content -->
+  <url><loc>https://gopangitsolution.com/blog</loc><lastmod>2026-07-28</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/software-development-cost-pakistan</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/flutter-vs-react-native</loc><lastmod>2026-07-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/write-software-requirements-document</loc><lastmod>2026-07-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/website-speed-optimization-checklist</loc><lastmod>2026-07-15</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/laravel-vs-node-backend</loc><lastmod>2026-07-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/shopify-vs-woocommerce-vs-custom</loc><lastmod>2026-07-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/why-software-projects-fail</loc><lastmod>2026-07-04</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/cloud-hosting-small-business</loc><lastmod>2026-06-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/ai-for-small-business</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/blog/hiring-development-team-pakistan</loc><lastmod>2026-06-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Service detail pages -->
+  <url><loc>https://gopangitsolution.com/mobile-app-development</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/web-development</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/ui-ux-design</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/custom-software-development</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/ecommerce-development</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/backend-api-development</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/cloud-devops</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/ai-machine-learning</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/quality-assurance-testing</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/maintenance-support</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gopangitsolution.com/it-consulting</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Policies and transparency -->
+  <url><loc>https://gopangitsolution.com/privacy-policy</loc><lastmod>2026-07-28</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://gopangitsolution.com/terms-of-service</loc><lastmod>2026-07-28</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://gopangitsolution.com/cookie-policy</loc><lastmod>2026-07-28</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://gopangitsolution.com/disclaimer</loc><lastmod>2026-07-28</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://gopangitsolution.com/editorial-policy</loc><lastmod>2026-07-28</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+
 </urlset>

@@ -9,6 +9,23 @@ DirectoryIndex home.html index.html
 
     RewriteRule ^$ home.html [L]
     RewriteRule ^about/?$ about/about.html [L]
+
+    # Blog & Insights — original long-form content (blog/index.html + blog/<slug>/index.html)
+    RewriteRule ^blog/?$ blog/index.html [L]
+    RewriteRule ^blog/([a-z0-9-]+)/?$ blog/$1/index.html [L]
+
+    # Portfolio. NOTE: /projects is claimed further down by the Apply flow
+    # (^(jobs|internships|partnerships|projects|project-based-hiring)/?...), so the
+    # portfolio page is served at /portfolio. Do not move it back to /projects
+    # without also changing the Apply routing and the /apply-project 301.
+    RewriteRule ^portfolio/?$ projects/projects.html [L]
+
+    # Policy / transparency pages (each lives at <slug>/index.html)
+    RewriteRule ^terms-of-service/?$ terms-of-service/index.html [L]
+    RewriteRule ^cookie-policy/?$ cookie-policy/index.html [L]
+    RewriteRule ^disclaimer/?$ disclaimer/index.html [L]
+    RewriteRule ^editorial-policy/?$ editorial-policy/index.html [L]
+
     RewriteRule ^admin-applications/?$ admin-applications/applications.html [L]
     RewriteRule ^admin-applicants/?$ admin-applicants/index.html [L]
     RewriteRule ^admin-apply/?$ admin-apply/index.html [L]

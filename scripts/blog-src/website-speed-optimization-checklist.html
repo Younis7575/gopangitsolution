@@ -1,0 +1,118 @@
+<p>Every site we ship goes through the same performance pass before launch. It is not glamorous work — most of it is deleting things — but it is the difference between a site that scores 96 on a Monday and a site that stays fast eighteen months later after marketing has added four tracking scripts. This is the actual checklist, in the order we run it, with what each item typically buys you.</p>
+
+<div class="gis-takeaways">
+    <h2>The short version</h2>
+    <ul>
+        <li><strong>Images and third-party scripts</strong> cause the overwhelming majority of slow sites. Fix those two and you have fixed most of it.</li>
+        <li>Optimise for <strong>field data</strong> (real users, Chrome UX Report) not just lab scores. A 100 in Lighthouse on your fibre connection proves very little.</li>
+        <li>The three metrics that matter: <strong>LCP</strong> under 2.5s, <strong>INP</strong> under 200ms, <strong>CLS</strong> under 0.1.</li>
+        <li><strong>Reserve space for everything that loads late</strong> — images, ads, embeds, fonts. Unreserved space is where layout shift comes from.</li>
+        <li>Performance is not a launch task. It regresses. Put a budget in CI or it will drift.</li>
+    </ul>
+</div>
+
+<h2 id="measure-first">Step 0: measure properly, before you touch anything</h2>
+
+<p>Optimising without a baseline means you cannot tell improvement from luck. Before changing a single line:</p>
+
+<ul>
+    <li>Run <strong>PageSpeed Insights</strong> on your three most important pages — usually home, a service or product page, and the contact page. Note both the lab score and the "real user experience" section, which is field data from actual visitors.</li>
+    <li>Test on a <strong>throttled mobile connection</strong>. Chrome DevTools → Network → "Slow 4G", plus CPU throttling at 4×. This approximates the mid-range Android phone most of your visitors actually use.</li>
+    <li>Look at the <strong>waterfall</strong>, not the score. The score is a summary; the waterfall tells you which request is blocking.</li>
+    <li>Record the numbers somewhere. You will want them for the "before and after" conversation.</li>
+</ul>
+
+<div class="gis-callout">
+    <i class="fas fa-gauge-high"></i>
+    <div>
+        <h3>What the three Core Web Vitals actually measure</h3>
+        <p><strong>LCP (Largest Contentful Paint)</strong> — when the biggest visible element finishes rendering. Usually your hero image or headline. Target: under 2.5 seconds.</p>
+        <p><strong>INP (Interaction to Next Paint)</strong> — how long the page takes to visibly respond to a tap or click. Replaced FID. Target: under 200ms.</p>
+        <p><strong>CLS (Cumulative Layout Shift)</strong> — how much content jumps around while loading. Target: under 0.1.</p>
+    </div>
+</div>
+
+<h2 id="images">Images — items 1 to 6</h2>
+
+<p>If you only do one section, do this one. On the sites we are asked to fix, images are the single largest cause of slow loading roughly seven times out of ten.</p>
+
+<ol>
+    <li><strong>Resize to the display size.</strong> A 4,000px photo displayed in a 600px card wastes 90% of its bytes. Export at roughly 2× the largest display width and no more.</li>
+    <li><strong>Serve WebP or AVIF.</strong> WebP typically saves 25–35% over an equivalent JPEG at the same visual quality; AVIF often more. Keep a JPEG fallback via <code>&lt;picture&gt;</code> only if you must support very old browsers.</li>
+    <li><strong>Set explicit <code>width</code> and <code>height</code> on every image.</strong> This is the single highest-value CLS fix. Without dimensions the browser cannot reserve space, so everything below the image jumps when it arrives.</li>
+    <li><strong>Lazy-load below-the-fold images</strong> with <code>loading="lazy"</code> — and never lazy-load the hero image. Lazy-loading your LCP element actively delays it, and this mistake is remarkably common.</li>
+    <li><strong>Preload the hero image</strong> with <code>&lt;link rel="preload" as="image"&gt;</code> so it starts downloading before the CSS finishes parsing.</li>
+    <li><strong>Use responsive <code>srcset</code></strong> so phones download a phone-sized file. A single desktop-sized image served to everyone is a mobile performance tax.</li>
+</ol>
+
+<h2 id="fonts">Fonts — items 7 to 9</h2>
+
+<ol start="7">
+    <li><strong>Self-host, or preconnect.</strong> A third-party font host means an extra DNS lookup, TLS handshake and round trip before any text can render. Self-hosting removes all three; if you must use a hosted font, add <code>&lt;link rel="preconnect"&gt;</code>.</li>
+    <li><strong>Use <code>font-display: swap</code></strong> so text renders immediately in a fallback rather than staying invisible. Pair it with a fallback whose metrics are close to your web font — otherwise you trade invisible text for a visible reflow.</li>
+    <li><strong>Cut the weights.</strong> Most sites load six weights and use three. Each weight is a separate file. Regular, semibold and bold cover nearly every design.</li>
+</ol>
+
+<h2 id="scripts">JavaScript and third parties — items 10 to 15</h2>
+
+<p>This is where sites silently degrade over time. Nobody removes a tracking script.</p>
+
+<ol start="10">
+    <li><strong>Audit every third-party script.</strong> List them, and for each one name the person who will notice if it disappears. Scripts with no owner get deleted. We routinely remove three to five.</li>
+    <li><strong>Defer everything non-critical.</strong> <code>defer</code> for scripts that need the DOM, <code>async</code> for genuinely independent ones. Nothing except a critical inline snippet should block parsing.</li>
+    <li><strong>Load chat widgets and video embeds on interaction.</strong> A live-chat bundle can be 300KB+ and a YouTube iframe pulls in over a megabyte. Replace them with a lightweight placeholder that loads the real thing on click — the "facade" pattern. This is often the largest single win available on a marketing site.</li>
+    <li><strong>Split your bundles.</strong> If you are on a framework, code-split by route so a visitor to the homepage does not download the checkout logic.</li>
+    <li><strong>Remove unused CSS and JS.</strong> DevTools → Coverage shows exactly what went unused. A full icon font for six icons, or an entire UI library for two components, is pure waste — inline the SVGs instead.</li>
+    <li><strong>Watch your tag manager.</strong> One container tag can hide a dozen scripts. Audit inside it, not just the page source.</li>
+</ol>
+
+<div class="gis-callout">
+    <i class="fas fa-triangle-exclamation"></i>
+    <div>
+        <h3>If you run ads on the site</h3>
+        <p>Ad slots are the most common source of layout shift on content sites. Give every slot a fixed reserved height in CSS at each breakpoint, so the page does not jump when a creative loads. Also place slots so the largest one is not competing with your hero image for the first second of bandwidth.</p>
+    </div>
+</div>
+
+<h2 id="delivery">Server and delivery — items 16 to 20</h2>
+
+<ol start="16">
+    <li><strong>Enable Brotli or gzip compression.</strong> Text assets compress by 70–80%. It is a one-line server change and it is still missing on a surprising number of live sites.</li>
+    <li><strong>Set long cache headers on static assets</strong> — a year for fingerprinted files — and use versioned filenames so you can still ship updates instantly.</li>
+    <li><strong>Put a CDN in front.</strong> If your server is in Karachi and your visitor is in Toronto, physics is your bottleneck. A CDN solves it for static assets and costs very little.</li>
+    <li><strong>Cache at the server.</strong> Page caching on WordPress, or a proper query and object cache on a custom app. Most slow "backend" pages are a database query executed on every request that could have been cached for five minutes.</li>
+    <li><strong>Check your TTFB.</strong> Above roughly 600ms and the problem is server-side — slow queries, no caching, or oversubscribed shared hosting — not front-end. Our <a href="/blog/cloud-hosting-small-business">hosting guide</a> covers when to move up a tier.</li>
+</ol>
+
+<h2 id="advanced">The last four — items 21 to 24</h2>
+
+<ol start="21">
+    <li><strong>Inline critical CSS</strong> for above-the-fold content and load the rest asynchronously. Meaningful on content-heavy pages, fiddly to maintain, so we do it selectively rather than always.</li>
+    <li><strong>Reduce main-thread work.</strong> Long tasks are what wreck INP. Break up heavy work, avoid layout thrashing in scroll handlers, and debounce anything that fires on input.</li>
+    <li><strong>Avoid chained redirects.</strong> Each hop is a full round trip. <code>http://example.com</code> → <code>https://example.com</code> → <code>https://www.example.com</code> → <code>/home</code> is three wasted trips before anything renders.</li>
+    <li><strong>Set a performance budget in CI.</strong> Fail the build if the JS bundle grows past a threshold or Lighthouse drops below a floor. Without this, the site regresses within two quarters — guaranteed.</li>
+</ol>
+
+<h2 id="wordpress">If you are on WordPress</h2>
+
+<p>The same principles apply, with three additions that account for most WordPress slowness:</p>
+
+<ul>
+    <li><strong>Audit plugins ruthlessly.</strong> Every active plugin can enqueue its own CSS and JS on every page. We regularly find sites loading a slider library on pages with no slider. Deactivate, measure, repeat.</li>
+    <li><strong>Pick one caching plugin</strong> and configure it properly. Two caching plugins fighting each other is worse than none.</li>
+    <li><strong>Question your page builder.</strong> Heavy visual builders can add 200–400KB of CSS and JS before your content. Sometimes the right fix is a lean custom theme — which is a rebuild, so weigh it honestly against the traffic you have.</li>
+</ul>
+
+<h2 id="what-it-is-worth">What this is actually worth</h2>
+
+<p>Two things, and it is worth being precise about both because the internet exaggerates them.</p>
+
+<p><strong>Conversion.</strong> The relationship between speed and conversion is real and consistently measured across large retail datasets, but it is not a fixed multiplier you can promise. What we can say from our own before/after data is that dropping mobile LCP from around 5 seconds to under 2.5 reliably reduces bounce on landing pages, and the effect is largest on paid traffic where visitors have no loyalty and no patience.</p>
+
+<p><strong>Search.</strong> Core Web Vitals are a genuine ranking signal, but a modest one — relevance and content quality dominate. Speed will not rescue a thin page. It will differentiate you from a competitor whose content is equally good and whose site takes six seconds to load. Treat it as a tiebreaker you should always win, not a growth strategy on its own.</p>
+
+<blockquote>
+    <p>Fast is a feature you only notice when it is missing. Nobody has ever emailed to say the site loaded quickly — but they do leave when it does not.</p>
+</blockquote>
+
+<p>We run this pass on every <a href="/web-development">web development</a> project, and we also run it as standalone work on sites we did not build. If you want the specific list for your site rather than the general one, <a href="/contact">send us the URL</a> and we will tell you what is costing you the most.</p>

@@ -1,0 +1,134 @@
+<p>We are a software studio in Pakistan writing a guide to vetting software studios in Pakistan, which is a conflict of interest we should name up front. We are writing it anyway, because the questions below are the ones that protect clients — including from us — and because a market where buyers know what to ask is a better market for the people doing careful work.</p>
+
+<div class="gis-takeaways">
+    <h2>The short version</h2>
+    <ul>
+        <li>Ask for <strong>repository access from day one</strong> and a written IP assignment. If either is refused, walk away.</li>
+        <li>Register the domain, hosting, app store and cloud accounts in <strong>your own</strong> company's name. This is the most common way clients get trapped.</li>
+        <li>Pay by <strong>milestone against demonstrable output</strong>, never by calendar date, and never more than 30% up front.</li>
+        <li>The best signal in a sales call is whether they <strong>tell you something you did not want to hear</strong>.</li>
+        <li>Reference calls with past clients are worth more than any portfolio. Ask for one where something went wrong.</li>
+    </ul>
+</div>
+
+<h2 id="why-pakistan">What you are actually buying</h2>
+
+<p>Pakistan has a large, genuinely capable software workforce, strong English, and rates well below Western Europe or North America. The variance in quality, however, is very wide — wider than the price range would suggest. The same brief can produce a well-architected, documented, tested system or a pile of screens that stops working when the original developer leaves.</p>
+
+<p>Cost is therefore the wrong primary filter. The right filter is <strong>whether this team will still be useful to you in eighteen months</strong>, which is a question about process, ownership and communication rather than about code.</p>
+
+<h2 id="vetting">Vetting: what to ask, and what the answers tell you</h2>
+
+<h3>Ask about a project that went wrong</h3>
+
+<p>"Tell me about a project that did not go well and what you changed afterwards." A studio with real delivery history has one and will describe it specifically — a scope misjudged, an integration that stalled, a hire that did not work. A studio that claims a perfect record is either new or not being straight with you. This single question separates candidates faster than any other.</p>
+
+<h3>Ask who specifically will do the work</h3>
+
+<p>You want names, seniority, and the percentage of their week you get. The common failure mode is meeting a senior architect during the sales process and receiving a team of juniors afterwards. Ask directly: "Will the person in this call write or review my code?" Then put the named team in the contract.</p>
+
+<h3>Ask them to critique your brief</h3>
+
+<p>Hand over your requirements and ask what is missing or risky. A good team comes back with uncomfortable questions — about roles you have not defined, edge cases, the integration that will be difficult, the feature that costs three times what you think. A team that says "no problem, all clear" has either not read it or will discover the problems on your budget. Our <a href="/blog/write-software-requirements-document">requirements guide</a> shows the level of detail worth expecting.</p>
+
+<h3>Ask for a reference call, not a portfolio</h3>
+
+<p>Portfolios are curated and occasionally borrowed. Ask to speak to two past clients, ideally one whose project had difficulties. Then ask those clients three things: did the estimate hold, how were changes handled, and would you use them again for something larger?</p>
+
+<h3>Ask to see code</h3>
+
+<p>Even if you cannot read it, ask for a sample repository or a walkthrough. Have any technical person you trust glance at it. You are not auditing algorithms; you are checking for commit history, tests, a README, and consistent structure. Their absence tells you about habits.</p>
+
+<div class="gis-callout">
+    <i class="fas fa-comments"></i>
+    <div>
+        <h3>The soft signal that predicts the most</h3>
+        <p>Did they push back on anything? Every genuinely useful development partner we know has told a client "that feature is not worth building" or "your timeline is not realistic" during the sales process. A team that agrees with everything in order to win the work will keep agreeing with everything, and you will find out in month three that agreement was not the same as capability.</p>
+    </div>
+</div>
+
+<h2 id="contract">The contract terms that actually matter</h2>
+
+<p>You do not need a complicated agreement. You need these seven things stated plainly.</p>
+
+<ol>
+    <li><strong>Intellectual property assignment.</strong> All work product, including source code, designs and documentation, is assigned to you on payment. If the studio uses its own reusable libraries, that should be disclosed and licensed to you perpetually and irrevocably. Never accept an arrangement where you licence your own product back.</li>
+    <li><strong>Repository ownership from day one.</strong> The Git repository lives in <em>your</em> organisation's account, and you are an admin from the first commit. This is the single most important clause in the agreement. Code you cannot see is leverage against you, and "we will transfer it at the end" is where disputes come from.</li>
+    <li><strong>Milestone payments tied to output.</strong> Each payment releases against something you can inspect — a deployed build, a completed module, a passed test cycle. Not "end of month two". Up to 30% up front is normal; more than that transfers all the risk to you.</li>
+    <li><strong>A named scope document, referenced by version.</strong> The contract should point to a specific dated version of the requirements, including the out-of-scope list.</li>
+    <li><strong>A change request process.</strong> How changes are requested, estimated, approved and priced. Agree the hourly or daily rate for changes <em>in the contract</em>, before you need it.</li>
+    <li><strong>Warranty period.</strong> 30 to 90 days after launch during which defects in delivered scope are fixed at no cost. Define what counts as a defect versus a new requirement.</li>
+    <li><strong>Exit terms.</strong> What happens if either side stops. What you receive, in what state, within how many days. This clause costs nothing while things are going well and is priceless when they are not.</li>
+</ol>
+
+<h2 id="accounts">Own your accounts — the trap that catches most people</h2>
+
+<p>This has nothing to do with code and causes more genuine harm than any technical decision. Every one of the following must be registered in your company's name, with credentials you hold, from the beginning:</p>
+
+<ul>
+    <li>Domain registration</li>
+    <li>Hosting and cloud accounts (AWS, DigitalOcean, cPanel)</li>
+    <li>Apple Developer and Google Play Console accounts</li>
+    <li>Payment gateway merchant accounts</li>
+    <li>Google Analytics, Search Console, Tag Manager, Ads</li>
+    <li>Business email and any transactional email service</li>
+    <li>The Git repository organisation</li>
+    <li>Database backups, in storage you control</li>
+    <li>Any third-party API keys purchased for the project</li>
+</ul>
+
+<p>The reason this matters is simple: an app published under a vendor's Apple account cannot be moved to yours without their cooperation, and a domain registered in a vendor's name is not yours. We have been called to help clients who owned their code and could not deploy it. Do not let convenience during setup become dependence later. Our <a href="/blog/cloud-hosting-small-business">hosting guide</a> has the full pre-launch ownership checklist.</p>
+
+<h2 id="red-flags">Eight red flags worth walking away from</h2>
+
+<ol>
+    <li><strong>A quote in under an hour from a one-page brief.</strong> They quoted their guess. The real number arrives as change requests.</li>
+    <li><strong>Reluctance to give repository access</strong> before final payment. There is no legitimate reason for this.</li>
+    <li><strong>No questions about edge cases, roles or error states.</strong> Either they have not read the brief or they have not built anything complex.</li>
+    <li><strong>A price 60–70% below every other quote.</strong> The scope is smaller, or the plan is to make it up on changes. Ask what is excluded and compare exclusion lists, not prices.</li>
+    <li><strong>Pressure to sign quickly</strong> — a discount expiring, a slot about to be filled. Good studios have pipelines, not urgency tactics.</li>
+    <li><strong>Portfolio work they cannot discuss in detail.</strong> Ask about a specific project's hardest technical problem. Vagueness about work you supposedly did is diagnostic.</li>
+    <li><strong>No QA in the proposal.</strong> Testing is 15–25% of a professional build. Its absence means your users are the QA team.</li>
+    <li><strong>A single point of contact who is also the only developer.</strong> Fine for a small site, dangerous for anything you will depend on. One illness becomes your outage.</li>
+</ol>
+
+<h2 id="working-well">Making the engagement work once it starts</h2>
+
+<p>Half of project outcomes are determined on the client side. The best clients we work with — the ones whose projects go smoothly and cost what we said — do these things:</p>
+
+<ul>
+    <li><strong>They name one decision-maker</strong> and let that person decide.</li>
+    <li><strong>They protect 3–5 hours a week</strong> for the project and actually spend them.</li>
+    <li><strong>They give feedback on builds, not on descriptions.</strong> Clicking the thing produces better feedback than reading about it.</li>
+    <li><strong>They answer questions within 48 hours.</strong> A blocked team is an expensive team.</li>
+    <li><strong>They deliver content and test data on time</strong> — the most common cause of slippage that has nothing to do with engineering.</li>
+    <li><strong>They accept that changing their mind has a price</strong>, and budget 10–15% for it rather than pretending the first spec was perfect.</li>
+</ul>
+
+<h2 id="models">Fixed price, retainer, or dedicated team?</h2>
+
+<div class="gis-table-scroll">
+    <table>
+        <thead>
+            <tr><th>Model</th><th>Best when</th><th>Watch out for</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Fixed price</td><td>Scope is genuinely clear and stable</td><td>20–30% risk premium; strict change control</td></tr>
+            <tr><td>Time &amp; materials</td><td>Product will evolve; you can stay engaged</td><td>Needs your attention weekly or costs drift</td></tr>
+            <tr><td>Monthly retainer</td><td>Ongoing maintenance and small improvements</td><td>Define included hours and response times</td></tr>
+            <tr><td>Dedicated team</td><td>Long-term roadmap, 6+ months of work</td><td>You are effectively managing them; needs your own product owner</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<p>For a first engagement with a new studio, our honest recommendation is to start small: a paid discovery phase, or one well-defined module, before committing the full budget. It costs you a few weeks and tells you more about how they work than any amount of reference checking. If they resist a small first engagement, that is itself information.</p>
+
+<blockquote>
+    <p>The best due diligence is a small paid project. Contracts describe intentions; a delivered module describes reality.</p>
+</blockquote>
+
+<h2 id="close">Using this against us too</h2>
+
+<p>Every question above applies to us. Ask us who will actually write your code. Ask us about a project that went badly. Ask for repository access on day one — you will get it, because that is how we work. And if our answer to "should we build this?" is that an off-the-shelf product would serve you better, we will say so; we have lost work that way and it remains the right answer.</p>
+
+<p>If you want to test all of this in a conversation rather than a document, <a href="/contact">start there</a>. It costs nothing, and you will learn more about how we think in thirty minutes than from any page on this site. You may also want our <a href="/blog/software-development-cost-pakistan">cost breakdown</a> to sense-check the quotes you receive, and our list of the <a href="/blog/why-software-projects-fail">nine ways projects fail</a> to know what to watch for once work begins.</p>
