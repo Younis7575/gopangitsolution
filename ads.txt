@@ -1,1 +1,2 @@
-google.com, pub-9355105941780970, DIRECT, f08c47fec0942fa0
+# Google AdSense removed — site now monetizes via Monetag.
+# If Monetag support gives you an ads.txt seller line, add it here.

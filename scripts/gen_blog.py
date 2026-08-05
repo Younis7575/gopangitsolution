@@ -222,10 +222,7 @@ CSS_LINKS = """    <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">"""
 
-ADS_LOADER = (
-    '    <script async src="https://pagead2.googlesyndication.com/pagead/js/'
-    'adsbygoogle.js?client=ca-pub-9355105941780970" crossorigin="anonymous"></script>'
-)
+ADS_LOADER = '    <script src="/assets/js/monetag-sw.js" defer></script>'
 
 
 # --------------------------------------------------------------------------
