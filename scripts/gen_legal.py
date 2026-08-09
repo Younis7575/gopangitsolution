@@ -70,10 +70,7 @@ CSS_LINKS = """    <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">"""
 
-ADS_LOADER = (
-    '    <script src="https://quge5.com/88/tag.min.js" data-zone="267255" async data-cfasync="false"></script>\n'
-    '    <script src="/assets/js/monetag-sw.js" defer></script>'
-)
+ADS_LOADER = '    <script src="/assets/js/monetag-ads.js" defer></script>'
 
 SCRIPTS = """    <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/modernizr.min.js"></script>
