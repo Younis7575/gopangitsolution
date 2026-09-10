@@ -497,3 +497,150 @@
     .marketplace-submit-row { align-items: stretch; flex-direction: column; }
     .marketplace-submit-row .theme-btn { width: 100%; }
 }
+
+/* Responsive layout polish */
+.project-hiring-hero .row,
+.project-hiring-form-layout,
+.marketplace-detail-layout,
+.marketplace-bid-layout {
+    align-items: center;
+}
+
+.project-hiring-visual {
+    max-width: 470px;
+    margin-left: auto;
+}
+
+.benefits-grid article,
+.skills-grid article,
+.process-list article,
+.project-hiring-cta,
+.project-hiring-form-card,
+.project-hiring-page .gis-job-card,
+.marketplace-detail-card,
+.marketplace-side-card,
+.marketplace-selected-project,
+.marketplace-bid-form-card,
+.marketplace-state {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.project-hiring-form-card .row,
+.marketplace-bid-form-card .row {
+    row-gap: 18px;
+}
+
+.project-hiring-form-card .form-control,
+.marketplace-bid-form-card .form-control {
+    width: 100%;
+}
+
+.marketplace-detail-labels,
+.marketplace-side-card #project-detail-summary > div,
+.marketplace-selected-project > div > div {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1199px) {
+    .project-hiring-page .gis-job-card {
+        grid-template-columns: minmax(0, 1fr) 220px;
+    }
+
+    .marketplace-detail-layout {
+        grid-template-columns: minmax(0, 1fr) 310px;
+    }
+}
+
+@media (max-width: 991px) {
+    .project-hiring-visual {
+        margin-left: 0;
+        max-width: none;
+    }
+
+    .project-hiring-benefits {
+        margin-top: -44px;
+    }
+
+    .project-hiring-skills,
+    .project-hiring-process,
+    .project-hiring-form-section {
+        padding: 64px 0;
+    }
+
+    .marketplace-detail-layout,
+    .marketplace-bid-layout {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 767px) {
+    .benefits-grid,
+    .process-list,
+    .skills-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-hiring-page .gis-job-card-top,
+    .project-hiring-page .gis-job-card-body,
+    .project-hiring-page .gis-job-facts,
+    .project-hiring-page .gis-job-card-footer {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .marketplace-header-inner {
+        gap: 14px;
+    }
+
+    .marketplace-header nav {
+        gap: 10px;
+    }
+
+    .marketplace-subhero {
+        padding: 48px 0 62px;
+    }
+}
+
+@media (max-width: 575px) {
+    .project-hiring-hero {
+        padding: 54px 0 86px;
+    }
+
+    .project-hiring-visual {
+        min-height: 235px;
+    }
+
+    .project-hiring-visual div {
+        padding: 22px;
+    }
+
+    .benefits-grid,
+    .process-list,
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-hiring-skills,
+    .project-hiring-process,
+    .project-hiring-form-section {
+        padding: 50px 0;
+    }
+
+    .marketplace-detail-section,
+    .marketplace-bid-section {
+        padding: 42px 0 60px;
+    }
+
+    .marketplace-detail-labels,
+    .marketplace-primary-action,
+    .project-hiring-page .gis-job-card-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .marketplace-primary-action .theme-btn,
+    .marketplace-view-btn {
+        width: 100%;
+    }
+}

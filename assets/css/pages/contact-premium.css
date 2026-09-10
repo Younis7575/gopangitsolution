@@ -200,3 +200,78 @@
   .contact-form-actions .theme-btn,
   .contact-form-actions .contact-outline-btn { width: 100%; }
 }
+
+/* Form and layout polish */
+.contact-premium-hero .row,
+.contact-main-grid {
+  align-items: center;
+}
+
+.contact-hero-card {
+  max-width: 460px;
+  margin-left: auto;
+}
+
+.contact-info-card,
+.contact-side-panel,
+.contact-form-panel {
+  min-width: 0;
+}
+
+.contact-form-panel .row {
+  row-gap: 18px;
+}
+
+.contact-form-panel .form-control,
+.contact-form-panel .form-select {
+  width: 100%;
+}
+
+.contact-side-list span,
+.contact-mini-card,
+.contact-info-card strong {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1199px) {
+  .contact-main-grid {
+    grid-template-columns: minmax(250px, 0.88fr) minmax(0, 1.12fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .contact-hero-card {
+    margin-left: 0;
+    max-width: none;
+  }
+
+  .contact-premium-content {
+    margin-top: -48px;
+  }
+}
+
+@media (max-width: 575px) {
+  .contact-premium-hero {
+    padding: 50px 0 86px;
+  }
+
+  .contact-premium-content {
+    padding-bottom: 58px;
+  }
+
+  .contact-hero-card {
+    min-height: 235px;
+  }
+
+  .contact-hero-card div {
+    padding: 22px;
+  }
+
+  .contact-hero-card strong {
+    font-size: 2.25rem;
+  }
+
+  .contact-form-actions {
+    align-items: stretch;
+  }
+}

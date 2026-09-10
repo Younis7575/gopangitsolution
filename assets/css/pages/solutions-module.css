@@ -762,3 +762,165 @@
     .solutions-form-row { grid-template-columns: 1fr; }
     .solutions-comment-children { margin-left: 8px; padding-left: 12px; }
 }
+
+/* Responsive layout polish */
+.solutions-card,
+.solutions-sidebar-card,
+.solutions-detail-card,
+.solutions-form,
+.solutions-answer-form,
+.solutions-comment,
+.solutions-hero-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.gis-solutions-hero .row,
+.gis-solution-ask-hero .row {
+    align-items: center;
+}
+
+.solutions-search input,
+.solutions-actions select,
+.solutions-field input,
+.solutions-field textarea,
+.solutions-field select,
+.solutions-answer-form input,
+.solutions-answer-form textarea {
+    min-width: 0;
+}
+
+.solutions-card-header,
+.solutions-detail-header {
+    align-items: flex-start;
+}
+
+.solutions-card h2,
+.solutions-detail-card h1,
+.solutions-comment-body {
+    overflow-wrap: anywhere;
+}
+
+.solutions-detail-content pre,
+.solutions-comment-body pre {
+    max-width: 100%;
+}
+
+.solutions-form-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.solutions-field {
+    grid-column: span 2;
+}
+
+.solutions-field.solutions-full-width,
+.solutions-checkbox-field,
+.solutions-form-footer {
+    grid-column: 1 / -1;
+}
+
+.solutions-sidebar-card {
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.05);
+}
+
+@media (max-width: 1199px) {
+    .solutions-grid {
+        grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.75fr);
+        gap: 24px;
+    }
+
+    .solutions-detail-layout {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 991px) {
+    .gis-solutions-hero,
+    .gis-solution-ask-hero {
+        padding: 68px 0 84px;
+    }
+
+    .solutions-hero-card {
+        margin-top: 10px;
+    }
+
+    .gis-solutions-content {
+        padding: 60px 0 76px;
+    }
+
+    .solutions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .solutions-form {
+        padding: 24px;
+    }
+
+    .solutions-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .solutions-field,
+    .solutions-half-width {
+        grid-column: 1 / -1;
+    }
+
+    .solutions-card,
+    .solutions-detail-card,
+    .solutions-sidebar-card {
+        padding: 24px;
+    }
+
+    .solutions-detail-actions .theme-btn-outline,
+    .solutions-detail-actions .theme-btn,
+    .solutions-pagination .theme-btn,
+    .solutions-pagination .theme-btn-outline {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 575px) {
+    .gis-solutions-hero,
+    .gis-solution-ask-hero {
+        padding: 52px 0 68px;
+    }
+
+    .gis-solutions-content {
+        padding: 44px 0 58px;
+    }
+
+    .solutions-card,
+    .solutions-detail-card,
+    .solutions-sidebar-card,
+    .solutions-form,
+    .solutions-answer-form {
+        border-radius: 14px;
+        padding: 20px;
+    }
+
+    .solutions-detail-card h1 {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    .solutions-detail-actions,
+    .solutions-form-actions,
+    .solutions-form-footer,
+    .solutions-pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .solutions-detail-actions .theme-btn-outline,
+    .solutions-detail-actions .theme-btn,
+    .solutions-form-actions .theme-btn,
+    .solutions-form-actions .theme-btn-outline,
+    .solutions-pagination .theme-btn,
+    .solutions-pagination .theme-btn-outline {
+        width: 100%;
+    }
+}

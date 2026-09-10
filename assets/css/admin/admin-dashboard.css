@@ -294,3 +294,52 @@ a.dash-mini-card:hover {
     .dash-stats { grid-template-columns: 1fr; }
     .dash-mini-stats { grid-template-columns: 1fr; }
 }
+
+/* Responsive dashboard polish */
+.dash-stat-card,
+.dash-mini-card,
+.dash-recent-item,
+.dash-panel-heading-link {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.dash-toolbar {
+    align-items: stretch;
+}
+
+.dash-recent-time {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 767px) {
+    .dash-toolbar .admin-ghost-btn {
+        flex: 1 1 160px;
+    }
+
+    .dash-recent-item {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 575px) {
+    .dash-stat-card {
+        padding: 20px;
+    }
+
+    .dash-stat-value {
+        font-size: 34px;
+    }
+
+    .dash-mini-card {
+        padding: 15px;
+    }
+
+    .dash-recent-item {
+        flex-wrap: wrap;
+    }
+
+    .dash-recent-time {
+        margin-left: 56px;
+    }
+}

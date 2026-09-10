@@ -122,3 +122,33 @@
         font-size: 26px;
     }
 }
+
+/* Responsive polish */
+.admin-login-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-login-btn {
+    min-height: 46px;
+}
+
+@media (max-width: 575px) {
+    .admin-login-shell {
+        align-items: flex-start;
+        padding-top: 24px;
+    }
+
+    .admin-login-logo {
+        margin-bottom: 22px;
+    }
+
+    .admin-login-logo img {
+        max-height: 48px;
+    }
+
+    .admin-login-btn {
+        justify-self: stretch;
+        width: 100%;
+    }
+}
