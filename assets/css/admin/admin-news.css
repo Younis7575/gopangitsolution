@@ -122,3 +122,26 @@
     color: #94a3b8;
     font-size: 12px;
 }
+
+/* Responsive module polish */
+.admin-news-card-image,
+.gis-ext-stat,
+.gis-ext-settings,
+.gis-ext-latest-ul li {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-field select {
+    min-width: 0;
+}
+
+.gis-ext-status-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+
+@media (max-width: 575px) {
+    .gis-ext-settings {
+        padding: 16px;
+    }
+}

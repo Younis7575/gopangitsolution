@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" role="img" aria-labelledby="title desc">
+  <title id="title">Default female profile picture</title>
+  <desc id="desc">A faceless female character avatar for team members without a photo.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123c55"/>
+      <stop offset="1" stop-color="#0f7a76"/>
+    </linearGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#302238"/>
+      <stop offset="1" stop-color="#1b1422"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#26314f"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="760" fill="url(#bg)"/>
+  <circle cx="320" cy="315" r="238" fill="#ffffff" opacity=".08"/>
+  <path d="M176 450c-28-129-12-254 38-323 28-39 67-58 106-58s78 19 106 58c50 69 66 194 38 323-65 46-223 46-288 0Z" fill="url(#hair)"/>
+  <path d="M212 286c0-86 48-148 108-148s108 62 108 148c0 78-43 142-108 142s-108-64-108-142Z" fill="#f1c7a8"/>
+  <path d="M205 269c33-99 93-148 180-148 30 31 48 73 54 126-76-4-142-28-198-73-17 22-29 54-36 95Z" fill="url(#hair)"/>
+  <path d="M172 760c18-164 80-246 148-246s130 82 148 246H172Z" fill="url(#top)"/>
+  <path d="M254 520h132l-66 84-66-84Z" fill="#f8fafc"/>
+  <path d="M190 487c37 41 80 62 130 62s93-21 130-62c-10 74-54 128-130 128s-120-54-130-128Z" fill="#ffffff" opacity=".11"/>
+</svg>

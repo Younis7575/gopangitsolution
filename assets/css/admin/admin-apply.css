@@ -676,3 +676,110 @@
     .aa-form-grid { grid-template-columns: 1fr; }
     .aa-drawer-panel { width: 100vw; }
 }
+
+/* Responsive apply-admin polish */
+.aa-opp-card,
+.aa-table,
+.aa-file-card,
+.aa-section,
+.aa-modal-panel,
+.aa-drawer-panel {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.aa-table {
+    min-width: 780px;
+}
+
+.aa-panel-tools,
+.aa-opp-card-top,
+.aa-modal-foot {
+    flex-wrap: wrap;
+}
+
+.aa-filters input,
+.aa-filters select,
+.aa-form-grid input,
+.aa-form-grid select,
+.aa-form-grid textarea,
+.aa-status-form select,
+.aa-status-form textarea {
+    min-width: 0;
+}
+
+.aa-opp-actions button,
+.aa-download-btn,
+.aa-btn-secondary {
+    min-height: 40px;
+    white-space: normal;
+}
+
+@media (max-width: 991px) {
+    .aa-opp-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .aa-panel-tools {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .aa-filters .aa-filter-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .aa-filters .aa-filter-actions button,
+    .aa-modal-foot button,
+    .aa-modal-foot .theme-btn {
+        width: 100%;
+    }
+
+    .aa-drawer-head {
+        padding: 20px;
+    }
+
+    .aa-drawer-body {
+        padding: 18px 18px 24px;
+    }
+
+    .aa-file-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .aa-download-btn {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@media (max-width: 575px) {
+    .aa-modal {
+        padding: 16px 10px;
+    }
+
+    .aa-modal-head,
+    .aa-modal-body,
+    .aa-modal-foot {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .aa-modal-foot {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .aa-opp-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .aa-opp-actions button {
+        width: 100%;
+    }
+}

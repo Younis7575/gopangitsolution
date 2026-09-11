@@ -577,3 +577,88 @@
     .career-growth { align-items: stretch; flex-direction: column; }
     .career-growth .gis-retry-btn { text-align: center; }
 }
+
+/* Responsive layout polish */
+.gis-careers-surface,
+.gis-detail-panel,
+.gis-application-panel,
+.gis-job-card,
+.career-info-hero,
+.career-info-grid section,
+.career-workflow,
+.career-growth {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.gis-careers-hero .row {
+    align-items: center;
+}
+
+.gis-careers-summary {
+    max-width: 430px;
+    margin-left: auto;
+}
+
+.gis-careers-section-head > div,
+.gis-detail-head > div {
+    min-width: 0;
+}
+
+.gis-application-panel .row {
+    row-gap: 18px;
+}
+
+.gis-application-panel .form-control,
+.gis-application-panel .form-select {
+    width: 100%;
+}
+
+.gis-job-card-top {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1199px) {
+    .gis-careers-hero h1 {
+        font-size: clamp(2.2rem, 5vw, 3.8rem);
+    }
+}
+
+@media (max-width: 991px) {
+    .gis-careers-summary {
+        margin-left: 0;
+        max-width: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .gis-careers-content {
+        padding-bottom: 64px;
+    }
+
+    .gis-detail-head .theme-btn,
+    .gis-careers-section-head .gis-retry-btn {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 575px) {
+    .gis-careers-hero {
+        padding: 54px 0 88px;
+    }
+
+    .gis-careers-content {
+        margin-top: -44px;
+    }
+
+    .gis-job-card {
+        padding: 18px;
+    }
+
+    .gis-detail-head .theme-btn,
+    .gis-careers-section-head .gis-retry-btn {
+        align-self: stretch;
+        text-align: center;
+        width: 100%;
+    }
+}

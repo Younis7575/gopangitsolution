@@ -27,3 +27,17 @@
 .opp-empty-actions a:hover{background:#fff;border-color:var(--brand);color:var(--brand)}
 .opp-empty-actions button{border:0;border-radius:999px;background:var(--brand);color:#fff;padding:9px 18px;font-weight:700;cursor:pointer}
 .opp-error .opp-empty-icon{color:var(--warn)}
+
+/* Responsive polish */
+.opp-shell,.opp-card,.opp-detail,.opp-apply,.opp-filters{min-width:0}
+.opp-card,.opp-detail,.opp-apply,.opp-empty{overflow-wrap:anywhere}
+.opp-header nav{min-width:0}
+.opp-header nav a,.opp-header summary{white-space:nowrap}
+.opp-filters input,.opp-filters select,.opp-form-grid input,.opp-form-grid select,.opp-apply textarea{width:100%;min-width:0}
+.opp-card a,.opp-filters button,.opp-apply button{min-height:44px}
+.opp-card-actions{flex-wrap:wrap}
+.opp-card-actions a{min-width:130px}
+.opp-pages{flex-wrap:wrap}
+@media(max-width:991px){.opp-hero{padding:58px max(18px,5vw)}.opp-shell{padding:38px 18px}.opp-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.opp-filters label:first-child{grid-column:1/-1}.opp-filters button{grid-column:1/-1;width:100%}}
+@media(max-width:700px){.opp-header{height:auto;min-height:72px;align-items:flex-start;gap:14px;flex-direction:column;padding:14px 18px}.opp-header nav{width:100%;gap:8px;justify-content:space-between;overflow-x:auto;padding-bottom:2px}.opp-header details div{left:0;right:auto;max-width:calc(100vw - 36px)}.opp-grid{grid-template-columns:1fr}.opp-detail,.opp-apply{border-radius:14px;padding:22px}.opp-form-grid{grid-template-columns:1fr}.opp-card-actions a{min-width:0}}
+@media(max-width:480px){.opp-hero{padding:46px 16px}.opp-shell{padding:30px 16px}.opp-filters{grid-template-columns:1fr;padding:16px}.opp-card{padding:20px}.opp-pages{margin:26px 0}.opp-card-actions{flex-direction:column}.opp-empty-actions{align-items:stretch;flex-direction:column}.opp-empty-actions a,.opp-empty-actions button{text-align:center;width:100%}}

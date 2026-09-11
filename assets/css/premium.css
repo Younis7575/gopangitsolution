@@ -612,6 +612,14 @@ blockquote.gis-review-card { margin: 0; }
   overflow: hidden;
   position: relative;
   padding: 56px 48px;
+  margin-bottom: 0 !important;
+  z-index: 1;
+}
+.cta-banner-wrapper {
+  background: #fff;
+  padding-bottom: 72px;
+  position: relative;
+  z-index: 1;
 }
 .cta-banner-box::before { display: none !important; }
 .cta-banner-box .section-title span { color: var(--gis-accent); }
@@ -624,14 +632,20 @@ blockquote.gis-review-card { margin: 0; }
 .footer-1 .footer-widgets-wrapper {
   background: var(--gis-dark) !important;
   background-image: none !important;
-  padding: 80px 0 56px;
+  padding: 72px 0 52px;
+  position: relative;
+  z-index: 2;
 }
 .footer-1 .footer-widgets-wrapper p,
 .footer-1 .footer-widgets-wrapper li a,
 .footer-1 .footer-widgets-wrapper .contact-info span,
 .footer-1 .footer-widgets-wrapper .contact-info a { color: rgba(255, 255, 255, 0.66); }
 .footer-1 .footer-widgets-wrapper li a:hover,
-.footer-1 .footer-widgets-wrapper .contact-info a:hover { color: #fff; }
+footer.footer-1 .footer-widgets-wrapper li a:hover,
+.footer-1 .footer-widgets-wrapper .contact-info a:hover,
+footer.footer-1 .footer-widgets-wrapper .contact-info a:hover {
+  color: var(--gis-accent) !important;
+}
 .footer-1 .footer-widgets-wrapper .wid-title h3 { color: #fff; font-size: 1.05rem; margin-bottom: 22px; }
 .footer-1 .single-footer-wid ul li { margin-bottom: 11px; }
 .footer-1 .single-footer-wid ul { list-style: none; padding: 0; }
@@ -641,20 +655,49 @@ blockquote.gis-review-card { margin: 0; }
   background: rgba(255, 255, 255, 0.08);
   display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
 }
-.footer-bottom {
+.footer-1 .footer-bottom,
+footer.footer-1 .footer-bottom {
   background: #07090d;
-  padding: 22px 0;
+  padding: 18px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
-.footer-bottom p { color: rgba(255, 255, 255, 0.6); margin: 0; }
-.footer-bottom p strong { color: #fff; }
-.footer-bottom .social-links a {
+.footer-1 .footer-bottom .bottom-content-wrapper,
+footer.footer-1 .footer-bottom .bottom-content-wrapper {
+  padding: 0;
+}
+.footer-1 .footer-bottom p,
+footer.footer-1 .footer-bottom p { color: rgba(255, 255, 255, 0.6); margin: 0; }
+.footer-1 .footer-bottom p strong,
+footer.footer-1 .footer-bottom p strong { color: #fff; }
+.footer-1 .footer-bottom .social-links a,
+footer.footer-1 .footer-bottom .social-links a {
   display: inline-flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 9px;
   background: rgba(255, 255, 255, 0.08); color: #fff; margin-left: 8px;
   transition: background 0.18s ease;
 }
-.footer-bottom .social-links a:hover { background: var(--gis-accent); }
+.footer-1 .footer-bottom .social-links a:hover,
+footer.footer-1 .footer-bottom .social-links a:hover { background: var(--gis-accent); color: #fff; }
+.footer-1 .newsletter_widget .newsletter_box input,
+footer.footer-1 .newsletter_widget .newsletter_box input {
+  background: #fff !important;
+  color: var(--gis-ink) !important;
+}
+.footer-1 .newsletter_widget .newsletter_box input::placeholder,
+footer.footer-1 .newsletter_widget .newsletter_box input::placeholder {
+  color: var(--gis-muted) !important;
+}
+.footer-1 .newsletter_widget .newsletter_box button,
+footer.footer-1 .newsletter_widget .newsletter_box button {
+  background: #fff !important;
+  color: var(--gis-accent) !important;
+  border-left: 1px solid var(--gis-border);
+}
+.footer-1 .newsletter_widget .newsletter_box button:hover,
+footer.footer-1 .newsletter_widget .newsletter_box button:hover {
+  background: var(--gis-bg-subtle) !important;
+  color: var(--gis-accent-hover) !important;
+}
 
 /* --------------------------------------------------------------------------
    WhatsApp float
@@ -797,4 +840,244 @@ img, svg, video { max-width: 100%; height: auto; }
   .gis-hero-actions .theme-btn,
   .gis-hero-actions .theme-btn-outline { width: 100%; justify-content: center; }
   .mobile-nav { width: 88vw; max-width: 320px; }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive composition polish
+   -------------------------------------------------------------------------- */
+.container,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+  padding-left: clamp(16px, 2.4vw, 24px);
+  padding-right: clamp(16px, 2.4vw, 24px);
+}
+
+@media (min-width: 1200px) {
+  .container { max-width: 1180px; }
+}
+
+.row { row-gap: 30px; }
+
+section,
+.section-padding,
+.gis-section {
+  overflow: clip;
+}
+
+.section-title.text-center,
+.section-title.text-md-center {
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title h1,
+.section-title h2,
+.page-heading h1,
+.gis-hero-premium h1 {
+  overflow-wrap: anywhere;
+}
+
+.single-service-box,
+.single-service-left-icon,
+.single-service-top-icon,
+.single-pricing-plan,
+.client-review-card,
+.info-icon-item,
+.gis-card,
+.gis-case-card,
+.gis-review-card {
+  min-width: 0;
+}
+
+.single-service-box p,
+.single-service-left-icon p,
+.single-service-top-icon p,
+.client-review-card p,
+.gis-card p,
+.gis-review-card p {
+  overflow-wrap: anywhere;
+}
+
+.theme-btn,
+.theme-btn-outline,
+.contact-outline-btn,
+.apply-outline-btn,
+.project-hiring-outline-btn {
+  min-height: 46px;
+  white-space: normal;
+}
+
+.form-control,
+.form-select,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.table,
+table {
+  max-width: 100%;
+}
+
+.table-responsive table,
+.gis-table-scroll table {
+  margin-bottom: 0;
+}
+
+.mobile-nav {
+  background: #fff;
+  box-shadow: -24px 0 60px rgba(16, 24, 40, 0.18);
+  max-height: 100vh;
+  padding-bottom: 24px;
+}
+
+.mobile-nav .sidebar-nav {
+  padding-bottom: 22px;
+}
+
+.mobile-nav .sidebar-nav .metismenu a {
+  align-items: center;
+  border-radius: 8px;
+  color: var(--gis-ink);
+  display: flex;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 11px 14px;
+  white-space: normal;
+}
+
+.mobile-nav .sidebar-nav .metismenu li + li {
+  margin-top: 2px;
+}
+
+.mobile-nav .sidebar-nav .metismenu ul {
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+  margin: 6px 0 10px;
+  padding: 6px;
+}
+
+.overlay.active {
+  cursor: pointer;
+}
+
+.footer-1 .footer-widgets-wrapper .row {
+  row-gap: 36px;
+}
+
+.footer-1 .single-footer-wid {
+  min-width: 0;
+}
+
+.footer-bottom .container,
+.footer-bottom .row {
+  row-gap: 16px;
+}
+
+@media (max-width: 991px) {
+  .top-bar-wrapper {
+    display: none;
+  }
+
+  header.header-1.gis-main-header {
+    padding: 8px 0;
+  }
+
+  header.header-1.gis-main-header .row {
+    min-height: 60px;
+  }
+
+  header.header-1.gis-main-header .logo img {
+    height: 38px;
+    max-width: 180px;
+  }
+
+  .section-title {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  body {
+    font-size: 15px;
+  }
+
+  .section-title h2 {
+    line-height: 1.18;
+  }
+
+  .section-title p {
+    font-size: 1rem;
+  }
+
+  .gis-section,
+  .section-padding {
+    padding: 58px 0;
+  }
+
+  .gis-case-metrics {
+    gap: 16px;
+    justify-content: space-between;
+  }
+
+  .footer-1 .footer-widgets-wrapper {
+    padding: 56px 0 40px;
+  }
+
+  .footer-bottom,
+  .footer-bottom .text-md-end {
+    text-align: center !important;
+  }
+
+  .footer-bottom .social-links a {
+    margin: 4px;
+  }
+
+  .gis-whatsapp-float {
+    bottom: 16px;
+    height: 50px;
+    right: 16px;
+    width: 50px;
+  }
+}
+
+@media (max-width: 575px) {
+  .container,
+  .container-fluid {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .row {
+    row-gap: 24px;
+  }
+
+  .gis-section,
+  .section-padding {
+    padding: 48px 0;
+  }
+
+  .section-title {
+    margin-bottom: 24px;
+  }
+
+  .gis-card,
+  .gis-review-card,
+  .gis-case-body,
+  .single-service-left-icon,
+  .single-service-top-icon,
+  .single-pricing-plan,
+  .info-icon-item {
+    padding: 22px 18px;
+  }
+
+  .cta-banner-box {
+    border-radius: var(--gis-r);
+    padding: 30px 20px;
+  }
 }

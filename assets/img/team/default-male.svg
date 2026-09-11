@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" role="img" aria-labelledby="title desc">
+  <title id="title">Default male profile picture</title>
+  <desc id="desc">A neutral male profile avatar for team members without a photo.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123c55"/>
+      <stop offset="1" stop-color="#0f7a76"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101828"/>
+      <stop offset="1" stop-color="#21516a"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="760" fill="url(#bg)"/>
+  <circle cx="320" cy="250" r="126" fill="#f1c7a8"/>
+  <path d="M185 230c10-86 67-141 139-141 75 0 132 50 145 129-40-23-92-31-154-31-52 0-96 15-130 43Z" fill="#23252d"/>
+  <path d="M176 760c15-159 77-238 144-238s129 79 144 238H176Z" fill="url(#shirt)"/>
+  <path d="M258 520h124l-62 86-62-86Z" fill="#f8fafc"/>
+  <path d="M289 568h62l-23 110h-16l-23-110Z" fill="#0fb8a8"/>
+  <circle cx="272" cy="264" r="10" fill="#1f2937"/>
+  <circle cx="368" cy="264" r="10" fill="#1f2937"/>
+  <path d="M280 328c27 21 54 21 81 0" fill="none" stroke="#915f49" stroke-width="10" stroke-linecap="round"/>
+</svg>

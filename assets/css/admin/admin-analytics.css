@@ -394,6 +394,87 @@
     .an-filter { flex: 1 1 45%; }
 }
 
+/* Responsive analytics polish */
+.an-chart-card,
+.an-rank-row,
+.an-table-wrap,
+.an-settings-grid,
+.an-export {
+    min-width: 0;
+}
+
+.an-toolbar {
+    align-items: flex-end;
+}
+
+.an-search {
+    min-width: 0;
+}
+
+.an-table-wrap {
+    border: 1px solid #e6eaf0;
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.an-table {
+    min-width: 760px;
+}
+
+@media (max-width: 767px) {
+    .an-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .an-filter {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .an-toolbar-actions,
+    .an-export,
+    .an-settings-actions,
+    .an-pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .an-toolbar-actions .admin-ghost-btn,
+    .an-apply-btn,
+    .an-export .admin-ghost-btn,
+    .an-settings-actions .admin-ghost-btn,
+    .an-settings-actions .theme-btn {
+        width: 100%;
+    }
+
+    .an-settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .an-canvas-wrap {
+        height: 230px;
+    }
+}
+
+@media (max-width: 575px) {
+    .an-tabs {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .an-tab {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .an-rank-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+    }
+}
+
 /* ---- Print (PDF export) --------------------------------------------- */
 @media print {
     .admin-header, .admin-sidebar, .an-toolbar, .an-tabs, .an-tab,

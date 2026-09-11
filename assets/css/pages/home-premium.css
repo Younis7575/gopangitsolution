@@ -210,3 +210,79 @@
   .gis-hero-actions .theme-btn,
   .gis-hero-actions .theme-btn-outline { width: 100%; }
 }
+
+/* Layout refinements */
+.gis-hero-premium .row {
+  align-items: center;
+}
+
+.gis-hero-card {
+  max-width: 500px;
+  margin-left: auto;
+}
+
+.gis-hero-dashboard div,
+.gis-trust-grid div {
+  min-width: 0;
+}
+
+.gis-hero-dashboard span,
+.gis-trust-grid span {
+  overflow-wrap: anywhere;
+}
+
+.gis-hero-stat {
+  min-width: 115px;
+}
+
+@media (max-width: 1199px) {
+  .gis-hero-content {
+    padding: 78px 0 76px;
+  }
+
+  .gis-hero-premium h1 {
+    max-width: 640px;
+  }
+
+  .gis-trust-grid div {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 991px) {
+  .gis-hero-card {
+    margin-left: 0;
+    max-width: none;
+  }
+}
+
+@media (max-width: 575px) {
+  .gis-hero-badge {
+    align-items: flex-start;
+    border-radius: 12px;
+    line-height: 1.35;
+  }
+
+  .gis-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gis-hero-stat {
+    min-width: 0;
+  }
+
+  .gis-hero-card {
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .gis-trust-strip {
+    margin-top: -24px;
+  }
+
+  .gis-trust-grid div {
+    min-height: 76px;
+    padding: 18px;
+  }
+}

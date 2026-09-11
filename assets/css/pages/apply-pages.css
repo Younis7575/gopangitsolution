@@ -356,3 +356,84 @@
         width: 100%;
     }
 }
+
+/* Responsive layout polish */
+.apply-premium-hero .row,
+.apply-layout {
+    align-items: center;
+}
+
+.apply-visual-card {
+    max-width: 470px;
+    margin-left: auto;
+}
+
+.apply-side-panel,
+.apply-form-panel,
+.apply-benefit-list div {
+    min-width: 0;
+}
+
+.apply-form-panel .row {
+    row-gap: 18px;
+}
+
+.apply-form-panel .form-control,
+.apply-form-panel .form-select {
+    width: 100%;
+}
+
+.apply-side-panel p,
+.apply-form-heading p,
+.apply-benefit-list span {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1199px) {
+    .apply-premium-hero h1 {
+        font-size: clamp(2.2rem, 5vw, 3.7rem);
+    }
+}
+
+@media (max-width: 991px) {
+    .apply-visual-card {
+        margin-left: 0;
+        max-width: none;
+    }
+
+    .apply-premium-content {
+        margin-top: -48px;
+    }
+}
+
+@media (max-width: 767px) {
+    .apply-premium-content {
+        padding-bottom: 62px;
+    }
+
+    .apply-button-row {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 575px) {
+    .apply-premium-hero {
+        padding: 52px 0 90px;
+    }
+
+    .apply-visual-card {
+        min-height: 235px;
+    }
+
+    .apply-visual-card div {
+        padding: 22px;
+    }
+
+    .apply-visual-card strong {
+        font-size: 22px;
+    }
+
+    .gis-careers-filters {
+        grid-template-columns: 1fr;
+    }
+}

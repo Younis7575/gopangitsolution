@@ -498,3 +498,97 @@
         font-size: 27px;
     }
 }
+
+/* Layout polish */
+.gis-news-card,
+.gis-news-detail-article,
+.gis-ext-article,
+.gis-news-toolbar {
+    min-width: 0;
+}
+
+.gis-news-card h2,
+.gis-news-card p,
+.gis-news-detail-content,
+.gis-ext-content,
+.gis-ext-body h1 {
+    overflow-wrap: anywhere;
+}
+
+.gis-news-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.gis-news-card:hover {
+    border-color: rgba(15, 98, 254, 0.24);
+    box-shadow: 0 22px 55px rgba(16, 24, 40, 0.12);
+    transform: translateY(-3px);
+}
+
+.gis-news-search input,
+.gis-news-sort {
+    min-width: 0;
+}
+
+.gis-news-detail-image img,
+.gis-ext-image img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+@media (max-width: 1199px) {
+    .gis-news-grid {
+        gap: 20px;
+    }
+
+    .gis-news-card-body {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 767px) {
+    .gis-news-content {
+        padding-bottom: 60px;
+    }
+
+    .gis-news-toolbar-right {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .gis-news-detail-shell {
+        padding: 48px 15px;
+    }
+
+    .gis-news-detail-image,
+    .gis-ext-image {
+        aspect-ratio: 16 / 10;
+    }
+}
+
+@media (max-width: 575px) {
+    .gis-news-content {
+        margin-top: -42px;
+    }
+
+    .gis-news-card-body {
+        padding: 20px;
+    }
+
+    .gis-news-toolbar-right,
+    .gis-ext-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .gis-news-sort,
+    .gis-ext-actions .theme-btn,
+    .gis-ext-actions .theme-btn-outline {
+        width: 100%;
+    }
+
+    .gis-news-detail-body {
+        padding: 24px 20px;
+    }
+}

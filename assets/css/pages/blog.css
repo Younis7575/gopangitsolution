@@ -676,3 +676,76 @@
         flex-direction: column;
     }
 }
+
+/* Responsive reading polish */
+.gis-blog-grid,
+.gis-related-list {
+    align-items: stretch;
+}
+
+.gis-post-card,
+.gis-related-item,
+.gis-toc,
+.gis-takeaways,
+.gis-author-box,
+.gis-aside-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.gis-article {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gis-prose pre,
+.gis-prose code {
+    max-width: 100%;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (max-width: 767px) {
+    .gis-blog-body,
+    .gis-article-wrap {
+        padding: 48px 0 64px;
+    }
+
+    .gis-blog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+        gap: 22px;
+    }
+
+    .gis-blog-filters {
+        gap: 8px;
+        margin-bottom: 28px;
+    }
+
+    .gis-blog-filter {
+        padding: 8px 14px;
+    }
+
+    .gis-byline {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 575px) {
+    .gis-blog-hero {
+        padding: 48px 0 36px;
+    }
+
+    .gis-post-card .card-body {
+        padding: 20px;
+    }
+
+    .gis-prose p,
+    .gis-prose li {
+        font-size: 1rem;
+    }
+
+    .gis-callout {
+        gap: 12px;
+        padding: 18px;
+    }
+}
