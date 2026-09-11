@@ -599,3 +599,40 @@ header.header-1 .main-menu ul li > ul li > ul {
 
 
 
+
+/* ==========================================================================
+   Gopang — shared enterprise components (site-wide)
+   ========================================================================== */
+
+/* Navbar CTA button (desktop) */
+.theme-btn-sm {
+  font-size: 0.85rem;
+  padding: 10px 18px;
+}
+
+/* Mobile menu CTA link */
+.gis-mobile-cta {
+  color: var(--gis-accent) !important;
+  font-weight: 700 !important;
+}
+
+/* Footer legal links */
+.footer-legal-links {
+  display: inline-flex;
+  gap: 16px;
+  margin-right: 18px;
+  vertical-align: middle;
+}
+.footer-legal-links a {
+  color: var(--gis-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.footer-legal-links a:hover { color: var(--gis-accent); }
+
+/* Editorial note (e.g. NDA note under testimonials) */
+.gis-note {
+  color: var(--gis-muted);
+  font-size: 0.85rem;
+  margin-top: 26px;
+}
