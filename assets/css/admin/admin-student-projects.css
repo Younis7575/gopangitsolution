@@ -1,0 +1,444 @@
+/* ==========================================================================
+   Student Projects admin — /admin-student-projects/*
+
+   Built on top of admin-jobs.css, which already supplies .admin-header,
+   .admin-sidebar, .admin-hero, .admin-panel, .admin-table, .admin-field and
+   the base status pills. Everything here is prefixed `sp-` so it can never
+   collide with the admin pages it sits next to.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Sub-navigation (Overview · Consultations · Projects · Showcase · Settings)
+   -------------------------------------------------------------------------- */
+.sp-admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.sp-admin-tabs a {
+  border: 1px solid var(--gis-border);
+  background: var(--gis-surface);
+  color: var(--gis-text);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.sp-admin-tabs a:hover { color: var(--gis-ink); border-color: var(--gis-border-strong); }
+.sp-admin-tabs a.active {
+  background: var(--gis-grad);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   KPI tiles
+   -------------------------------------------------------------------------- */
+.sp-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.sp-kpi {
+  padding: 22px 22px 20px;
+  border-radius: 14px;
+  background: var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  box-shadow: 0 14px 34px rgba(16, 24, 40, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+.sp-kpi::after {
+  content: '';
+  position: absolute;
+  inset: auto -20% -60% auto;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.22), transparent 70%);
+  pointer-events: none;
+}
+.sp-kpi > * { position: relative; z-index: 1; }
+.sp-kpi-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gis-muted);
+  margin-bottom: 10px;
+}
+.sp-kpi-label i { color: var(--gis-cyan); }
+.sp-kpi-value {
+  font-family: var(--gis-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--gis-ink);
+  display: block;
+}
+.sp-kpi-note { display: block; margin-top: 7px; font-size: 0.8rem; color: var(--gis-muted); }
+
+/* --------------------------------------------------------------------------
+   Status pills — every status the module can store
+   -------------------------------------------------------------------------- */
+.admin-status-pill.sp-pending,
+.admin-status-pill.sp-pending_review { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
+.admin-status-pill.sp-confirmed,
+.admin-status-pill.sp-approved,
+.admin-status-pill.sp-completed,
+.admin-status-pill.sp-published { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+.admin-status-pill.sp-rescheduled,
+.admin-status-pill.sp-contacted,
+.admin-status-pill.sp-proposal_sent,
+.admin-status-pill.sp-negotiation { background: rgba(47, 107, 255, 0.18); color: #93c5fd; }
+.admin-status-pill.sp-in_development,
+.admin-status-pill.sp-consultation_required { background: rgba(124, 92, 255, 0.18); color: #c4b5fd; }
+.admin-status-pill.sp-cancelled,
+.admin-status-pill.sp-rejected,
+.admin-status-pill.sp-no_show,
+.admin-status-pill.sp-archived { background: rgba(244, 63, 94, 0.15); color: #fca5a5; }
+.admin-status-pill.sp-draft { background: rgba(148, 163, 184, 0.18); color: #cbd5e1; }
+
+.sp-status-select {
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border-strong);
+  color: var(--gis-ink);
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sp-status-select:focus-visible { outline: 2px solid var(--gis-accent-text); outline-offset: 2px; }
+
+/* --------------------------------------------------------------------------
+   Filter bar
+   -------------------------------------------------------------------------- */
+.sp-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+}
+.sp-filters .admin-field { margin: 0; }
+.sp-filters-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.sp-filters-actions .theme-btn,
+.sp-filters-actions .admin-ghost-btn { padding: 12px 22px; font-size: 0.88rem; }
+
+/* --------------------------------------------------------------------------
+   Table extras
+   -------------------------------------------------------------------------- */
+.sp-ref {
+  font-family: var(--gis-display);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--gis-accent-text);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.sp-row-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+.sp-row-actions button,
+.sp-row-actions a {
+  border: 1px solid var(--gis-border-strong);
+  background: transparent;
+  color: var(--gis-text);
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.sp-row-actions button:hover,
+.sp-row-actions a:hover { color: var(--gis-ink); border-color: rgba(127, 166, 255, 0.55); background: rgba(127, 166, 255, 0.08); }
+.sp-row-actions .danger:hover { color: #fca5a5; border-color: rgba(244, 63, 94, 0.55); background: rgba(244, 63, 94, 0.1); }
+.sp-row-actions .ok:hover { color: #6ee7b7; border-color: rgba(16, 185, 129, 0.55); background: rgba(16, 185, 129, 0.1); }
+.sp-nowrap { white-space: nowrap; }
+.sp-clip { max-width: 320px; }
+
+/* --------------------------------------------------------------------------
+   Pagination
+   -------------------------------------------------------------------------- */
+.sp-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gis-border);
+}
+.sp-pager-info { font-size: 0.85rem; color: var(--gis-muted); }
+.sp-pager-buttons { display: flex; gap: 8px; }
+.sp-pager-buttons button {
+  border: 1px solid var(--gis-border-strong);
+  background: transparent;
+  color: var(--gis-text);
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.sp-pager-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+.sp-pager-buttons button:not(:disabled):hover { color: var(--gis-ink); border-color: rgba(127, 166, 255, 0.55); }
+
+/* --------------------------------------------------------------------------
+   Detail drawer
+   -------------------------------------------------------------------------- */
+.sp-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+}
+.sp-drawer.is-open { display: block; }
+.sp-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 6, 12, 0.72);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.sp-drawer-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(620px, 100%);
+  background: var(--gis-surface);
+  border-left: 1px solid var(--gis-border);
+  box-shadow: -30px 0 70px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  animation: sp-slide-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes sp-slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.sp-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--gis-border);
+}
+.sp-drawer-head h2 { margin: 4px 0 0; font-size: 1.25rem; }
+.sp-drawer-head p { margin: 6px 0 0; font-size: 0.85rem; color: var(--gis-muted); }
+.sp-drawer-close {
+  border: 1px solid var(--gis-border-strong);
+  background: transparent;
+  color: var(--gis-ink);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.sp-drawer-close:hover { background: rgba(255, 255, 255, 0.07); }
+.sp-drawer-body { padding: 22px 24px 28px; overflow-y: auto; flex: 1; }
+.sp-drawer-body section + section { margin-top: 26px; }
+.sp-drawer-body h3 {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gis-muted);
+  margin: 0 0 12px;
+}
+
+.sp-detail-list { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 0; border: 1px solid var(--gis-border); border-radius: 12px; overflow: hidden; }
+.sp-detail-list > div { display: contents; }
+.sp-detail-list dt,
+.sp-detail-list dd { margin: 0; padding: 11px 15px; font-size: 0.87rem; }
+.sp-detail-list dt { background: var(--gis-bg-subtle); color: var(--gis-muted); font-weight: 700; }
+.sp-detail-list dd { background: var(--gis-surface); color: var(--gis-ink); overflow-wrap: anywhere; }
+.sp-detail-list dd a { overflow-wrap: anywhere; }
+
+.sp-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.sp-form-grid .wide { grid-column: 1 / -1; }
+.sp-field label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--gis-ink); margin-bottom: 6px; }
+.sp-field input,
+.sp-field select,
+.sp-field textarea {
+  width: 100%;
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border-strong);
+  border-radius: 9px;
+  color: var(--gis-ink);
+  padding: 11px 13px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.sp-field textarea { resize: vertical; min-height: 96px; }
+.sp-field input:focus,
+.sp-field select:focus,
+.sp-field textarea:focus { outline: 2px solid var(--gis-accent-text); outline-offset: 1px; border-color: transparent; }
+.sp-field .hint { font-size: 0.76rem; color: var(--gis-muted); margin-top: 5px; }
+.sp-field.err input,
+.sp-field.err select,
+.sp-field.err textarea { border-color: #f97066; }
+.sp-field-msg { font-size: 0.76rem; color: #ff9d94; margin-top: 5px; display: none; }
+.sp-field.err .sp-field-msg { display: block; }
+.sp-drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid var(--gis-border);
+  background: var(--gis-bg-subtle);
+}
+.sp-drawer-actions .theme-btn,
+.sp-drawer-actions .admin-ghost-btn { padding: 12px 22px; font-size: 0.88rem; }
+
+/* --------------------------------------------------------------------------
+   Activity log
+   -------------------------------------------------------------------------- */
+.sp-timeline { list-style: none; margin: 0; padding: 0 0 0 20px; border-left: 2px solid var(--gis-border); display: grid; gap: 16px; }
+.sp-timeline li { position: relative; padding-left: 14px; font-size: 0.86rem; color: var(--gis-text); }
+.sp-timeline li::before {
+  content: '';
+  position: absolute;
+  left: -27px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gis-accent);
+  box-shadow: 0 0 0 3px var(--gis-surface);
+}
+.sp-timeline time { display: block; font-size: 0.76rem; color: var(--gis-muted); margin-top: 3px; }
+
+/* --------------------------------------------------------------------------
+   Upcoming sessions list
+   -------------------------------------------------------------------------- */
+.sp-session-list { display: grid; gap: 10px; }
+.sp-session {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+}
+.sp-session-when { font-family: var(--gis-display); font-weight: 700; color: var(--gis-ink); white-space: nowrap; }
+.sp-session-who { font-size: 0.88rem; color: var(--gis-text); }
+.sp-session-who small { display: block; color: var(--gis-muted); font-size: 0.78rem; }
+
+/* --------------------------------------------------------------------------
+   Trend bars (no chart library — 14 days, pure CSS)
+   -------------------------------------------------------------------------- */
+.sp-trend { display: flex; align-items: flex-end; gap: 5px; height: 140px; padding-top: 10px; }
+.sp-trend-day { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; height: 100%; position: relative; }
+.sp-trend-bar { border-radius: 4px 4px 0 0; background: var(--gis-grad); min-height: 2px; }
+.sp-trend-bar.alt { background: linear-gradient(180deg, #a78bfa, #6d5cff); }
+.sp-trend-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.74rem; color: var(--gis-muted); }
+.sp-legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--gis-muted); margin-bottom: 12px; }
+.sp-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sp-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* --------------------------------------------------------------------------
+   Showcase editor cards
+   -------------------------------------------------------------------------- */
+.sp-showcase-list { display: grid; gap: 14px; }
+.sp-showcase-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--gis-surface);
+  border: 1px solid var(--gis-border);
+}
+.sp-showcase-row:hover { border-color: var(--gis-border-strong); }
+.sp-showcase-thumb {
+  width: 96px;
+  height: 64px;
+  border-radius: 10px;
+  background: linear-gradient(150deg, #10162a, #0b1020);
+  border: 1px solid var(--gis-border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gis-accent-text);
+  font-size: 1.3rem;
+}
+.sp-showcase-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.sp-showcase-title { font-size: 0.98rem; font-weight: 700; color: var(--gis-ink); margin-bottom: 5px; }
+.sp-showcase-meta { font-size: 0.8rem; color: var(--gis-muted); display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.sp-showcase-desc { font-size: 0.86rem; color: var(--gis-text); line-height: 1.55; }
+
+/* --------------------------------------------------------------------------
+   Notifications
+   -------------------------------------------------------------------------- */
+.sp-notif-list { display: grid; gap: 10px; max-height: 380px; overflow-y: auto; }
+.sp-notif {
+  display: flex;
+  gap: 12px;
+  padding: 13px 15px;
+  border-radius: 11px;
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border);
+  font-size: 0.86rem;
+}
+.sp-notif.unread { border-color: rgba(127, 166, 255, 0.45); background: rgba(47, 107, 255, 0.08); }
+.sp-notif i { color: var(--gis-cyan); margin-top: 2px; }
+.sp-notif strong { display: block; color: var(--gis-ink); margin-bottom: 3px; }
+.sp-notif p { margin: 0; color: var(--gis-text); line-height: 1.5; }
+.sp-notif time { display: block; margin-top: 5px; font-size: 0.74rem; color: var(--gis-muted); }
+
+/* --------------------------------------------------------------------------
+   Settings
+   -------------------------------------------------------------------------- */
+.sp-settings-note {
+  font-size: 0.85rem;
+  color: var(--gis-text);
+  line-height: 1.65;
+  padding: 15px 18px;
+  border-radius: 11px;
+  background: rgba(47, 107, 255, 0.08);
+  border: 1px solid rgba(127, 166, 255, 0.28);
+  margin-bottom: 20px;
+}
+.sp-settings-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+
+@media (max-width: 991.98px) {
+  .sp-showcase-row { grid-template-columns: minmax(0, 1fr); }
+  .sp-showcase-thumb { width: 100%; height: 130px; }
+  .sp-detail-list { grid-template-columns: minmax(0, 1fr); }
+  .sp-detail-list dt { padding-bottom: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-drawer-panel { animation: none; }
+}

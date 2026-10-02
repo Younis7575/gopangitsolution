@@ -57,6 +57,16 @@ if (!defined('APPLY_RATE_WINDOW'))    define('APPLY_RATE_WINDOW', (int) (getenv(
 if (!defined('SEED_SAMPLE_PROJECTS')) define('SEED_SAMPLE_PROJECTS', false);
 
 /* ------------------------------------------------------------------ */
+/* Student Project Hub (consultations + FYP requests)                 */
+/* ------------------------------------------------------------------ */
+/* Student uploads are supporting documents (proposals, PDFs, mockups),
+   so they get a slightly larger ceiling than a CV but stay well bounded. */
+if (!defined('STUDENT_MAX_FILE_SIZE')) define('STUDENT_MAX_FILE_SIZE', (int) (getenv('STUDENT_MAX_FILE_SIZE') ?: (10 * 1024 * 1024)));
+/* Submissions per IP per rolling window, shared by both public forms. */
+if (!defined('STUDENT_RATE_LIMIT'))    define('STUDENT_RATE_LIMIT', (int) (getenv('STUDENT_RATE_LIMIT') ?: 5));
+if (!defined('STUDENT_RATE_WINDOW'))   define('STUDENT_RATE_WINDOW', (int) (getenv('STUDENT_RATE_WINDOW') ?: 3600));
+
+/* ------------------------------------------------------------------ */
 /* Solutions community module (Q&A)                                   */
 /* ------------------------------------------------------------------ */
 /* When true, guest questions/comments publish immediately; otherwise

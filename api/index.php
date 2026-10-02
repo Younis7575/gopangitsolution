@@ -7,6 +7,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/apply_module.php';
+require_once __DIR__ . '/student_projects.php';
 require_once __DIR__ . '/news_service.php';
 require_once __DIR__ . '/analytics.php';
 
@@ -649,6 +650,7 @@ try {
     init_schema();
     $pdo = db();
     init_apply_schema();
+    init_student_schema();
 
     /* Website analytics schema first, so conversion marking during an
        application submission (handled below) always has its columns ready. */
@@ -657,6 +659,9 @@ try {
     handle_analytics($method, $path);          // /api/admin/analytics/* (exits if matched)
 
     handle_apply_module($method, $path, $pdo);
+
+    /* Student Project Hub — free consultation booking + FYP project requests. */
+    handle_student_module($method, $path, $pdo);
 
     /* Public status lookup returns only non-sensitive summary fields. */
     if ($method === 'GET' && $path === '/api/submission-status') {

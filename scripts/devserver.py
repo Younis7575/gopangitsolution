@@ -53,6 +53,15 @@ ROUTES = [
     (r"^/admin-projects/?$", "admin-projects/projects-management.html"),
     (r"^/admin-solutions/?$", "admin-solutions/solutions-management.html"),
     (r"^/admin-submissions/?$", "admin-submissions/submissions.html"),
+    # Student Project Hub — public pages.
+    (r"^/student-projects/?$", "student-projects/index.html"),
+    (r"^/student-projects/consultation/?$", "student-projects/consultation.html"),
+    # Student Project Hub — admin panel. /student-projects/admin/* are the
+    # friendly aliases; /admin-student-projects/* are the canonical ones.
+    (r"^/admin-student-projects/?$", "admin-student-projects/overview.html"),
+    (r"^/admin-student-projects/(overview|consultations|projects|showcase|settings)/?$", r"admin-student-projects/\1.html"),
+    (r"^/student-projects/admin/?$", "admin-student-projects/overview.html"),
+    (r"^/student-projects/admin/(overview|consultations|projects|showcase|settings)/?$", r"admin-student-projects/\1.html"),
     (r"^/apply-job/?$", "apply-job/job-application.html"),
     (r"^/apply-partner/?$", "apply-partner/partner-application.html"),
     (r"^/apply-project/?$", "apply-project/project-proposal.html"),

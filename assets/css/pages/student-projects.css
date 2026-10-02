@@ -1,0 +1,907 @@
+/* ==========================================================================
+   Student Project Hub — /student-projects
+   --------------------------------------------------------------------------
+   Layered on top of premium.css (tokens + buttons + headings),
+   gis-experience.css (dark canvas overrides + reveal) and gis-3d.css (3D
+   scenes). Nothing here redefines a token; the hub only adds its own layout.
+
+   Every glass surface below carries an OPAQUE background colour. The ambient
+   particle canvas sits behind the content at z-index -2, so a translucent
+   card drops body text to roughly 1.15:1 against moving pixels. Opaque base +
+   translucent tint keeps the depth without destroying legibility.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared shell
+   -------------------------------------------------------------------------- */
+.sp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gis-accent-text);
+  margin-bottom: 16px;
+}
+.sp-eyebrow::before {
+  content: '';
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gis-grad);
+}
+.sp-eyebrow.is-centered { justify-content: center; }
+
+.sp-panel {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+              var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r-lg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--gis-shadow);
+}
+
+.sp-lede { color: var(--gis-text); font-size: 1.06rem; line-height: 1.75; }
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.sp-hero {
+  position: relative;
+  padding: 96px 0 88px;
+  overflow: hidden;
+}
+.sp-hero-inner { position: relative; z-index: 2; }
+.sp-hero h1 {
+  font-family: var(--gis-display);
+  font-size: clamp(2.3rem, 5vw, 3.9rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  margin-bottom: 22px;
+  max-width: 15ch;
+}
+.sp-hero h1 em {
+  font-style: normal;
+  background: var(--gis-grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sp-hero .sp-lede { max-width: 56ch; margin-bottom: 32px; }
+
+.sp-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 42px; }
+
+.sp-hero-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--gis-border);
+  border: 1px solid var(--gis-border);
+  border-radius: var(--gis-r);
+  overflow: hidden;
+}
+.sp-hero-fact { background: var(--gis-surface); padding: 20px 22px; }
+.sp-hero-fact strong {
+  display: block;
+  font-family: var(--gis-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--gis-ink);
+  margin-bottom: 4px;
+}
+.sp-hero-fact span { color: var(--gis-muted); font-size: 0.85rem; }
+
+/* floating phone mock, borrowed from the gis-3d phone scene */
+.sp-hero-visual {
+  position: relative;
+  perspective: 1300px;
+  min-height: 460px;
+}
+
+/* the booking page has no visual column, so the hero collapses to one band */
+.sp-hero--compact { padding: 64px 0 40px; }
+.sp-hero--compact h1 { font-size: clamp(2rem, 4.2vw, 3rem); max-width: 24ch !important; }
+.sp-hero--compact .sp-lede { margin-bottom: 18px; }
+.sp-hero--compact .breadcrumb { --bs-breadcrumb-divider-color: var(--gis-muted); }
+.sp-hero--compact .breadcrumb-item, .sp-hero--compact .breadcrumb-item a { color: var(--gis-muted); font-size: 0.85rem; }
+.sp-hero--compact .breadcrumb-item.active { color: var(--gis-accent-text); }
+.sp-hero--compact .breadcrumb a { color: var(--gis-text); }
+.sp-hero--compact .breadcrumb a:hover { color: var(--gis-cyan); }
+.sp-hero-glow {
+  position: absolute;
+  inset: 8% 6%;
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.36), transparent 72%);
+  filter: blur(28px);
+  pointer-events: none;
+}
+.sp-hero-orb {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: 4%;
+  top: 2%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(167, 139, 250, 0.55), rgba(56, 221, 242, 0.16) 55%, transparent 72%);
+  filter: blur(6px);
+  animation: sp-float 9s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sp-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-18px, -26px, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   Path chooser — the two things a visitor can actually do here
+   -------------------------------------------------------------------------- */
+.sp-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.sp-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 30px 30px;
+  border-radius: 24px;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.02)),
+              var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.sp-choice::after {
+  content: '';
+  position: absolute;
+  inset: -40% 55% 40% -10%;
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.34), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.sp-choice:hover,
+.sp-choice:focus-within {
+  transform: translateY(-8px);
+  border-color: rgba(127, 166, 255, 0.5);
+  box-shadow: 0 44px 78px -46px rgba(0, 0, 0, 1), 0 0 50px -34px rgba(47, 107, 255, 0.95);
+}
+.sp-choice:hover::after,
+.sp-choice:focus-within::after { opacity: 1; }
+.sp-choice > * { position: relative; z-index: 1; }
+
+.sp-choice-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(140deg, rgba(47, 107, 255, 0.32), rgba(124, 92, 255, 0.22));
+  border: 1px solid rgba(127, 166, 255, 0.34);
+  margin-bottom: 22px;
+  transform: translateZ(46px);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sp-choice-icon .gis-lottie { width: 46px; height: 46px; }
+.sp-choice:hover .sp-choice-icon { transform: translateZ(62px) rotate(-6deg) scale(1.05); }
+
+.sp-choice h3 { font-family: var(--gis-display); font-size: 1.32rem; margin-bottom: 10px; }
+.sp-choice p { color: var(--gis-text); font-size: 0.96rem; line-height: 1.68; margin-bottom: 20px; }
+.sp-choice ul { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 10px; }
+.sp-choice li {
+  position: relative;
+  padding-left: 28px;
+  color: var(--gis-text);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.sp-choice li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.55em;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--gis-grad);
+  transform: rotate(45deg);
+}
+.sp-choice .theme-btn,
+.sp-choice .theme-btn-outline { margin-top: auto; align-self: flex-start; }
+.sp-choice-tag {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gis-cyan);
+  background: rgba(56, 221, 242, 0.1);
+  border: 1px solid rgba(56, 221, 242, 0.28);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Showcase — driven entirely by /api/student/showcase so nothing is invented
+   -------------------------------------------------------------------------- */
+.sp-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 30px;
+}
+.sp-filter {
+  border: 1px solid var(--gis-border);
+  background: var(--gis-surface);
+  color: var(--gis-text);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.sp-filter:hover { color: var(--gis-ink); border-color: var(--gis-border-strong); transform: translateY(-1px); }
+.sp-filter[aria-pressed="true"] {
+  color: #fff;
+  background: var(--gis-grad);
+  border-color: transparent;
+  box-shadow: 0 12px 26px -16px rgba(47, 107, 255, 0.95);
+}
+.sp-filter:focus-visible { outline: 2px solid var(--gis-accent-text); outline-offset: 3px; }
+
+.sp-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+.sp-showcase-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.sp-showcase-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(127, 166, 255, 0.45);
+  box-shadow: 0 36px 62px -40px rgba(0, 0, 0, 1);
+}
+.sp-showcase-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(150deg, #10162a, #0b1020);
+  overflow: hidden;
+}
+.sp-showcase-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sp-showcase-media .sp-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: rgba(127, 166, 255, 0.55);
+  background:
+    radial-gradient(closest-side at 50% 40%, rgba(47, 107, 255, 0.3), transparent 70%),
+    linear-gradient(150deg, #10162a, #0b1020);
+}
+.sp-showcase-cat {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 2;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gis-ink);
+  background: rgba(5, 7, 13, 0.78);
+  border: 1px solid var(--gis-border-strong);
+  border-radius: 999px;
+  padding: 5px 12px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.sp-showcase-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+.sp-showcase-body h3 { font-size: 1.08rem; font-family: var(--gis-display); margin-bottom: 8px; }
+.sp-showcase-body p { color: var(--gis-text); font-size: 0.9rem; line-height: 1.62; margin-bottom: 16px; }
+.sp-showcase-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.sp-showcase-tags span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--gis-border);
+  color: var(--gis-text);
+}
+
+.sp-empty {
+  padding: 54px 28px;
+  text-align: center;
+  border-radius: var(--gis-r-lg);
+  border: 1px dashed var(--gis-border-strong);
+  background: var(--gis-surface);
+}
+.sp-empty i { font-size: 2rem; color: var(--gis-accent-text); margin-bottom: 14px; display: block; }
+.sp-empty h3 { font-size: 1.1rem; margin-bottom: 8px; }
+.sp-empty p { color: var(--gis-text); font-size: 0.92rem; margin: 0 auto; max-width: 52ch; }
+
+/* --------------------------------------------------------------------------
+   "More than just a project" — 8-node ecosystem, hover/focus linked
+   -------------------------------------------------------------------------- */
+.sp-eco {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 28px;
+  align-items: start;
+}
+.sp-eco-list { display: grid; gap: 10px; }
+.sp-eco-node {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--gis-border);
+  background: var(--gis-surface);
+  color: var(--gis-ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease, color 0.22s ease;
+}
+.sp-eco-node:hover { transform: translateX(4px); border-color: rgba(127, 166, 255, 0.42); }
+.sp-eco-node[aria-selected="true"] {
+  border-color: rgba(127, 166, 255, 0.7);
+  background: var(--gis-surface-2);
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--gis-grad), 0 18px 34px -26px rgba(47, 107, 255, 0.9);
+}
+.sp-eco-node:focus-visible { outline: 2px solid var(--gis-accent-text); outline-offset: 2px; }
+.sp-eco-dot {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--gis-border);
+  color: var(--gis-accent-text);
+  font-size: 0.82rem;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+.sp-eco-node[aria-selected="true"] .sp-eco-dot { background: var(--gis-grad); color: #fff; border-color: transparent; }
+
+.sp-eco-stage {
+  position: relative;
+  padding: 30px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+              var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  min-height: 330px;
+  overflow: hidden;
+}
+.sp-eco-stage::before {
+  content: '';
+  position: absolute;
+  right: -70px;
+  top: -70px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.3), transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+.sp-eco-icon {
+  width: 92px;
+  height: 92px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  background: linear-gradient(140deg, rgba(47, 107, 255, 0.3), rgba(124, 92, 255, 0.2));
+  border: 1px solid rgba(127, 166, 255, 0.32);
+}
+.sp-eco-icon .gis-lottie { width: 66px; height: 66px; }
+.sp-eco-stage h3 { font-family: var(--gis-display); font-size: 1.3rem; margin-bottom: 12px; }
+.sp-eco-stage p { color: var(--gis-text); font-size: 0.96rem; line-height: 1.7; margin-bottom: 18px; }
+.sp-eco-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.sp-eco-points li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--gis-text);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.sp-eco-points li::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Pro', 'Font Awesome 5 Free', sans-serif;
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--gis-cyan);
+}
+.sp-eco-stage.is-swapping .sp-eco-body { opacity: 0; transform: translateY(8px); }
+.sp-eco-body { transition: opacity 0.22s ease, transform 0.22s ease; }
+
+/* --------------------------------------------------------------------------
+   Journey — 9 steps, scroll-linked progress rail
+   -------------------------------------------------------------------------- */
+.sp-journey { position: relative; margin-top: 12px; }
+.sp-journey-rail {
+  position: absolute;
+  left: 27px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--gis-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.sp-journey-rail span {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--sp-progress, 0%);
+  background: var(--gis-grad);
+  border-radius: 2px;
+  transition: height 0.18s linear;
+}
+.sp-steps { display: grid; gap: 12px; position: relative; }
+.sp-step {
+  display: flex;
+  gap: 18px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  opacity: 0.42;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.sp-step.is-in { opacity: 1; transform: translateY(0); }
+.sp-step.is-current {
+  border-color: rgba(127, 166, 255, 0.55);
+  background: var(--gis-surface-2);
+  box-shadow: 0 22px 44px -32px rgba(47, 107, 255, 0.95);
+}
+.sp-step-num {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  font-family: var(--gis-display);
+  color: var(--gis-ink);
+  background: var(--gis-bg-subtle);
+  border: 1px solid var(--gis-border-strong);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.sp-step.is-current .sp-step-num {
+  background: var(--gis-grad);
+  border-color: transparent;
+  color: #fff;
+  transform: scale(1.08);
+}
+.sp-step-body h3 { font-size: 1.02rem; font-family: var(--gis-display); margin-bottom: 5px; }
+.sp-step-body p { color: var(--gis-text); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+
+/* --------------------------------------------------------------------------
+   Advantage strip
+   -------------------------------------------------------------------------- */
+.sp-advantages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+.sp-advantage {
+  padding: 24px 22px;
+  border-radius: 18px;
+  background: var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+.sp-advantage:hover { transform: translateY(-4px); border-color: rgba(127, 166, 255, 0.45); }
+.sp-advantage i { font-size: 1.35rem; color: var(--gis-accent-text); margin-bottom: 12px; display: block; }
+.sp-advantage h3 { font-size: 0.98rem; margin-bottom: 7px; }
+.sp-advantage p { color: var(--gis-text); font-size: 0.87rem; line-height: 1.6; margin: 0; }
+
+/* --------------------------------------------------------------------------
+   Before / after 3D transform
+   -------------------------------------------------------------------------- */
+.sp-transform { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.sp-transform-card {
+  position: relative;
+  padding: 30px 28px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+              var(--gis-surface);
+  border: 1px solid var(--gis-border);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+.sp-transform-card.is-after { border-color: rgba(127, 166, 255, 0.34); }
+.sp-transform-card > * { position: relative; z-index: 1; transform: translateZ(28px); }
+.sp-transform-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 13px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  color: var(--gis-muted);
+  border: 1px solid var(--gis-border-strong);
+  background: rgba(255, 255, 255, 0.04);
+}
+.sp-transform-card.is-after .sp-transform-label {
+  color: var(--gis-cyan);
+  border-color: rgba(56, 221, 242, 0.35);
+  background: rgba(56, 221, 242, 0.09);
+}
+.sp-transform-card h3 { font-size: 1.12rem; font-family: var(--gis-display); margin-bottom: 14px; }
+.sp-transform-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sp-transform-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--gis-text);
+}
+.sp-transform-list li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Pro', 'Font Awesome 5 Free', sans-serif;
+  font-weight: 900;
+  font-size: 0.82rem;
+}
+.sp-transform-card:not(.is-after) .sp-transform-list li::before { content: '\f00d'; color: #f97066; }
+.sp-transform-card.is-after .sp-transform-list li::before { content: '\f00c'; color: var(--gis-cyan); }
+.sp-transform-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--gis-accent-text);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 4px 0 22px;
+}
+.sp-transform-arrow::before,
+.sp-transform-arrow::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--gis-border-strong));
+}
+.sp-transform-arrow::after { background: linear-gradient(90deg, var(--gis-border-strong), transparent); }
+
+/* --------------------------------------------------------------------------
+   Booking + request forms
+   -------------------------------------------------------------------------- */
+.sp-booking { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 26px; align-items: start; }
+.sp-booking-aside { position: sticky; top: 96px; display: grid; gap: 14px; }
+.sp-aside-card { padding: 26px 24px; border-radius: 20px; background: var(--gis-surface); border: 1px solid var(--gis-border); }
+.sp-aside-card h3 { font-size: 1rem; font-family: var(--gis-display); margin-bottom: 14px; }
+.sp-aside-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.sp-aside-list li {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--gis-text);
+}
+.sp-aside-list i { color: var(--gis-accent-text); margin-top: 3px; flex: 0 0 auto; }
+.sp-aside-note {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--gis-muted);
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--gis-border);
+}
+
+.sp-form-card { padding: 32px 30px; border-radius: 22px; background: var(--gis-surface); border: 1px solid var(--gis-border); }
+.sp-form-head { margin-bottom: 24px; }
+.sp-form-head h2 { font-family: var(--gis-display); font-size: 1.5rem; margin-bottom: 8px; }
+.sp-form-head p { color: var(--gis-text); font-size: 0.93rem; margin: 0; }
+
+.sp-tabs { display: inline-flex; gap: 6px; padding: 6px; border-radius: 999px; background: var(--gis-bg-subtle); border: 1px solid var(--gis-border); margin-bottom: 28px; flex-wrap: wrap; }
+.sp-tab {
+  border: 0;
+  background: transparent;
+  color: var(--gis-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.sp-tab:hover { color: var(--gis-ink); }
+.sp-tab[aria-selected="true"] { background: var(--gis-grad); color: #fff; box-shadow: 0 12px 26px -16px rgba(47, 107, 255, 0.95); }
+.sp-tab:focus-visible { outline: 2px solid var(--gis-accent-text); outline-offset: 3px; }
+
+.sp-field-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gis-ink);
+  margin-bottom: 7px;
+}
+.sp-req { color: var(--gis-cyan); margin-left: 3px; }
+.sp-optional { color: var(--gis-muted); font-weight: 500; font-size: 0.78rem; }
+.sp-help { font-size: 0.78rem; color: var(--gis-muted); margin: 6px 0 0; line-height: 1.5; }
+/* The template stylesheet paints <code> in the UA's default monospace pink,
+   which lands at 4.2:1 on the muted help text background. */
+.sp-help code { color: var(--gis-accent-text); background: rgba(255, 255, 255, 0.05); padding: 1px 5px; border-radius: 5px; }
+
+.sp-field-error {
+  display: none;
+  font-size: 0.79rem;
+  color: #ff9d94;
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+.sp-has-error .form-control,
+.sp-has-error .form-select { border-color: #f97066 !important; }
+.sp-has-error .sp-field-error { display: block; }
+
+/* date + slot picker */
+.sp-date-row { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 14px; align-items: end; }
+.sp-slot-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.sp-slot {
+  border: 1px solid var(--gis-border);
+  background: var(--gis-bg-subtle);
+  color: var(--gis-ink);
+  font-family: var(--gis-display);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 11px;
+  cursor: pointer;
+  min-width: 76px;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.sp-slot:hover:not(:disabled) { border-color: rgba(127, 166, 255, 0.6); transform: translateY(-1px); }
+.sp-slot[aria-pressed="true"] { background: var(--gis-grad); border-color: transparent; color: #fff; }
+.sp-slot:disabled { opacity: 0.36; cursor: not-allowed; text-decoration: line-through; }
+.sp-slot:focus-visible { outline: 2px solid var(--gis-accent-text); outline-offset: 2px; }
+.sp-slots-note { font-size: 0.82rem; color: var(--gis-muted); margin-top: 10px; line-height: 1.55; }
+
+.sp-consent {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--gis-border);
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--gis-text);
+}
+.sp-consent input { margin-top: 3px; flex: 0 0 auto; width: 17px; height: 17px; accent-color: #4a7dff; }
+.sp-consent a { text-decoration: underline; }
+
+.sp-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+.sp-form-status { font-size: 0.85rem; color: var(--gis-muted); }
+
+.sp-alert {
+  display: none;
+  padding: 15px 18px;
+  border-radius: 14px;
+  font-size: 0.89rem;
+  line-height: 1.6;
+  margin-bottom: 22px;
+  border: 1px solid;
+}
+.sp-alert.is-visible { display: block; }
+.sp-alert.is-error { color: #ffc9c3; background: rgba(249, 112, 102, 0.12); border-color: rgba(249, 112, 102, 0.42); }
+.sp-alert.is-ok { color: #b8f0d6; background: rgba(56, 221, 242, 0.1); border-color: rgba(56, 221, 242, 0.38); }
+.sp-alert.is-busy { color: var(--gis-ink); background: rgba(127, 166, 255, 0.1); border-color: rgba(127, 166, 255, 0.34); }
+
+/* success panel */
+.sp-result { display: none; }
+.sp-result.is-visible { display: block; }
+.sp-result-card {
+  padding: 34px 30px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(56, 221, 242, 0.09), rgba(255, 255, 255, 0.02)),
+              var(--gis-surface);
+  border: 1px solid rgba(56, 221, 242, 0.34);
+}
+.sp-result-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 221, 242, 0.16);
+  border: 1px solid rgba(56, 221, 242, 0.4);
+  color: var(--gis-cyan);
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+.sp-result-card h2 { font-family: var(--gis-display); font-size: 1.5rem; margin-bottom: 10px; }
+.sp-result-card > p { color: var(--gis-text); font-size: 0.95rem; line-height: 1.7; }
+.sp-reference {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  padding: 14px 22px;
+  border-radius: 14px;
+  background: var(--gis-bg-subtle);
+  border: 1px dashed rgba(127, 166, 255, 0.55);
+  font-family: var(--gis-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gis-ink);
+}
+.sp-reference button {
+  border: 0;
+  background: transparent;
+  color: var(--gis-accent-text);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.sp-summary { display: grid; gap: 0; margin: 0 0 24px; border-radius: 16px; overflow: hidden; border: 1px solid var(--gis-border); }
+.sp-summary div { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 14px; padding: 13px 18px; background: var(--gis-surface); }
+.sp-summary div:nth-child(odd) { background: var(--gis-bg-subtle); }
+.sp-summary dt { color: var(--gis-muted); font-size: 0.82rem; font-weight: 600; margin: 0; }
+.sp-summary dd { color: var(--gis-ink); font-size: 0.9rem; margin: 0; overflow-wrap: anywhere; }
+.sp-status-pill {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 13px;
+  border-radius: 999px;
+  color: #ffe2a8;
+  background: rgba(247, 144, 9, 0.16);
+  border: 1px solid rgba(247, 144, 9, 0.4);
+}
+
+/* reference lookup */
+.sp-lookup { margin-top: 18px; padding-top: 22px; border-top: 1px solid var(--gis-border); }
+.sp-lookup h3 { font-size: 0.98rem; font-family: var(--gis-display); margin-bottom: 4px; }
+.sp-lookup > p { font-size: 0.84rem; color: var(--gis-muted); margin-bottom: 14px; }
+.sp-lookup-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+
+/* --------------------------------------------------------------------------
+   FAQ
+   -------------------------------------------------------------------------- */
+.sp-faq { display: grid; gap: 12px; }
+.sp-faq .accordion-item { background: var(--gis-surface) !important; }
+.sp-faq .accordion-button::after {
+  /* bootstrap draws a dark glyph; recolour it for the dark canvas */
+  filter: invert(1) grayscale(1) brightness(1.6);
+}
+.sp-faq .accordion-button { padding: 20px 22px; font-size: 0.98rem; }
+.sp-faq .accordion-body { padding: 0 22px 20px; font-size: 0.92rem; line-height: 1.7; }
+
+/* --------------------------------------------------------------------------
+   Final CTA
+   -------------------------------------------------------------------------- */
+.sp-cta {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 56px 44px;
+  text-align: center;
+  background: linear-gradient(150deg, rgba(47, 107, 255, 0.24), rgba(124, 92, 255, 0.14) 55%, rgba(56, 221, 242, 0.1)),
+              var(--gis-surface);
+  border: 1px solid var(--gis-border-strong);
+}
+.sp-cta::before {
+  content: '';
+  position: absolute;
+  inset: -50% -10% auto -10%;
+  height: 120%;
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.3), transparent 70%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+.sp-cta > * { position: relative; z-index: 1; }
+.sp-cta h2 { font-family: var(--gis-display); font-size: clamp(1.7rem, 3.4vw, 2.6rem); margin-bottom: 14px; }
+.sp-cta p { color: var(--gis-text); font-size: 1.02rem; line-height: 1.7; max-width: 62ch; margin: 0 auto 30px; }
+.sp-cta-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .sp-hero { padding: 68px 0 56px; }
+  .sp-hero h1 { max-width: none; }
+  .sp-hero-visual { min-height: 380px; margin-top: 26px; }
+  .sp-eco { grid-template-columns: minmax(0, 1fr); }
+  .sp-eco-node { padding: 11px 14px; font-size: 0.9rem; }
+  .sp-booking { grid-template-columns: minmax(0, 1fr); }
+  .sp-booking-aside { position: static; }
+}
+
+@media (max-width: 767.98px) {
+  .sp-hero { padding: 52px 0 44px; }
+  .sp-hero-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sp-choice { padding: 28px 22px 24px; }
+  .sp-choice-tag { position: static; align-self: flex-start; margin-bottom: 14px; }
+  .sp-form-card { padding: 24px 20px; }
+  .sp-date-row { grid-template-columns: minmax(0, 1fr); }
+  .sp-summary div { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  .sp-summary div:nth-child(odd) { background: var(--gis-surface); }
+  .sp-summary div:nth-child(even) { background: var(--gis-bg-subtle); }
+  .sp-lookup-row { grid-template-columns: minmax(0, 1fr); }
+  .sp-result-card { padding: 26px 20px; }
+  .sp-cta { padding: 40px 22px; }
+  .sp-journey-rail { left: 16px; }
+  .sp-step { padding: 16px 16px; gap: 14px; }
+  .sp-actions .theme-btn,
+  .sp-actions .theme-btn-outline { width: 100%; }
+  .sp-hero-actions .theme-btn,
+  .sp-hero-actions .theme-btn-outline { width: 100%; }
+  .sp-cta-actions .theme-btn,
+  .sp-cta-actions .theme-btn-outline { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-hero-orb { animation: none; }
+  .sp-journey-rail span { transition: none; }
+  .sp-choice,
+  .sp-step,
+  .sp-showcase-card,
+  .sp-advantage,
+  .sp-transform-card { transition: none; }
+}
+
+@media print {
+  .sp-hero-visual,
+  .sp-eco-stage::before,
+  .sp-hero-glow,
+  .sp-hero-orb { display: none !important; }
+  .sp-panel,
+  .sp-choice,
+  .sp-step,
+  .sp-advantage,
+  .sp-form-card { box-shadow: none; background: #fff; }
+}

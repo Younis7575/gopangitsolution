@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Student Projects Overview | Gopang IT Solution Admin</title>
+    <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2">
+    <link rel="stylesheet" href="/assets/css/custom/site.css?v=2">
+    <link rel="stylesheet" href="/assets/css/premium.css?v=13">
+    <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css?v=2">
+    <link rel="stylesheet" href="/assets/css/admin/admin-student-projects.css?v=1">
+    <link rel="stylesheet" href="/assets/css/gis-experience.css?v=4">
+    <script>
+        if (localStorage.getItem("isAdminLoggedIn") !== "true") {
+            window.location.replace("/admin-login");
+        }
+    </script>
+</head>
+
+<body class="body-wrapper admin-jobs-page">
+    <header class="admin-header">
+        <div class="container">
+            <div class="admin-header-inner">
+                <a href="/" class="admin-logo">
+                    <img src="/assets/img/logo-light.svg" alt="Gopang IT Solution">
+                </a>
+                <div class="admin-header-actions">
+                    <a href="/student-projects" class="admin-link">View Public Page</a>
+                    <button type="button" id="logout" class="admin-ghost-btn">Logout</button>
+                    <a href="/" class="theme-btn">Back to Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+        <nav>
+            <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
+            <a href="/admin-apply"><i class="fal fa-layer-group" aria-hidden="true"></i> Opportunities</a>
+            <a href="/admin-applicants"><i class="fal fa-file-user" aria-hidden="true"></i> Applicants</a>
+            <a href="/admin-student-projects" class="active"><i class="fal fa-graduation-cap" aria-hidden="true"></i> Student Projects</a>
+            <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
+            <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
+            <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
+            <a href="/admin-student-projects" class="active gis-admin-student-nav"><i class="fal fa-graduation-cap" aria-hidden="true"></i> Student Projects</a>
+            <a href="/admin-analytics"><i class="fal fa-chart-line" aria-hidden="true"></i> Analytics</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main" id="sp-overview">
+        <section class="admin-hero">
+            <div class="container">
+                <span class="admin-kicker">Student Project Hub</span>
+                <h1>Overview</h1>
+                <p>Free consultation bookings and Final Year Project requests submitted from <a href="/student-projects" style="color:#b9d4ff;text-decoration:underline">/student-projects</a>. Nothing here is auto-approved — a consultant reviews every request before it is confirmed.</p>
+                <div class="dash-toolbar">
+                    <button type="button" id="sp-refresh" class="admin-ghost-btn"><i class="fal fa-rotate" aria-hidden="true"></i> Refresh</button>
+                    <a href="/admin-student-projects/consultations" class="theme-btn"><i class="fal fa-calendar-check" aria-hidden="true"></i> Consultations</a>
+                    <a href="/admin-student-projects/projects" class="admin-ghost-btn"><i class="fal fa-file-signature" aria-hidden="true"></i> Project Requests</a>
+                </div>
+
+                <nav class="sp-admin-tabs" style="margin-top:26px;" aria-label="Student Projects sections">
+                    <a href="/admin-student-projects" class="active"><i class="fal fa-chart-simple" aria-hidden="true"></i> Overview</a>
+                    <a href="/admin-student-projects/consultations"><i class="fal fa-calendar-check" aria-hidden="true"></i> Consultations</a>
+                    <a href="/admin-student-projects/projects"><i class="fal fa-file-signature" aria-hidden="true"></i> Project Requests</a>
+                    <a href="/admin-student-projects/showcase"><i class="fal fa-layer-group" aria-hidden="true"></i> Showcase</a>
+                    <a href="/admin-student-projects/settings"><i class="fal fa-sliders" aria-hidden="true"></i> Settings</a>
+                </nav>
+            </div>
+        </section>
+
+        <section class="admin-content">
+            <div class="container">
+                <div id="sp-toast" class="sp-toast" role="status" aria-live="polite"></div>
+
+                <div class="sp-kpis">
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-calendar-check" aria-hidden="true"></i> Consultations</span>
+                        <span class="sp-kpi-value" id="kpi-consult-total">—</span>
+                        <span class="sp-kpi-note">all time</span>
+                    </div>
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-hourglass-half" aria-hidden="true"></i> Pending</span>
+                        <span class="sp-kpi-value" id="kpi-consult-pending">—</span>
+                        <span class="sp-kpi-note">awaiting confirmation</span>
+                    </div>
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-circle-check" aria-hidden="true"></i> Confirmed</span>
+                        <span class="sp-kpi-value" id="kpi-consult-confirmed">—</span>
+                        <span class="sp-kpi-note">slot is held</span>
+                    </div>
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-file-signature" aria-hidden="true"></i> Project Requests</span>
+                        <span class="sp-kpi-value" id="kpi-project-total">—</span>
+                        <span class="sp-kpi-note">all time</span>
+                    </div>
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-magnifying-glass" aria-hidden="true"></i> Pending Review</span>
+                        <span class="sp-kpi-value" id="kpi-project-review">—</span>
+                        <span class="sp-kpi-note">needs a quotation</span>
+                    </div>
+                    <div class="sp-kpi">
+                        <span class="sp-kpi-label"><i class="fal fa-code-branch" aria-hidden="true"></i> In Development</span>
+                        <span class="sp-kpi-value" id="kpi-project-dev">—</span>
+                        <span class="sp-kpi-note">being built</span>
+                    </div>
+                </div>
+
+                <div class="admin-grid">
+                    <section class="admin-panel" aria-labelledby="trend-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Last 14 days</span>
+                                <h2 id="trend-title">Request trend</h2>
+                            </div>
+                        </div>
+                        <div id="sp-trend"></div>
+                    </section>
+
+                    <section class="admin-panel" aria-labelledby="upcoming-title">
+                        <div class="admin-panel-heading">
+                            <div>
+                                <span class="admin-kicker">Schedule</span>
+                                <h2 id="upcoming-title">Upcoming consultations</h2>
+                            </div>
+                            <a href="/admin-student-projects/consultations" class="admin-ghost-btn">View all</a>
+                        </div>
+                        <div id="sp-upcoming"></div>
+                    </section>
+                </div>
+
+                <section class="admin-panel" style="margin-top:24px;" aria-labelledby="today-title">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span class="admin-kicker">Today</span>
+                            <h2 id="today-title">Sessions scheduled today</h2>
+                        </div>
+                    </div>
+                    <div id="sp-today"></div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/admin/admin-student-projects.js?v=1"></script>
+    <script src="/assets/js/gis-experience.js?v=3" defer></script>
+</body>
+
+</html>
