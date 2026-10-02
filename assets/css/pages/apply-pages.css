@@ -1,5 +1,5 @@
 .apply-premium-page {
-    background: #f6f8fc;
+    background: var(--gis-bg-subtle);
 }
 
 .apply-premium-hero {
@@ -11,8 +11,7 @@
 }
 
 .apply-premium-hero::before {
-    background:
-        linear-gradient(135deg, rgba(15, 98, 254, 0.92), rgba(0, 194, 168, 0.38)),
+    background: linear-gradient(135deg, rgba(15, 98, 254, 0.92), rgba(0, 194, 168, 0.38)),
         url("/assets/img/home1/slide1.jpg") center/cover;
     content: "";
     inset: 0;
@@ -21,8 +20,7 @@
 }
 
 .apply-project-hero::before {
-    background:
-        linear-gradient(135deg, rgba(8, 26, 58, 0.92), rgba(15, 98, 254, 0.58)),
+    background: linear-gradient(135deg, rgba(8, 26, 58, 0.92), rgba(15, 98, 254, 0.58)),
         url("/assets/img/project/6.jpg") center/cover;
 }
 
@@ -66,10 +64,10 @@
 
 .apply-outline-btn {
     align-items: center;
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.16);
     border-radius: 8px;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     display: inline-flex;
     font-size: 14px;
     font-weight: 900;
@@ -85,14 +83,14 @@
 }
 
 .apply-outline-btn:hover {
-    background: #0f62fe;
+    background: var(--gis-accent);
     color: #fff;
 }
 
 .apply-visual-card {
     align-items: flex-end;
     aspect-ratio: 4 / 5;
-    background: #0f62fe center/cover;
+    background: var(--gis-accent) center/cover;
     border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 8px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
@@ -144,7 +142,7 @@
 
 .apply-side-panel,
 .apply-form-panel {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.12);
     border-radius: 8px;
     box-shadow: 0 22px 60px rgba(16, 24, 40, 0.1);
@@ -153,12 +151,12 @@
 
 .apply-side-panel {
     align-self: start;
-    background: linear-gradient(180deg, #ffffff, #eef4ff);
+    background: linear-gradient(180deg, var(--gis-surface), var(--gis-accent-soft));
 }
 
 .apply-side-panel .apply-eyebrow,
 .apply-form-heading .apply-eyebrow {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
 }
 
 .apply-side-panel h2,
@@ -170,7 +168,7 @@
 
 .apply-side-panel p,
 .apply-form-heading p {
-    color: #667085;
+    color: var(--gis-text);
     line-height: 1.75;
 }
 
@@ -197,7 +195,7 @@
 }
 
 .apply-benefit-list span {
-    color: #344054;
+    color: var(--gis-text);
     font-weight: 800;
     line-height: 1.45;
 }
@@ -207,17 +205,17 @@
 }
 
 .apply-form-panel .form-label {
-    color: #344054;
+    color: var(--gis-text);
     font-size: 14px;
     font-weight: 800;
     margin-bottom: 8px;
 }
 
 .apply-form-panel .form-control {
-    background: #fff;
-    border: 1px solid #d0d5dd;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
-    color: #101828;
+    color: var(--gis-ink);
     min-height: 54px;
     padding: 13px 15px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -229,7 +227,7 @@
 }
 
 .apply-form-panel .form-control:focus {
-    border-color: #0f62fe;
+    border-color: var(--gis-accent);
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
 
@@ -304,7 +302,7 @@
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #667085;
+    color: var(--gis-text);
     margin-bottom: 6px;
 }
 
@@ -312,10 +310,10 @@
 .gis-filter-field select {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid #d0d5dd;
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
-    background: #fff;
-    color: #101828;
+    background: var(--gis-surface);
+    color: var(--gis-ink);
     font-size: 15px;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -323,7 +321,7 @@
 
 .gis-filter-field input:focus,
 .gis-filter-field select:focus {
-    border-color: #0f62fe;
+    border-color: var(--gis-accent);
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
 
@@ -337,8 +335,8 @@
     margin-left: 6px;
     padding: 2px 10px;
     border-radius: 999px;
-    background: #eef4ff;
-    color: #0f62fe;
+    background: var(--gis-accent-soft);
+    color: var(--gis-accent-text);
     font-size: 12px;
     font-weight: 800;
     vertical-align: middle;

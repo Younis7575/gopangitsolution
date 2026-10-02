@@ -5,7 +5,9 @@ Author URI: https://themeforest.net/user/modinatheme/
 Description: IT Solution & Technology HTML  Template
 Version: 1.2.0
 */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+/* Fonts are now loaded once from the document head (Plus Jakarta Sans +
+   Space Grotesk). The template's Montserrat/Poppins @import was render
+   blocking and downloaded weights the premium theme never uses. */
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -201,7 +203,7 @@ h6 {
   margin: 0px;
   margin-bottom: 15px;
   font-weight: 600;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   line-height: 130%;
 }
 
@@ -249,7 +251,7 @@ a {
   line-height: 28px;
   -webkit-transition: all 0.35s ease-in-out;
   transition: all 0.35s ease-in-out;
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 p {
@@ -2765,7 +2767,7 @@ nav .breadcrumb li {
   height: 60px;
   line-height: 64px;
   font-size: 18px;
-  background: #FFF;
+  background: var(--gis-surface);
   color: #5f2dee;
   -webkit-animation: playVideo infinite 3.5s;
           animation: playVideo infinite 3.5s;
@@ -3006,7 +3008,7 @@ nav .breadcrumb li {
 }
 
 .preloader .loader .loader-section .bg {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   height: 100%;
   left: 0;
   width: 100%;
@@ -3043,7 +3045,7 @@ header.header-1.sticky {
   top: 0 !important;
   width: 100%;
   position: fixed !important;
-  background: #fff;
+  background: var(--gis-surface);
   -webkit-animation: sticky .8s ease-in-out;
           animation: sticky .8s ease-in-out;
   -webkit-box-shadow: 0 13px 35px -12px rgba(35, 35, 35, 0.15);
@@ -3167,7 +3169,7 @@ header.header-1 .main-menu ul > li > a {
   display: inline-block;
   font-weight: 600;
   text-transform: capitalize;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   line-height: 1;
   padding: 38px 19px;
   overflow: hidden;
@@ -3310,7 +3312,7 @@ header .header-right-element .search-box form input {
   color: #27E420;
   font-size: 16px;
   height: 60px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
 }
 
 header .header-right-element .search-box form button {
@@ -3369,7 +3371,7 @@ header.header-3 {
 }
 
 header.header-3 .top-bar-3 {
-  background-color: #E9F0FB;
+  background-color: var(--gis-bg-subtle);
   padding: 8px 0px;
 }
 
@@ -3409,7 +3411,7 @@ header.header-3 .top-bar-3 {
 }
 
 header.header-3 .top-bar-3 .social-pages a {
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 header.header-3 .top-bar-3 .social-pages a:hover {
@@ -3541,7 +3543,7 @@ header.header-3 .main-menu ul > li > a {
   display: inline-block;
   font-weight: 500;
   text-transform: capitalize;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   line-height: 1;
   padding: 38px 19px;
   overflow: hidden;
@@ -3656,7 +3658,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .top-left a {
   font-weight: 500;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   margin-right: 35px;
   font-size: 15px;
 }
@@ -3694,8 +3696,8 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .top-header-bar {
-  background: #E9F0FB;
-  color: #0D0D0F;
+  background: var(--gis-bg-subtle);
+  color: var(--gis-ink);
 }
 
 .action-bar .single-info-element {
@@ -4006,7 +4008,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .mobile-nav .sidebar-nav .metismenu ul a:hover::before {
-  background-color: #fff;
+  background-color: var(--gis-surface);
 }
 
 .mobile-nav .sidebar-nav .metismenu ul a::before {
@@ -4015,7 +4017,7 @@ header.header-3 .main-menu ul > li > ul ul {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--gis-border-strong);
   content: "";
   top: 50%;
   -webkit-transition: all .3s ease-in-out;
@@ -4064,7 +4066,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .action-bar a {
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
   display: block;
 }
 
@@ -4172,7 +4174,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .offset-menu img {
   display: inline-block;
-  background: #fff;
+  background: var(--gis-surface);
   padding: 10px 20px;
 }
 
@@ -4272,7 +4274,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .hero-1 .single-slide .hero-contents a {
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
   padding: 22px 44px;
 }
 
@@ -4355,7 +4357,7 @@ header.header-3 .main-menu ul > li > ul ul {
   position: absolute;
   left: 50%;
   top: 50%;
-  background: #fff;
+  background: var(--gis-surface);
   margin: -1px 0 0 -5px;
   display: block;
   -webkit-transform-origin: 9px 50%;
@@ -4690,7 +4692,7 @@ header.header-3 .main-menu ul > li > ul ul {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1px solid #fff;
+  border: 1px solid var(--gis-border-strong);
   background: transparent;
   margin: 2px 0px;
   display: inline-block;
@@ -4702,7 +4704,7 @@ header.header-3 .main-menu ul > li > ul ul {
   width: 6px;
   height: 6px;
   content: "";
-  background: #fff;
+  background: var(--gis-surface);
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -4759,8 +4761,8 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .slide-dots li.slick-active button {
-  background-color: #FFF;
-  border-color: #FFF;
+  background-color: var(--gis-surface);
+  border-color: var(--gis-border-strong);
 }
 
 .section-padding {
@@ -5028,7 +5030,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .fun-fact-bar p {
-  color: #0D0D0F;
+  color: var(--gis-ink);
   font-weight: 700;
 }
 
@@ -5135,7 +5137,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .why-choice-us {
-  background: #FFF;
+  background: var(--gis-surface);
   z-index: 1;
 }
 
@@ -5156,14 +5158,14 @@ header.header-3 .main-menu ul > li > ul ul {
   left: 0;
   bottom: 0;
   content: "";
-  background: #fff;
+  background: var(--gis-surface);
   width: 100%;
   height: 40%;
   z-index: -1;
 }
 
 .single-icon-box {
-  background: #FFFFFF;
+  background: var(--gis-surface);
   border: 1px solid rgba(95, 45, 238, 0.16);
   border-radius: 8px;
   padding: 30px;
@@ -5187,8 +5189,8 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .single-service-box:hover {
-  background: #FFF;
-  border-color: #FFF;
+  background: var(--gis-surface);
+  border-color: var(--gis-border-strong);
   -webkit-box-shadow: 0px 8px 20px rgba(95, 45, 238, 0.12);
           box-shadow: 0px 8px 20px rgba(95, 45, 238, 0.12);
 }
@@ -5201,7 +5203,7 @@ header.header-3 .main-menu ul > li > ul ul {
 .single-service-box .icon {
   font-size: 72px;
   line-height: 1;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   margin-bottom: 28px;
 }
 
@@ -5223,7 +5225,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .single-service-box .read-more-link {
   font-weight: 500;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   text-decoration: underline;
   display: inline-block;
   line-height: 1;
@@ -5322,8 +5324,8 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .single-service-top-icon.style-2 {
   text-align: center;
-  background-color: #fff;
-  border-color: #fff;
+  background-color: var(--gis-surface);
+  border-color: var(--gis-border-strong);
   -webkit-box-shadow: 0px 30px 50px rgba(20, 42, 104, 0.06);
           box-shadow: 0px 30px 50px rgba(20, 42, 104, 0.06);
 }
@@ -5383,7 +5385,7 @@ header.header-3 .main-menu ul > li > ul ul {
   text-align: center;
   -webkit-box-shadow: 5px 6px 30px 0px rgba(0, 0, 0, 0.1);
           box-shadow: 5px 6px 30px 0px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: var(--gis-surface);
   padding: 30px 20px;
   margin-bottom: 40px;
   -webkit-transition: all .3s ease-in-out;
@@ -5477,7 +5479,7 @@ header.header-3 .main-menu ul > li > ul ul {
 .service-details-contents .contents .service-contact-form {
   margin-top: 30px;
   padding: 40px 40px 50px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   -webkit-box-shadow: 5px 6px 30px 0px rgba(0, 0, 0, 0.1);
           box-shadow: 5px 6px 30px 0px rgba(0, 0, 0, 0.1);
 }
@@ -5609,7 +5611,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .service-sidebar-wrapper .help-line-card .single-menu-box a {
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 .single-testimonial-card {
@@ -5739,7 +5741,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .single-testimonial-box {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   -webkit-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
   padding: 0px 35px 60px;
@@ -5817,7 +5819,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .testimonial-carousel-wrapper-active .single-testimonial-box {
   padding: 0px 20px 30px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
 }
 
 .testimonial-carousel-wrapper-active .slide-dots {
@@ -5841,7 +5843,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .single-customer-review {
-  background: #FFFFFF;
+  background: var(--gis-surface);
   -webkit-box-shadow: -8px 0px 1px rgba(37, 106, 215, 0.04), 8px 0px 24px rgba(37, 106, 215, 0.12);
           box-shadow: -8px 0px 1px rgba(37, 106, 215, 0.04), 8px 0px 24px rgba(37, 106, 215, 0.12);
   border-radius: 8px;
@@ -6032,7 +6034,7 @@ header.header-3 .main-menu ul > li > ul ul {
   position: absolute;
   left: -15%;
   top: 0;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   width: 130%;
   height: 70%;
   z-index: -1;
@@ -6069,7 +6071,7 @@ header.header-3 .main-menu ul > li > ul ul {
 .single-pricing-plan .plan-service-list li {
   margin-top: 12px;
   position: relative;
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 .single-pricing-plan .plan-service-list li.no::before, .single-pricing-plan .plan-service-list li.not::before {
@@ -6196,7 +6198,7 @@ header.header-3 .main-menu ul > li > ul ul {
 .single-team-member.active .member-info a, .single-team-member:hover .member-info h4,
 .single-team-member:hover .member-info p,
 .single-team-member:hover .member-info a {
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 .single-team-member .member-info {
@@ -6324,7 +6326,7 @@ header.header-3 .main-menu ul > li > ul ul {
   line-height: 32px;
   display: inline-block;
   margin: 0px 2px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   border-radius: 5px;
 }
 
@@ -6347,7 +6349,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .team-member-details-wrapper .icon-box {
   margin-top: 30px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   padding: 85px 30px;
 }
 
@@ -6386,7 +6388,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .contact-form7-wrapper .contact-form {
   padding: 50px 30px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
 }
 
 .contact-form7-wrapper .contact-form form textarea {
@@ -6395,7 +6397,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .biography-info {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   margin-top: 30px;
   padding: 30px;
 }
@@ -6433,7 +6435,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .member-profile-wrapper {
-  background-color: #fff;
+  background-color: var(--gis-surface);
 }
 
 .member-profile-wrapper .member-profile-img {
@@ -6587,7 +6589,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .skill-bars {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   margin-top: 30px;
   padding: 30px;
   padding-bottom: 70px;
@@ -6735,7 +6737,7 @@ header.header-3 .main-menu ul > li > ul ul {
   text-align: center;
   border-radius: 50%;
   line-height: 60px;
-  border: 2px solid #fff;
+  border: 2px solid var(--gis-border-strong);
   font-size: 24px;
   position: absolute;
   left: 50%;
@@ -6822,7 +6824,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .case-cat-filter button {
   border: none;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   display: inline-block;
   padding: 12px 20px;
   line-height: 1;
@@ -6834,7 +6836,7 @@ header.header-3 .main-menu ul > li > ul ul {
           box-shadow: 0px 16px 32px 0px rgba(51, 51, 51, 0.04);
   font-family: "Montserrat", sans-serif;
   text-transform: capitalize;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   border-radius: 7px;
 }
 
@@ -6902,7 +6904,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .case-study-post-wrapper .case-details-content ul li {
-  color: #0D0D0F;
+  color: var(--gis-ink);
   margin-top: 8px;
   padding-left: 30px;
   font-weight: 700;
@@ -6921,7 +6923,7 @@ header.header-3 .main-menu ul > li > ul ul {
 .case-info-card {
   border-radius: 7px;
   overflow: hidden;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   border-radius: 7px;
   -webkit-box-shadow: 0px 10px 60px 0px rgba(212, 212, 212, 0.38);
           box-shadow: 0px 10px 60px 0px rgba(212, 212, 212, 0.38);
@@ -6962,7 +6964,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .case-info-card .project-data .single-info-item .left-data {
-  color: #0D0D0F;
+  color: var(--gis-ink);
   position: relative;
   font-weight: 600;
   font-family: "Montserrat", sans-serif;
@@ -7019,7 +7021,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .project-case-study .single-project-card .contents {
   width: 90%;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   border-radius: 7px;
   position: absolute;
   left: 50%;
@@ -7161,11 +7163,11 @@ header.header-3 .main-menu ul > li > ul ul {
   transition: all 0.3s ease-in-out !important;
   width: 40px;
   height: 40px;
-  background: #fff;
+  background: var(--gis-surface);
   border-radius: 50%;
   line-height: 40px;
   text-align: center;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   -webkit-transition: all .3s ease-in-out;
   transition: all .3s ease-in-out;
 }
@@ -7278,7 +7280,7 @@ header.header-3 .main-menu ul > li > ul ul {
   position: absolute;
   width: 50px;
   height: 50px;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid #ebedf2;
   border-radius: 50px;
   color: #5f2dee;
@@ -7305,7 +7307,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .investors-inquire-card .investors-title {
-  border-bottom: 3px solid #FFF;
+  border-bottom: 3px solid var(--gis-border-strong);
 }
 
 .investors-inquire-card .investors-title h2 {
@@ -7320,7 +7322,7 @@ header.header-3 .main-menu ul > li > ul ul {
   border-radius: 50%;
   line-height: 200px;
   margin: 0px auto;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   margin-top: 30px;
   margin-bottom: 10px;
 }
@@ -7348,7 +7350,7 @@ header.header-3 .main-menu ul > li > ul ul {
   height: 40px;
   line-height: 40px;
   text-align: center;
-  border: 2px solid #fff;
+  border: 2px solid var(--gis-border-strong);
   border-radius: 30px;
   margin: 0px 3px;
   font-size: 14px;
@@ -7356,7 +7358,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .investors-inquire-card .social-profile a:hover {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   color: #256ad7 !important;
 }
 
@@ -7402,7 +7404,7 @@ header.header-3 .main-menu ul > li > ul ul {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--gis-surface);
   content: "";
   left: 0;
   top: 0;
@@ -7502,7 +7504,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .single-blog-item {
-  background-color: #fff;
+  background-color: var(--gis-surface);
   border: 1px solid #eaeaea;
   position: relative;
   margin-top: 30px;
@@ -7640,7 +7642,7 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .single-news-box .content {
   padding: 25px 30px;
-  background-color: #f7f7f7;
+  background-color: var(--gis-bg-subtle);
 }
 
 .single-news-box .content i {
@@ -7654,7 +7656,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .single-news-box .content .meta .author a {
-  color: #6D6D6D;
+  color: var(--gis-text);
   font-weight: 500;
   font-size: 14px;
 }
@@ -7867,7 +7869,7 @@ header.header-3 .main-menu ul > li > ul ul {
 }
 
 .blog-wrapper .single-blog-post.quote-post .post-meta span, .blog-wrapper .single-blog-post.format-quote .post-meta span {
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 .blog-wrapper .single-blog-post.quote-post .quote-content, .blog-wrapper .single-blog-post.format-quote .quote-content {
@@ -7887,7 +7889,7 @@ header.header-3 .main-menu ul > li > ul ul {
   float: left;
   overflow: hidden;
   margin-right: 30px;
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 @media (max-width: 585px) {
@@ -7902,12 +7904,12 @@ header.header-3 .main-menu ul > li > ul ul {
 
 .blog-wrapper .single-blog-post.quote-post .quote-content .quote-text, .blog-wrapper .single-blog-post.format-quote .quote-content .quote-text {
   overflow: hidden;
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 .blog-wrapper .single-blog-post.quote-post .quote-content h2, .blog-wrapper .single-blog-post.format-quote .quote-content h2 {
   margin-top: -2px;
-  color: #0D0D0F !important;
+  color: var(--gis-ink) !important;
 }
 
 .blog-wrapper .single-blog-post:last-child {
@@ -8081,7 +8083,7 @@ header.header-3 .main-menu ul > li > ul ul {
   width: 40px;
   line-height: 40px;
   border-radius: 50%;
-  background-color: #f2f2f2;
+  background-color: var(--gis-bg-subtle);
   margin-right: 15px;
   float: left;
   overflow: hidden;
@@ -8220,7 +8222,7 @@ header.header-3 .main-menu ul > li > ul ul {
   line-height: 40px;
   text-align: center;
   border-radius: 50%;
-  background-color: #f2f2f2;
+  background-color: var(--gis-bg-subtle);
   font-size: 14px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -8265,7 +8267,7 @@ header.header-3 .main-menu ul > li > ul ul {
   overflow: hidden;
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid var(--gis-border);
 }
 
 .popular-posts .single-post-item:last-child, .popular_posts .single-post-item:last-child {
@@ -8278,7 +8280,7 @@ header.header-3 .main-menu ul > li > ul ul {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: #f2f2f2;
+  background-color: var(--gis-bg-subtle);
   float: left;
   overflow: hidden;
   margin-right: 20px;
@@ -8730,7 +8732,7 @@ p.sticky-label {
 
 .request-quote-form-wrapper {
   padding: 40px 50px;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   -webkit-box-shadow: 0px 15px 40px 0px rgba(109, 109, 109, 0.06);
           box-shadow: 0px 15px 40px 0px rgba(109, 109, 109, 0.06);
 }
@@ -8826,7 +8828,7 @@ p.sticky-label {
 .single-branch-card {
   padding: 40px;
   padding-top: 0;
-  background: #fff;
+  background: var(--gis-surface);
   -webkit-box-shadow: 0px 0px 50px 0px #0000001a;
           box-shadow: 0px 0px 50px 0px #0000001a;
   position: relative;
@@ -9019,7 +9021,7 @@ p.sticky-label {
 
 .single-contact-card:hover .bottom-part .icon {
   color: #256ad7 !important;
-  background-color: #fff !important;
+  background-color: var(--gis-surface) !important;
 }
 
 .single-contact-card:hover p,
@@ -9067,7 +9069,7 @@ p.sticky-label {
   font-size: 14px;
   line-height: 50px;
   border-radius: 50%;
-  background-color: #fff;
+  background-color: var(--gis-surface);
   text-align: center;
   float: right;
   overflow: hidden;
@@ -9180,7 +9182,7 @@ footer .single-footer-wid .wid-title h3 {
 
 footer .single-footer-wid ul li a {
   margin-top: 8px;
-  color: #6D6D6D;
+  color: var(--gis-text);
   display: block;
   text-transform: capitalize;
   font-size: 16px;
@@ -9227,7 +9229,7 @@ footer .footer-bottom .bottom-content-wrapper {
 }
 
 footer .footer-bottom .bottom-content-wrapper p, footer .footer-bottom .bottom-content-wrapper b, footer .footer-bottom .bottom-content-wrapper strong {
-  color: #0D0D0F;
+  color: var(--gis-ink);
   text-transform: capitalize;
 }
 
@@ -9242,14 +9244,14 @@ footer .footer-bottom .bottom-content-wrapper ul li:first-of-type a {
 footer .footer-bottom .bottom-content-wrapper ul li a {
   display: inline-block;
   margin-left: 15px;
-  color: #0D0D0F;
+  color: var(--gis-ink);
   text-transform: capitalize;
 }
 
 footer .footer-bottom .social-links a {
   display: inline-block;
   margin-right: 15px;
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 footer .footer-bottom .social-links a:hover {
@@ -9332,19 +9334,19 @@ footer .footer-bottom .social-links a:last-of-type {
 }
 
 .newsletter_widget .newsletter_box input::-webkit-input-placeholder {
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 .newsletter_widget .newsletter_box input:-ms-input-placeholder {
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 .newsletter_widget .newsletter_box input::-ms-input-placeholder {
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 .newsletter_widget .newsletter_box input::placeholder {
-  color: #0D0D0F;
+  color: var(--gis-ink);
 }
 
 .newsletter_widget .newsletter_box button {

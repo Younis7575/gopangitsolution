@@ -1,33 +1,45 @@
 /* ==========================================================================
    Gopang IT Solution — Premium Design System
-   Minimal · White · One accent · 8pt grid · Enterprise
-   This file loads last and is the single source of truth for the visual system.
+   Deep-space dark · Glass surfaces · Blue/violet gradient light · Enterprise
+   This file is the single source of truth for the visual system; the page-level
+   stylesheets only ever read these tokens (never hard-coded colours).
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-  /* Brand */
-  --gis-accent: #0f62fe;
-  --gis-accent-hover: #0a4ed1;
-  --gis-accent-soft: #eef3ff;
+  /* Brand — evolved from the original #0f62fe for AA contrast on dark.
+     Fill values guarantee >=4.5:1 against WHITE text (AA for normal copy):
+     #2b65f5 = 4.90:1, every visible stop of --gis-grad >= 4.9:1. */
+  --gis-accent: #2b65f5;            /* fills: buttons, chips, icons */
+  --gis-accent-hover: #4a7dff;
+  --gis-accent-text: #7fa6ff;       /* accent used as *text* on dark */
+  --gis-accent-2: #7c5cff;          /* violet stop for gradients */
+  --gis-cyan: #38ddf2;              /* subtle cyan highlight */
+  --gis-accent-soft: rgba(43, 101, 245, 0.14);
+  --gis-grad: linear-gradient(115deg, #2b65f5 0%, #4f52ec 55%, #6d5cff 135%);
+  --gis-grad-text: linear-gradient(100deg, #8fb2ff 0%, #a58bff 55%, #67e8f9 100%);
 
   /* Ink & text */
-  --gis-ink: #0b0d12;          /* headings */
-  --gis-text: #565d6b;         /* body */
-  --gis-muted: #8a909c;        /* secondary / labels */
+  --gis-ink: #f2f5fc;               /* headings */
+  --gis-text: #a6b0c4;              /* body */
+  --gis-muted: #7b869c;             /* secondary / labels */
 
   /* Surfaces */
-  --gis-bg: #ffffff;
-  --gis-bg-subtle: #f7f8fa;    /* alternate sections — flat, no gradient */
-  --gis-dark: #0b0d12;         /* dark accent blocks (footer, info card) */
+  --gis-bg: #05070d;                /* page background */
+  --gis-bg-subtle: #080b14;         /* alternate sections */
+  --gis-surface: #0b1020;           /* cards / panels (was #fff) */
+  --gis-surface-2: #10162a;         /* raised card */
+  --gis-glass: rgba(255, 255, 255, 0.045);
+  --gis-dark: #04060c;              /* footer / deep blocks */
 
   /* Lines & shadow */
-  --gis-border: #e8eaee;
-  --gis-border-strong: #d7dae0;
-  --gis-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
-  --gis-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
-  --gis-shadow-lg: 0 18px 50px rgba(16, 24, 40, 0.09);
+  --gis-border: rgba(255, 255, 255, 0.08);
+  --gis-border-strong: rgba(255, 255, 255, 0.16);
+  --gis-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --gis-shadow: 0 18px 46px rgba(0, 0, 0, 0.45);
+  --gis-shadow-lg: 0 34px 80px rgba(0, 0, 0, 0.55);
+  --gis-glow: 0 14px 44px -12px rgba(47, 107, 255, 0.55);
 
   /* Radius */
   --gis-r-xs: 8px;
@@ -36,6 +48,7 @@
   --gis-r-lg: 20px;
 
   --gis-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --gis-display: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -56,13 +69,26 @@ body {
 
 h1, h2, h3, h4, h5, h6,
 .section-title h2 {
-  font-family: var(--gis-font);
+  font-family: var(--gis-display);
   color: var(--gis-ink);
   letter-spacing: -0.02em;
   font-weight: 700;
 }
 
 p { color: var(--gis-text); }
+
+/* Ambient deep-space glow, painted above the canvas but below all content */
+body.body-wrapper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 82% -8%, rgba(47, 107, 255, 0.18), transparent 65%),
+    radial-gradient(760px 460px at 6% 12%, rgba(124, 92, 255, 0.14), transparent 62%),
+    radial-gradient(1000px 620px at 50% 110%, rgba(56, 221, 242, 0.07), transparent 70%);
+}
 
 a { text-decoration: none; transition: color 0.18s ease; }
 
@@ -78,13 +104,26 @@ a { text-decoration: none; transition: color 0.18s ease; }
 
 .section-title span {
   display: inline-block;
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   margin-bottom: 14px;
+  position: relative;
+  padding-left: 26px;
 }
+.section-title span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 18px;
+  height: 1px;
+  background: var(--gis-grad);
+}
+.section-title.text-center span { padding-left: 0; }
+.section-title.text-center span::before { display: none; }
 
 .section-title h2 {
   font-size: clamp(1.9rem, 3.4vw, 2.8rem);
@@ -111,29 +150,37 @@ button.theme-btn {
   justify-content: center;
   gap: 9px;
   background: var(--gis-accent) !important;
-  background-image: none !important;
+  background-image: var(--gis-grad) !important;
   color: #fff !important;
-  border: 1px solid var(--gis-accent);
-  border-radius: var(--gis-r-sm) !important;
+  border: 1px solid transparent;
+  border-radius: 999px !important;
   font-weight: 600;
   font-size: 0.97rem;
   line-height: 1;
-  padding: 15px 26px;
-  box-shadow: none;
-  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  padding: 16px 30px;
+  box-shadow: 0 10px 30px -12px rgba(47, 107, 255, 0.85);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, filter 0.22s ease;
+  will-change: transform;
 }
 
 .theme-btn::before,
 .theme-btn::after { display: none !important; }
 
+/* sheen sweep on hover */
+.theme-btn > i,
+a.theme-btn > i { transition: transform 0.25s ease; }
+.theme-btn:hover > i,
+a.theme-btn:hover > i { transform: translateX(4px); }
+
 .theme-btn:hover,
 a.theme-btn:hover,
 button.theme-btn:hover {
-  background: var(--gis-accent-hover) !important;
-  border-color: var(--gis-accent-hover);
   color: #fff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(15, 98, 254, 0.22);
+  transform: translateY(-2px);
+  filter: saturate(1.12) brightness(1.06);
+  box-shadow: 0 18px 40px -14px rgba(88, 118, 255, 0.95);
 }
 
 .theme-btn-outline {
@@ -141,35 +188,39 @@ button.theme-btn:hover {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  padding: 15px 26px;
-  border-radius: var(--gis-r-sm);
+  padding: 16px 30px;
+  border-radius: 999px;
   border: 1px solid var(--gis-border-strong);
-  background: #fff;
+  background: var(--gis-glass);
   color: var(--gis-ink);
   font-weight: 600;
   font-size: 0.97rem;
   line-height: 1;
-  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+  will-change: transform;
 }
 
 .theme-btn-outline:hover {
-  background: var(--gis-bg-subtle);
-  border-color: var(--gis-ink);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(127, 166, 255, 0.6);
   color: var(--gis-ink);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -18px rgba(47, 107, 255, 0.9);
 }
 
-.theme-btn-outline i { color: #25d366; }
+.theme-btn-outline i { color: var(--gis-accent-text); }
 
 .gis-link {
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 7px;
 }
 .gis-link i { transition: transform 0.18s ease; }
-.gis-link:hover { color: var(--gis-accent-hover); }
+.gis-link:hover { color: var(--gis-cyan); }
 .gis-link:hover i { transform: translateX(3px); }
 
 /* --------------------------------------------------------------------------
@@ -182,27 +233,31 @@ button.theme-btn:hover {
   font-size: 0.85rem;
 }
 .top-bar-wrapper a { color: var(--gis-text); }
-.top-bar-wrapper a:hover { color: var(--gis-accent); }
+.top-bar-wrapper a:hover { color: var(--gis-accent-text); }
 .top-bar-wrapper .top-left a { margin-right: 22px; display: inline-flex; align-items: center; gap: 7px; }
 .top-bar-wrapper .top-left a i,
-.top-bar-wrapper .social-pages a i { color: var(--gis-accent); }
+.top-bar-wrapper .social-pages a i { color: var(--gis-accent-text); }
 .top-bar-wrapper .social-pages a { margin-left: 14px; color: var(--gis-text); }
 
 /* --------------------------------------------------------------------------
    Header
    -------------------------------------------------------------------------- */
 header.header-1.gis-main-header {
-  background: #fff !important;
-  border-bottom: 1px solid var(--gis-border);
+  background: rgba(5, 7, 13, 0.55) !important;
+  border-bottom: 1px solid transparent;
   box-shadow: none;
   padding: 6px 0;
+  -webkit-backdrop-filter: saturate(140%) blur(8px);
+  backdrop-filter: saturate(140%) blur(8px);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
-header.header-1.gis-sticky-header { position: sticky; top: 0; z-index: 999; transition: box-shadow 0.25s ease; }
+header.header-1.gis-sticky-header { position: sticky; top: 0; z-index: 999; transition: box-shadow 0.3s ease, background 0.3s ease; }
 header.header-1.gis-header-scrolled {
-  box-shadow: 0 1px 0 var(--gis-border), 0 8px 24px rgba(16, 24, 40, 0.06);
-  background: rgba(255, 255, 255, 0.92) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
-  backdrop-filter: saturate(180%) blur(10px);
+  box-shadow: 0 14px 40px -22px rgba(0, 0, 0, 0.9);
+  border-bottom-color: var(--gis-border);
+  background: rgba(6, 8, 16, 0.82) !important;
+  -webkit-backdrop-filter: saturate(160%) blur(16px);
+  backdrop-filter: saturate(160%) blur(16px);
 }
 header.header-1.gis-main-header .logo img { height: 42px; width: auto; }
 
@@ -217,40 +272,62 @@ header.header-1.gis-main-header .main-menu > ul > li > a {
 }
 header.header-1.gis-main-header .main-menu > ul > li:hover > a,
 header.header-1.gis-main-header .main-menu > ul > li > a:hover {
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   background: transparent !important;
 }
 header.header-1.gis-main-header .main-menu > ul > li > a.gis-admin-nav-link {
-  background: var(--gis-ink) !important;
-  background-image: none !important;
+  background: var(--gis-grad) !important;
+  background-image: var(--gis-grad) !important;
   color: #fff !important;
   padding: 9px 18px;
-  border-radius: var(--gis-r-xs);
+  border-radius: 999px;
   margin-left: 8px;
 }
 header.header-1.gis-main-header .main-menu > ul > li > a.gis-admin-nav-link:hover {
-  background: #000 !important;
+  filter: brightness(1.1);
   color: #fff !important;
 }
 
 /* Dropdowns */
 header.header-1 .main-menu ul li > ul,
 header.header-1.gis-main-header .main-menu ul > li > ul {
-  background: #fff;
+  background: rgba(9, 12, 22, 0.96);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   box-shadow: var(--gis-shadow-lg);
   padding: 8px;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  transform-origin: top center;
+  animation: gis-drop-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes gis-drop-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 header.header-1 .main-menu ul li > ul li a {
   border-radius: var(--gis-r-xs);
   padding: 9px 14px;
   color: var(--gis-text);
+  position: relative;
+  transition: color 0.18s ease, background 0.18s ease, padding-left 0.18s ease;
+}
+header.header-1 .main-menu ul li > ul li a::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--gis-grad);
+  transition: width 0.2s ease;
 }
 header.header-1 .main-menu ul li > ul li a:hover {
-  background: var(--gis-bg-subtle);
-  color: var(--gis-accent);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gis-accent-text);
+  padding-left: 20px;
 }
+header.header-1 .main-menu ul li > ul li a:hover::before { width: 9px; }
 
 header.header-1.gis-main-header #hamburger {
   background: var(--gis-bg-subtle);
@@ -263,34 +340,59 @@ header.header-1.gis-main-header #hamburger {
    Cards (services / why / generic)
    -------------------------------------------------------------------------- */
 .gis-card {
-  background: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--gis-border);
-  border-radius: var(--gis-r);
+  border-radius: var(--gis-r-lg);
   padding: 30px 28px;
   height: 100%;
-  box-shadow: none;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+/* soft light sweep from the top-left corner */
+.gis-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px 220px at var(--gis-mx, 20%) var(--gis-my, 0%), rgba(47, 107, 255, 0.16), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 .gis-card:hover {
-  border-color: var(--gis-border-strong);
-  box-shadow: var(--gis-shadow);
-  transform: translateY(-4px);
+  border-color: rgba(127, 166, 255, 0.42);
+  box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(47, 107, 255, 0.12);
+  transform: translateY(-6px);
 }
+.gis-card:hover::after { opacity: 1; }
+.gis-card > * { position: relative; z-index: 1; }
 .gis-card-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gis-accent-soft);
+  background: linear-gradient(140deg, rgba(47, 107, 255, 0.22), rgba(124, 92, 255, 0.16));
+  border: 1px solid rgba(127, 166, 255, 0.28);
+  color: var(--gis-accent-text);
+  box-shadow: 0 10px 26px -14px rgba(47, 107, 255, 0.8);
   margin-bottom: 22px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.gis-card:hover .gis-card-icon {
+  transform: translateZ(28px) rotate(-6deg) scale(1.06);
+  box-shadow: 0 16px 34px -14px rgba(88, 118, 255, 0.95);
 }
 .gis-card-icon img { width: 26px; height: 26px; }
 .gis-card h3,
 .gis-card h4 { font-size: 1.18rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
 .gis-card h3 a { color: var(--gis-ink); }
-.gis-card h3 a:hover { color: var(--gis-accent); }
+.gis-card h3 a:hover { color: var(--gis-accent-text); }
 .gis-card p { margin-bottom: 18px; line-height: 1.65; font-size: 0.97rem; }
 
 /* Why-choose item */
@@ -303,20 +405,21 @@ header.header-1.gis-main-header #hamburger {
   display: flex;
   gap: 16px;
   padding: 22px;
-  border-radius: var(--gis-r);
-  background: #fff;
+  border-radius: var(--gis-r-lg);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018));
   border: 1px solid var(--gis-border);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
 }
-.gis-why-item:hover { border-color: var(--gis-border-strong); box-shadow: var(--gis-shadow-sm); }
+.gis-why-item:hover { border-color: rgba(127, 166, 255, 0.4); box-shadow: var(--gis-shadow); transform: translateY(-4px); }
 .gis-why-item h3 { font-size: 1.05rem; margin-bottom: 4px; }
 .gis-why-item p { font-size: 0.92rem; margin: 0; }
 .gis-why-num {
   flex-shrink: 0;
   width: 42px; height: 42px;
-  border-radius: 10px;
-  background: var(--gis-accent-soft);
-  color: var(--gis-accent);
+  border-radius: 12px;
+  background: linear-gradient(140deg, rgba(47, 107, 255, 0.24), rgba(124, 92, 255, 0.18));
+  border: 1px solid rgba(127, 166, 255, 0.3);
+  color: var(--gis-accent-text);
   font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   font-size: 0.9rem;
@@ -333,18 +436,20 @@ header.header-1.gis-main-header #hamburger {
 .gis-tech-item {
   text-align: center;
   padding: 26px 16px;
-  border-radius: var(--gis-r);
-  background: #fff;
+  border-radius: var(--gis-r-lg);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018));
   border: 1px solid var(--gis-border);
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.24s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease;
 }
 .gis-tech-item:hover {
-  border-color: var(--gis-border-strong);
-  transform: translateY(-3px);
-  box-shadow: var(--gis-shadow-sm);
+  border-color: rgba(127, 166, 255, 0.45);
+  transform: translateY(-5px);
+  box-shadow: 0 24px 46px -30px rgba(0, 0, 0, 0.95);
 }
-.gis-tech-item i { font-size: 1.85rem; color: var(--gis-ink); margin-bottom: 12px; display: block; }
-.gis-tech-item:hover i { color: var(--gis-accent); }
+.gis-tech-item i { font-size: 1.85rem; color: var(--gis-accent-text); margin-bottom: 12px; display: block; transition: transform 0.3s ease, color 0.3s ease; }
+.gis-tech-item:hover i { color: var(--gis-cyan); transform: scale(1.14) translateY(-2px); }
 .gis-tech-item span { font-weight: 600; color: var(--gis-ink); font-size: 0.88rem; }
 
 /* --------------------------------------------------------------------------
@@ -364,22 +469,28 @@ header.header-1.gis-main-header #hamburger {
   right: -50%;
   width: 100%;
   height: 1px;
-  background: var(--gis-border-strong);
+  background: linear-gradient(90deg, var(--gis-border-strong), var(--gis-border));
 }
 .gis-process-step:last-child::after { display: none; }
 .gis-process-num {
   width: 52px; height: 52px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border-strong);
   color: var(--gis-ink);
   font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 18px;
   position: relative; z-index: 1;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color 0.24s ease, color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
 }
-.gis-process-step:hover .gis-process-num { border-color: var(--gis-accent); color: var(--gis-accent); }
+.gis-process-step:hover .gis-process-num {
+  border-color: transparent;
+  background: var(--gis-grad);
+  color: #fff;
+  box-shadow: 0 14px 30px -14px rgba(47, 107, 255, 0.9);
+  transform: translateY(-3px);
+}
 .gis-process-step h4 { font-size: 1rem; margin-bottom: 6px; }
 .gis-process-step p { font-size: 0.85rem; margin: 0; line-height: 1.55; }
 
@@ -388,12 +499,18 @@ header.header-1.gis-main-header #hamburger {
    -------------------------------------------------------------------------- */
 .gis-industry-card {
   position: relative;
-  border-radius: var(--gis-r);
+  border-radius: var(--gis-r-lg);
   overflow: hidden;
   min-height: 220px;
   display: flex;
   align-items: flex-end;
   border: 1px solid var(--gis-border);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.gis-industry-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(127, 166, 255, 0.45);
+  box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 1);
 }
 .gis-industry-card::before {
   content: '';
@@ -408,12 +525,20 @@ header.header-1.gis-main-header #hamburger {
 /* Portfolio cards reuse the template .single-project-card; keep clean */
 .single-project-card {
   position: relative;
-  border-radius: var(--gis-r);
+  border-radius: var(--gis-r-lg);
   overflow: hidden;
   min-height: 260px;
   display: flex;
   align-items: flex-end;
   border: 1px solid var(--gis-border);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.single-project-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(127, 166, 255, 0.45);
+  box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 1);
 }
 .single-project-card::before {
   content: '';
@@ -431,14 +556,16 @@ header.header-1.gis-main-header #hamburger {
    Case studies
    -------------------------------------------------------------------------- */
 .gis-case-card {
-  border-radius: var(--gis-r);
+  border-radius: var(--gis-r-lg);
   overflow: hidden;
-  background: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--gis-border);
   height: 100%;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: border-color 0.26s ease, box-shadow 0.26s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.gis-case-card:hover { border-color: var(--gis-border-strong); box-shadow: var(--gis-shadow); transform: translateY(-4px); }
+.gis-case-card:hover { border-color: rgba(127, 166, 255, 0.42); box-shadow: var(--gis-shadow-lg); transform: translateY(-6px); }
 .gis-case-thumb { height: 210px; background-size: cover; background-position: center; }
 .gis-case-body { padding: 26px; }
 .gis-case-tag {
@@ -446,7 +573,7 @@ header.header-1.gis-main-header #hamburger {
   padding: 5px 12px;
   border-radius: 999px;
   background: var(--gis-accent-soft);
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -463,16 +590,22 @@ header.header-1.gis-main-header #hamburger {
    Pricing
    -------------------------------------------------------------------------- */
 .gis-pricing-card {
-  border-radius: var(--gis-r);
+  border-radius: var(--gis-r-lg);
   padding: 34px 30px;
-  background: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--gis-border);
   height: 100%;
   position: relative;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
 }
-.gis-pricing-card:hover { border-color: var(--gis-border-strong); box-shadow: var(--gis-shadow); }
-.gis-pricing-card.featured { border-color: var(--gis-accent); box-shadow: var(--gis-shadow); }
+.gis-pricing-card:hover { border-color: rgba(127, 166, 255, 0.42); box-shadow: var(--gis-shadow); transform: translateY(-4px); }
+.gis-pricing-card.featured {
+  border-color: rgba(127, 166, 255, 0.55);
+  box-shadow: 0 30px 70px -40px rgba(47, 107, 255, 0.9);
+  background: linear-gradient(160deg, rgba(47, 107, 255, 0.12), rgba(124, 92, 255, 0.06));
+}
 .gis-pricing-card h3 { font-size: 1.2rem; margin-bottom: 14px; }
 .gis-pricing-card .price { font-size: 2.4rem; font-weight: 800; color: var(--gis-ink); letter-spacing: -0.03em; }
 .gis-pricing-card .price span { font-size: 0.95rem; font-weight: 500; color: var(--gis-muted); }
@@ -486,17 +619,25 @@ header.header-1.gis-main-header #hamburger {
 .gis-pricing-list { list-style: none; padding: 0; margin: 22px 0; }
 .gis-pricing-list li { padding: 9px 0; display: flex; align-items: flex-start; gap: 10px; font-size: 0.93rem; color: var(--gis-text); border-bottom: 1px solid var(--gis-border); }
 .gis-pricing-list li:last-child { border-bottom: 0; }
-.gis-pricing-list li i { color: var(--gis-accent); margin-top: 3px; font-size: 0.95rem; }
+.gis-pricing-list li i { color: var(--gis-accent-text); margin-top: 3px; font-size: 0.95rem; }
 
 /* --------------------------------------------------------------------------
    Stats — clean white band with hairline dividers
    -------------------------------------------------------------------------- */
 .gis-stats-bar {
-  background: #fff !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)) !important;
   background-image: none !important;
   border-top: 1px solid var(--gis-border);
   border-bottom: 1px solid var(--gis-border);
   padding: 72px 0;
+  position: relative;
+}
+.gis-stats-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(700px 200px at 50% 0%, rgba(47, 107, 255, 0.16), transparent 70%);
+  pointer-events: none;
 }
 .gis-stats-bar .row > [class*="col-"] { position: relative; }
 .gis-stats-bar .row > [class*="col-"]::after {
@@ -509,8 +650,12 @@ header.header-1.gis-main-header #hamburger {
 .gis-stat-item { text-align: center; color: var(--gis-ink); }
 .gis-stat-item .num {
   font-size: clamp(2.2rem, 4.2vw, 3.1rem);
-  font-weight: 800;
-  color: var(--gis-ink);
+  font-weight: 700;
+  font-family: var(--gis-display);
+  background: var(--gis-grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   letter-spacing: -0.03em;
   display: block;
 }
@@ -520,10 +665,12 @@ header.header-1.gis-main-header #hamburger {
    Reviews / testimonials
    -------------------------------------------------------------------------- */
 .gis-reviews-wrap {
-  background: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r-lg);
   padding: 40px;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 .gis-google-header { display: flex; align-items: center; gap: 18px; margin-bottom: 30px; flex-wrap: wrap; }
 .gis-google-score { font-size: 2.8rem; font-weight: 800; color: var(--gis-ink); line-height: 1; letter-spacing: -0.03em; }
@@ -531,18 +678,33 @@ header.header-1.gis-main-header #hamburger {
 .gis-google-brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; color: var(--gis-ink); font-size: 0.95rem; }
 .gis-google-brand svg { flex-shrink: 0; }
 .gis-review-card {
-  background: #fff;
-  border-radius: var(--gis-r);
-  padding: 28px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018));
+  border-radius: var(--gis-r-lg);
+  padding: 30px;
   border: 1px solid var(--gis-border);
   height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.26s ease, transform 0.26s ease, box-shadow 0.26s ease;
+}
+.gis-review-card:hover { border-color: rgba(127, 166, 255, 0.4); transform: translateY(-5px); box-shadow: var(--gis-shadow-lg); }
+.gis-review-card::before {
+  content: '\201C';
+  position: absolute;
+  top: -18px;
+  right: 14px;
+  font-family: var(--gis-display);
+  font-size: 7rem;
+  line-height: 1;
+  color: rgba(127, 166, 255, 0.14);
+  pointer-events: none;
 }
 .gis-review-card p { font-size: 0.98rem; line-height: 1.7; color: var(--gis-text); }
 .gis-review-card footer { margin-top: 14px; font-size: 0.92rem; color: var(--gis-muted); }
 .gis-review-card footer strong { color: var(--gis-ink); }
 .gis-review-card .avatar {
   width: 46px; height: 46px; border-radius: 50%;
-  background: var(--gis-accent-soft); color: var(--gis-accent);
+  background: var(--gis-accent-soft); color: var(--gis-accent-text);
   display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;
 }
 .gis-review-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
@@ -554,12 +716,16 @@ blockquote.gis-review-card { margin: 0; }
    -------------------------------------------------------------------------- */
 .gis-contact-section { background: var(--gis-bg-subtle); }
 .gis-contact-info-card {
-  background: var(--gis-dark);
+  background: linear-gradient(160deg, rgba(47, 107, 255, 0.16), rgba(124, 92, 255, 0.08) 55%, rgba(255, 255, 255, 0.03));
   background-image: none;
+  border: 1px solid rgba(127, 166, 255, 0.24);
   border-radius: var(--gis-r-lg);
   padding: 40px 34px;
   color: #fff;
   height: 100%;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 40px 80px -50px rgba(47, 107, 255, 0.9);
 }
 .gis-contact-info-card h3 { color: #fff; margin-bottom: 26px; font-size: 1.3rem; }
 .gis-contact-item { display: flex; gap: 16px; margin-bottom: 22px; color: rgba(255, 255, 255, 0.8); }
@@ -574,55 +740,62 @@ blockquote.gis-review-card { margin: 0; }
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .gis-contact-form-wrap {
-  background: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r-lg);
   padding: 38px 34px;
-  box-shadow: var(--gis-shadow-sm);
+  box-shadow: var(--gis-shadow);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 .gis-contact-form .form-label { font-weight: 500; color: var(--gis-ink); font-size: 0.9rem; margin-bottom: 6px; }
 .gis-contact-form .form-control,
 .gis-contact-form .form-select {
-  border-radius: var(--gis-r-sm);
+  border-radius: 12px;
   border: 1px solid var(--gis-border-strong);
-  padding: 12px 15px;
+  padding: 13px 15px;
   font-size: 0.95rem;
   color: var(--gis-ink);
-  background: #fff;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  background: rgba(4, 6, 12, 0.6);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .gis-contact-form .form-control::placeholder { color: var(--gis-muted); }
 .gis-contact-form .form-control:focus,
 .gis-contact-form .form-select:focus {
-  border-color: var(--gis-accent);
-  box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.12);
+  border-color: var(--gis-accent-hover);
+  background: rgba(4, 6, 12, 0.85);
+  box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.22);
   outline: none;
 }
-.gis-form-feedback { margin-top: 16px; padding: 12px 16px; border-radius: var(--gis-r-sm); font-size: 0.9rem; }
-.gis-form-success { background: rgba(16, 185, 129, 0.1); color: #047857; }
+select.form-select option { background: #0b1020; color: var(--gis-ink); }
+.gis-form-feedback { margin-top: 16px; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; }
+.gis-form-success { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
 
 /* --------------------------------------------------------------------------
    CTA banner — light, framed, premium (no stacked dark before footer)
    -------------------------------------------------------------------------- */
 .cta-banner-box {
-  background: var(--gis-bg-subtle) !important;
+  background: linear-gradient(120deg, rgba(47, 107, 255, 0.18), rgba(124, 92, 255, 0.12) 55%, rgba(56, 221, 242, 0.08)) !important;
   background-image: none !important;
-  border: 1px solid var(--gis-border);
-  border-radius: var(--gis-r-lg);
+  border: 1px solid rgba(127, 166, 255, 0.28);
+  border-radius: 28px;
   overflow: hidden;
   position: relative;
   padding: 56px 48px;
   margin-bottom: 0 !important;
   z-index: 1;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 50px 100px -60px rgba(47, 107, 255, 0.95);
 }
 .cta-banner-wrapper {
-  background: #fff;
+  background: transparent;
   padding-bottom: 72px;
   position: relative;
   z-index: 1;
 }
 .cta-banner-box::before { display: none !important; }
-.cta-banner-box .section-title span { color: var(--gis-accent); }
+.cta-banner-box .section-title span { color: var(--gis-cyan); }
 .cta-banner-box .section-title h2,
 .cta-banner-box .text-white { color: var(--gis-ink) !important; }
 
@@ -644,7 +817,7 @@ blockquote.gis-review-card { margin: 0; }
 footer.footer-1 .footer-widgets-wrapper li a:hover,
 .footer-1 .footer-widgets-wrapper .contact-info a:hover,
 footer.footer-1 .footer-widgets-wrapper .contact-info a:hover {
-  color: var(--gis-accent) !important;
+  color: var(--gis-accent-text) !important;
 }
 .footer-1 .footer-widgets-wrapper .wid-title h3 { color: #fff; font-size: 1.05rem; margin-bottom: 22px; }
 .footer-1 .single-footer-wid ul li { margin-bottom: 11px; }
@@ -680,8 +853,9 @@ footer.footer-1 .footer-bottom .social-links a {
 footer.footer-1 .footer-bottom .social-links a:hover { background: var(--gis-accent); color: #fff; }
 .footer-1 .newsletter_widget .newsletter_box input,
 footer.footer-1 .newsletter_widget .newsletter_box input {
-  background: #fff !important;
+  background: rgba(4, 6, 12, 0.7) !important;
   color: var(--gis-ink) !important;
+  border: 1px solid var(--gis-border-strong);
 }
 .footer-1 .newsletter_widget .newsletter_box input::placeholder,
 footer.footer-1 .newsletter_widget .newsletter_box input::placeholder {
@@ -689,14 +863,25 @@ footer.footer-1 .newsletter_widget .newsletter_box input::placeholder {
 }
 .footer-1 .newsletter_widget .newsletter_box button,
 footer.footer-1 .newsletter_widget .newsletter_box button {
-  background: #fff !important;
-  color: var(--gis-accent) !important;
-  border-left: 1px solid var(--gis-border);
+  background: var(--gis-grad) !important;
+  color: #fff !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
 }
 .footer-1 .newsletter_widget .newsletter_box button:hover,
 footer.footer-1 .newsletter_widget .newsletter_box button:hover {
   background: var(--gis-bg-subtle) !important;
   color: var(--gis-accent-hover) !important;
+}
+/* Inline newsletter submit confirmation */
+.gis-newsletter-status {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--gis-text) !important;
+  overflow-wrap: anywhere;
+}
+.gis-newsletter-status.gis-newsletter-ok {
+  color: #6ee7b7 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -767,10 +952,10 @@ textarea:focus-visible {
 
 /* Active nav state (set by premium.js initActiveNav) */
 header.header-1.gis-main-header .main-menu > ul > li > a.gis-nav-active {
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
 }
 .mobile-nav .sidebar-nav .metismenu a.gis-nav-active {
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   font-weight: 600;
 }
 
@@ -805,7 +990,16 @@ header.header-1.gis-main-header .main-menu > ul > li > a.gis-nav-active {
 /* --------------------------------------------------------------------------
    Global responsive safeguards + tuning
    -------------------------------------------------------------------------- */
-html, body { overflow-x: hidden; }
+/* Horizontal clipping lives on the viewport only. Putting overflow-x:hidden on
+   <body> (which the template sizes at height:100%) turns <body> into its own
+   scroll container and breaks window.scrollY — sticky header state, scroll
+   progress and smooth anchor scrolling all depend on the viewport being the
+   scroller. `clip` is the modern equivalent: it crops the off-canvas drawer
+   without creating a scroll container, so the document width stays honest. */
+html { overflow-x: hidden; }
+@supports (overflow-x: clip) {
+  html, body.body-wrapper { overflow-x: clip; }
+}
 img, svg, video { max-width: 100%; height: auto; }
 .table-responsive, .gis-table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
@@ -930,10 +1124,11 @@ table {
 }
 
 .mobile-nav {
-  background: #fff;
-  box-shadow: -24px 0 60px rgba(16, 24, 40, 0.18);
+  background: #070a13;
+  box-shadow: -30px 0 70px rgba(0, 0, 0, 0.7);
   max-height: 100vh;
   padding-bottom: 24px;
+  border-left: 1px solid var(--gis-border);
 }
 
 .mobile-nav .sidebar-nav {

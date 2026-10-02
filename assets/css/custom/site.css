@@ -69,7 +69,7 @@ header.header-1 .main-menu ul li > ul li a {
 /* Premium theme integration */
 .theme-btn,
 a.theme-btn {
-    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%) !important;
+    background: linear-gradient(135deg, var(--gis-accent) 0%, #0043ce 100%) !important;
     border-radius: 999px !important;
 }
 
@@ -104,7 +104,7 @@ header.header-1.gis-main-header .main-menu > ul {
 
 header.header-1.gis-main-header .main-menu > ul > li > a {
     border-radius: 999px;
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 14px;
     font-weight: 700;
     padding: 12px 14px;
@@ -113,12 +113,12 @@ header.header-1.gis-main-header .main-menu > ul > li > a {
 
 header.header-1.gis-main-header .main-menu > ul > li:hover > a,
 header.header-1.gis-main-header .main-menu > ul > li > a:hover {
-    background: #eef4ff;
-    color: #0f62fe;
+    background: var(--gis-accent-soft);
+    color: var(--gis-accent-text);
 }
 
 header.header-1.gis-main-header .main-menu > ul > li > a.gis-admin-nav-link {
-    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+    background: linear-gradient(135deg, var(--gis-accent) 0%, #0043ce 100%);
     color: #fff;
     margin-left: 6px;
 }
@@ -143,10 +143,10 @@ header.header-1.gis-main-header .mobile-nav-wrap {
 
 header.header-1.gis-main-header #hamburger {
     align-items: center;
-    background: #eef4ff;
-    border: 1px solid #d6e4ff;
+    background: var(--gis-accent-soft);
+    border: 1px solid var(--gis-border);
     border-radius: 999px;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     cursor: pointer;
     display: inline-flex;
     height: 44px;
@@ -164,13 +164,12 @@ header.header-1.gis-main-header .header-right-element {
 
 /* Premium Apply Jobs page */
 .gis-careers-page {
-    background: #f6f8fc;
-    color: #475467;
+    background: var(--gis-bg-subtle);
+    color: var(--gis-text);
 }
 
 .gis-careers-hero {
-    background:
-        linear-gradient(135deg, rgba(8, 26, 58, 0.96) 0%, rgba(15, 98, 254, 0.9) 100%),
+    background: linear-gradient(135deg, rgba(8, 26, 58, 0.96) 0%, rgba(15, 98, 254, 0.9) 100%),
         url("/assets/img/project/1.jpg") center/cover;
     color: #fff;
     overflow: hidden;
@@ -260,7 +259,7 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-careers-section-head {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
@@ -271,19 +270,19 @@ header.header-1.gis-main-header .header-right-element {
 
 .gis-careers-section-head span,
 .gis-application-intro span {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
 }
 
 .gis-careers-section-head h2,
 .gis-application-intro h2 {
-    color: #101828;
+    color: var(--gis-ink);
     font-size: clamp(1.8rem, 3vw, 2.7rem);
     margin: 8px 0 10px;
 }
 
 .gis-careers-section-head p,
 .gis-application-intro p {
-    color: #667085;
+    color: var(--gis-text);
     margin: 0 auto;
     max-width: 680px;
 }
@@ -293,7 +292,7 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-job-card {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 16px 42px rgba(16, 24, 40, 0.08);
@@ -319,17 +318,17 @@ header.header-1.gis-main-header .header-right-element {
 
 .gis-job-card-top span,
 .gis-job-card-top small {
-    background: #eef4ff;
+    background: var(--gis-accent-soft);
     border-radius: 999px;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     font-size: 12px;
     font-weight: 800;
     padding: 8px 12px;
 }
 
 .gis-job-card-top small {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .gis-job-card-body {
@@ -338,27 +337,27 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-job-card-body h5 {
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 22px;
     line-height: 1.25;
     margin-bottom: 8px;
 }
 
 .gis-job-company {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     font-weight: 800;
     margin-bottom: 14px;
 }
 
 .gis-job-description {
-    color: #667085;
+    color: var(--gis-text);
     line-height: 1.7;
     margin: 0;
 }
 
 .gis-job-card-footer {
     align-items: center;
-    border-top: 1px solid #eef2f7;
+    border-top: 1px solid var(--gis-border);
     display: flex;
     gap: 16px;
     justify-content: space-between;
@@ -366,7 +365,7 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-job-card-footer span {
-    color: #98a2b3;
+    color: var(--gis-muted);
     display: block;
     font-size: 12px;
     font-weight: 800;
@@ -374,12 +373,12 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-job-card-footer strong {
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 14px;
 }
 
 .gis-job-card-footer .apply-btn {
-    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+    background: linear-gradient(135deg, var(--gis-accent) 0%, #0043ce 100%);
     border: 0;
     border-radius: 999px;
     color: #fff;
@@ -390,7 +389,7 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-application-panel {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.12);
     border-radius: 8px;
     box-shadow: 0 24px 70px rgba(16, 24, 40, 0.12);
@@ -403,16 +402,16 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-application-panel .form-label {
-    color: #344054;
+    color: var(--gis-text);
     font-size: 14px;
     font-weight: 800;
     margin-bottom: 8px;
 }
 
 .gis-application-panel .form-control {
-    border: 1px solid #d0d5dd;
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
-    color: #101828;
+    color: var(--gis-ink);
     min-height: 52px;
     padding: 12px 14px;
 }
@@ -422,15 +421,15 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-application-panel .form-control:focus {
-    border-color: #0f62fe;
+    border-color: var(--gis-accent);
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
 
 .gis-cancel-btn {
-    background: #f2f4f7;
-    border: 1px solid #d0d5dd;
+    background: var(--gis-bg-subtle);
+    border: 1px solid var(--gis-border);
     border-radius: 999px;
-    color: #344054;
+    color: var(--gis-text);
     cursor: pointer;
     font-weight: 800;
     padding: 13px 24px;
@@ -439,7 +438,7 @@ header.header-1.gis-main-header .header-right-element {
 .gis-jobs-loading,
 .gis-jobs-empty {
     align-items: center;
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 16px 42px rgba(16, 24, 40, 0.08);
@@ -452,13 +451,13 @@ header.header-1.gis-main-header .header-right-element {
 }
 
 .gis-jobs-empty h3 {
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 24px;
     margin-bottom: 8px;
 }
 
 .gis-jobs-empty p {
-    color: #667085;
+    color: var(--gis-text);
     margin: 0;
 }
 
@@ -468,8 +467,8 @@ header.header-1.gis-main-header .header-right-element {
 
 .gis-loader {
     animation: gis-loader-spin 0.8s linear infinite;
-    border: 3px solid #d6e4ff;
-    border-top-color: #0f62fe;
+    border: 3px solid var(--gis-border);
+    border-top-color: var(--gis-accent-text);
     border-radius: 50%;
     display: inline-block;
     height: 34px;
@@ -612,7 +611,7 @@ header.header-1 .main-menu ul li > ul li > ul {
 
 /* Mobile menu CTA link */
 .gis-mobile-cta {
-  color: var(--gis-accent) !important;
+  color: var(--gis-accent-text) !important;
   font-weight: 700 !important;
 }
 
@@ -628,7 +627,7 @@ header.header-1 .main-menu ul li > ul li > ul {
   font-size: 0.85rem;
   text-decoration: none;
 }
-.footer-legal-links a:hover { color: var(--gis-accent); }
+.footer-legal-links a:hover { color: var(--gis-accent-text); }
 
 /* Editorial note (e.g. NDA note under testimonials) */
 .gis-note {

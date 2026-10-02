@@ -1,6 +1,6 @@
 .admin-login-page {
-    background: linear-gradient(135deg, #081a3a 0%, #0f62fe 100%);
-    color: #101828;
+    background: linear-gradient(135deg, #081a3a 0%, var(--gis-accent) 100%);
+    color: var(--gis-ink);
     min-height: 100vh;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .admin-login-card {
-    background: #fff;
+    background: var(--gis-surface);
     border-radius: 8px;
     box-shadow: 0 24px 70px rgba(16, 24, 40, 0.22);
     margin: 0 auto;
@@ -32,7 +32,7 @@
 }
 
 .admin-login-kicker {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     display: inline-block;
     font-size: 12px;
     font-weight: 800;
@@ -47,7 +47,7 @@
 }
 
 .admin-login-card p {
-    color: #667085;
+    color: var(--gis-text);
     margin-bottom: 24px;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .admin-login-field label {
-    color: #344054;
+    color: var(--gis-text);
     display: block;
     font-size: 14px;
     font-weight: 700;
@@ -65,9 +65,9 @@
 }
 
 .admin-login-field input {
-    border: 1px solid #d0d5dd;
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
-    color: #101828;
+    color: var(--gis-ink);
     outline: none;
     padding: 13px 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -75,7 +75,7 @@
 }
 
 .admin-login-field input:focus {
-    border-color: #0f62fe;
+    border-color: var(--gis-accent);
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
 
@@ -93,17 +93,17 @@
 }
 
 .admin-login-alert.error {
-    background: #fff1f3;
-    color: #b42318;
+    background: rgba(244, 63, 94, 0.14);
+    color: #fca5a5;
 }
 
 .admin-login-alert.success {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-login-back {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     display: inline-block;
     font-weight: 700;
     margin-top: 22px;

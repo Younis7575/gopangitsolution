@@ -1,8 +1,8 @@
 .admin-field select {
-    background: #fff;
-    border: 1px solid #d0d5dd;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
-    color: #101828;
+    color: var(--gis-ink);
     min-height: 50px;
     outline: none;
     padding: 12px 14px;
@@ -11,7 +11,7 @@
 
 .admin-news-card-image {
     aspect-ratio: 16 / 8;
-    background: #d6e4ff center/cover;
+    background: var(--gis-accent-soft) center/cover;
     border-radius: 8px;
     margin-bottom: 14px;
 }
@@ -26,20 +26,20 @@
 }
 
 .admin-news-status.published {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-news-status.draft {
-    background: #fff7ed;
-    color: #c2410c;
+    background: rgba(245, 158, 11, 0.14);
+    color: #fdba74;
 }
 
 /* ------------------------------------------------------------------ */
 /* External Technology News admin panel                                */
 /* ------------------------------------------------------------------ */
 .admin-muted {
-    color: #64748b;
+    color: var(--gis-muted);
     font-size: 14px;
     line-height: 1.7;
 }
@@ -58,14 +58,14 @@
 }
 
 .gis-ext-stat {
-    background: #f8fafc;
+    background: var(--gis-bg-subtle);
     border: 1px solid #e6ebf3;
     border-radius: 10px;
     padding: 14px 16px;
 }
 
 .gis-ext-stat span {
-    color: #64748b;
+    color: var(--gis-muted);
     display: block;
     font-size: 12px;
     font-weight: 700;
@@ -75,16 +75,16 @@
 }
 
 .gis-ext-stat strong {
-    color: #0f172a;
+    color: var(--gis-ink);
     font-size: 16px;
 }
 
-.gis-ext-stat.ok strong { color: #0f7a4f; }
-.gis-ext-stat.warn strong { color: #b45309; }
-.gis-ext-stat.error strong { color: #b91c1c; }
+.gis-ext-stat.ok strong { color: #6ee7b7; }
+.gis-ext-stat.warn strong { color: #fcd34d; }
+.gis-ext-stat.error strong { color: #fca5a5; }
 
 .gis-ext-settings {
-    background: #f8fafc;
+    background: var(--gis-bg-subtle);
     border: 1px solid #e6ebf3;
     border-radius: 12px;
     margin-bottom: 22px;
@@ -103,7 +103,7 @@
 }
 
 .gis-ext-latest-ul li {
-    border-bottom: 1px solid #eef1f6;
+    border-bottom: 1px solid var(--gis-border);
     padding: 10px 0;
 }
 
@@ -112,7 +112,7 @@
 }
 
 .gis-ext-latest-ul a {
-    color: #0f45c0;
+    color: #93b4ff;
     display: block;
     font-weight: 600;
     text-decoration: none;

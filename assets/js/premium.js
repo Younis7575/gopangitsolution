@@ -28,7 +28,10 @@
     if (!header) return;
     header.classList.add('gis-sticky-header');
     var onScroll = function () {
-      header.classList.toggle('gis-header-scrolled', window.scrollY > 40);
+      var y = window.scrollY || window.pageYOffset ||
+        (document.documentElement && document.documentElement.scrollTop) ||
+        (document.body && document.body.scrollTop) || 0;
+      header.classList.toggle('gis-header-scrolled', y > 40);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -133,6 +136,63 @@
     });
   }
 
+  function initNewsletterForms() {
+    document
+      .querySelectorAll('.newsletter_widget form, .newsletter_box form')
+      .forEach(function (form) {
+        if (form.dataset.gisNewsletterReady) return;
+        form.dataset.gisNewsletterReady = '1';
+
+        var input = form.querySelector('input[type="email"]');
+        if (!input) return;
+        if (!input.name) input.name = 'email';
+
+        var button = form.querySelector('button[type="submit"], button');
+        if (button) {
+          button.setAttribute('type', 'submit');
+          button.setAttribute('aria-label', 'Subscribe to the newsletter');
+        }
+
+        var host = form.parentNode;
+        var status = host.querySelector('.gis-newsletter-status');
+        if (!status) {
+          status = document.createElement('p');
+          status.className = 'gis-newsletter-status';
+          status.setAttribute('role', 'status');
+          status.hidden = true;
+          host.appendChild(status);
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          if (!input.checkValidity()) {
+            input.reportValidity();
+            return;
+          }
+
+          var email = input.value.trim();
+          var mailto =
+            'mailto:' +
+            SITE.email +
+            '?subject=' +
+            encodeURIComponent('Newsletter Subscription Request - Gopang IT Solution') +
+            '&body=' +
+            encodeURIComponent(
+              'Please add the following address to the newsletter list:\\n\\n' + email
+            );
+
+          status.hidden = false;
+          status.className = 'gis-newsletter-status gis-newsletter-ok';
+          status.textContent =
+            'Thanks! We will send updates to ' + email + '.';
+
+          window.location.href = mailto;
+          form.reset();
+        });
+      });
+  }
+
   function initLazyImages() {
     document.querySelectorAll('img:not([loading])').forEach(function (img) {
       if (!img.closest('header') && !img.closest('.logo')) {
@@ -226,6 +286,7 @@
     initScrollReveal();
     initCounters();
     initContactForms();
+    initNewsletterForms();
     initLazyImages();
     initWhatsApp();
     initFaqSchemaToggle();

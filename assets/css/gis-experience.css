@@ -1,0 +1,434 @@
+/* ==========================================================================
+   Gopang IT Solution — Experience layer (loads last)
+   Shared premium micro-interactions: magnetic CTAs, tilt depth, scroll
+   progress, glass navigation, animated footer, inner-page polish, a11y.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Typography polish
+   -------------------------------------------------------------------------- */
+body.body-wrapper { font-size: 16px; height: auto; min-height: 100%; }
+.section-title h2,
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+.gis-eyebrow-grad {
+  background: var(--gis-grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Inline `color:var(--gis-accent)` on section eyebrows is too dim on the dark
+   canvas — the light accent token wins over the inline style. */
+.section-title > span,
+.section-title span { color: var(--gis-accent-text) !important; }
+.cta-banner-box .section-title span { color: var(--gis-cyan) !important; }
+
+/* Prose links stay discoverable on dark without underline noise */
+p a:not(.theme-btn):not(.theme-btn-outline),
+.accordion-body a,
+td a {
+  color: var(--gis-accent-text);
+  font-weight: 600;
+}
+p a:not(.theme-btn):not(.theme-btn-outline):hover,
+.accordion-body a:hover,
+td a:hover { color: var(--gis-cyan); }
+
+/* Default link colour sits with this layer (loaded last) so the template's
+   bare `a` rules can never paint dark ink on the dark canvas. Class-scoped
+   rules (nav, footer, buttons) still win on specificity. */
+a { color: var(--gis-accent-text); }
+a:hover, a:focus { color: var(--gis-cyan); }
+
+/* Slick dot controls: the template paints a gradient disc but leaves the
+   fallback digit in near-black — hide the digit (aria-label carries the
+   position), keep the dot itself. */
+.circle-dots li button,
+.slick-dots li button {
+  color: transparent;
+  font-size: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll progress + skip link
+   -------------------------------------------------------------------------- */
+.gis-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  z-index: 1000;
+  background: var(--gis-grad);
+  box-shadow: 0 0 12px rgba(56, 221, 242, 0.7);
+  transition: width 0.1s linear;
+}
+.gis-skip-link {
+  position: fixed;
+  top: -60px;
+  left: 16px;
+  z-index: 1200;
+  background: var(--gis-grad);
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 0 0 12px 12px;
+  transition: top 0.2s ease;
+}
+.gis-skip-link:focus { top: 0; color: #fff; }
+
+/* --------------------------------------------------------------------------
+   Magnetic CTA + tilt helpers (values written by gis-experience.js)
+   -------------------------------------------------------------------------- */
+.gis-magnetic {
+  transform: translate3d(var(--gis-mx, 0px), var(--gis-my, 0px), 0);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.gis-tilt {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--tz, 0px));
+  transition: transform 0.2s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* pointer-follow glow used on feature panels */
+.gis-glow-follow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(340px 200px at var(--gx, 50%) var(--gy, 50%), rgba(47, 107, 255, 0.22), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.gis-glow-follow:hover::before { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   Top utility bar — kill the template's neon wedge, keep it quiet
+   -------------------------------------------------------------------------- */
+.top-bar-wrapper {
+  background: rgba(4, 6, 12, 0.72) !important;
+  border-bottom: 1px solid var(--gis-border);
+  padding: 10px 0;
+}
+.top-bar-wrapper::before { display: none !important; }
+.top-bar-wrapper .top-left a { color: var(--gis-text); }
+.top-bar-wrapper .top-left a:hover { color: var(--gis-accent-text); }
+
+/* --------------------------------------------------------------------------
+   Header extras
+   -------------------------------------------------------------------------- */
+header.header-1.gis-main-header .logo img {
+  height: 44px;
+  width: auto;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+header.header-1.gis-main-header .logo:hover img { transform: translateY(-2px); }
+
+header.header-1.gis-main-header .main-menu > ul > li > a {
+  position: relative;
+}
+header.header-1.gis-main-header .main-menu > ul > li > a::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gis-grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+header.header-1.gis-main-header .main-menu > ul > li > a:hover::after,
+header.header-1.gis-main-header .main-menu > ul > li > a.gis-nav-active::after { transform: scaleX(1); }
+
+header.header-1 .gis-nav-cta,
+header.header-1.gis-main-header .gis-nav-cta {
+  border-radius: 999px;
+  padding: 13px 24px;
+  font-size: 0.92rem;
+  margin-left: 18px;
+  white-space: nowrap;
+}
+
+.gis-mobile-cta {
+  background: var(--gis-grad);
+  color: #fff !important;
+  border-radius: 12px;
+  justify-content: center;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+/* mobile drawer animation */
+.mobile-nav {
+  transform: translateX(105%);
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  visibility: hidden;
+}
+.mobile-nav.show {
+  transform: translateX(0);
+  visibility: visible;
+}
+.overlay {
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+/* --------------------------------------------------------------------------
+   Preloader — dark, branded
+   -------------------------------------------------------------------------- */
+#preloader,
+.preloader {
+  background: #05070d !important;
+}
+.preloader .animation-preloader .letters-loading { color: #f2f5fc !important; }
+.preloader .animation-preloader .spinner {
+  border: 3px solid rgba(127, 166, 255, 0.25) !important;
+  border-top-color: #38ddf2 !important;
+}
+.preloader p { color: #7b869c !important; letter-spacing: 0.3em; font-size: 0.78rem; text-transform: uppercase; }
+
+/* --------------------------------------------------------------------------
+   Forms across the site
+   -------------------------------------------------------------------------- */
+.form-control,
+.form-select,
+textarea.form-control,
+input.form-control,
+select.form-control {
+  background: rgba(4, 6, 12, 0.62);
+  border: 1px solid var(--gis-border-strong);
+  color: var(--gis-ink);
+  border-radius: 12px;
+  padding: 13px 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus,
+input.form-control:focus,
+select.form-control:focus {
+  background: rgba(4, 6, 12, 0.88);
+  border-color: var(--gis-accent-hover);
+  box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.22);
+  color: var(--gis-ink);
+}
+.form-control::placeholder { color: var(--gis-muted); }
+.form-select option { background: #0b1020; color: var(--gis-ink); }
+.form-label { color: var(--gis-ink); font-weight: 500; }
+
+/* --------------------------------------------------------------------------
+   Inner page banner — dark tech treatment
+   -------------------------------------------------------------------------- */
+.page-banner-wrap {
+  background:
+    radial-gradient(760px 320px at 84% 0%, rgba(47, 107, 255, 0.22), transparent 62%),
+    radial-gradient(620px 300px at 6% 100%, rgba(124, 92, 255, 0.16), transparent 65%),
+    linear-gradient(180deg, #070a13, #05070d) !important;
+  border-bottom: 1px solid var(--gis-border);
+}
+.page-banner-wrap::after {
+  background-image: radial-gradient(rgba(127, 166, 255, 0.22) 1px, transparent 1px) !important;
+  background-size: 26px 26px !important;
+}
+.page-banner-wrap .breadcrumb {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--gis-border) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.page-banner-wrap .breadcrumb .breadcrumb-item a { color: var(--gis-accent-text) !important; }
+.page-banner-wrap .breadcrumb .breadcrumb-item::before { color: var(--gis-muted) !important; }
+
+/* surfaces that must read as cards on the dark canvas */
+.accordion-item,
+.single-service-box,
+.single-service-left-icon,
+.single-service-top-icon,
+.single-pricing-plan,
+.client-review-card,
+.info-icon-item,
+.single-work-process,
+.single-digit-count {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.016)) !important;
+  border: 1px solid var(--gis-border) !important;
+  border-radius: var(--gis-r-lg) !important;
+}
+.accordion-button { background: transparent; color: var(--gis-ink); font-weight: 600; }
+.accordion-button:not(.collapsed) { background: transparent; color: var(--gis-accent-text); box-shadow: none; }
+.accordion-button:focus { box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.25); }
+.accordion-body { color: var(--gis-text); }
+.accordion-item + .accordion-item { margin-top: 12px; }
+
+/* --------------------------------------------------------------------------
+   Footer — enterprise + animated technology background
+   -------------------------------------------------------------------------- */
+.footer-1 .footer-widgets-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #06080f 0%, #04060c 100%) !important;
+}
+.footer-1 .footer-widgets-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(127, 166, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 166, 255, 0.07) 1px, transparent 1px);
+  background-size: 54px 54px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 90% at 50% 0%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse 70% 90% at 50% 0%, #000 0%, transparent 78%);
+  animation: gis-footer-grid 34s linear infinite;
+  pointer-events: none;
+}
+.footer-1 .footer-widgets-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -140px;
+  width: 720px;
+  height: 320px;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(47, 107, 255, 0.34), transparent 72%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+@keyframes gis-footer-grid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 54px, 54px 0; }
+}
+.footer-1 .footer-widgets-wrapper .container { position: relative; z-index: 2; }
+.footer-1 .footer-widgets-wrapper .wid-title h3 {
+  font-family: var(--gis-display);
+  position: relative;
+  padding-bottom: 12px;
+}
+.footer-1 .footer-widgets-wrapper .wid-title h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 26px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gis-grad);
+}
+.footer-1 .single-footer-wid ul li a {
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.footer-1 .single-footer-wid ul li a:hover { transform: translateX(4px); }
+.footer-1 .footer-bottom { background: rgba(3, 5, 10, 0.92); }
+.footer-1 .footer-bottom .footer-legal-links a {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.86rem;
+  margin-left: 18px;
+  transition: color 0.2s ease;
+}
+.footer-1 .footer-bottom .footer-legal-links a:hover { color: var(--gis-accent-text); }
+
+/* --------------------------------------------------------------------------
+   Scroll reveal polish
+   -------------------------------------------------------------------------- */
+.gis-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gis-reveal.gis-visible { opacity: 1; transform: translateY(0); }
+.gis-reveal[data-gis-delay="1"] { transition-delay: 0.08s; }
+.gis-reveal[data-gis-delay="2"] { transition-delay: 0.16s; }
+.gis-reveal[data-gis-delay="3"] { transition-delay: 0.24s; }
+.gis-reveal[data-gis-delay="4"] { transition-delay: 0.32s; }
+.gis-reveal[data-gis-delay="5"] { transition-delay: 0.4s; }
+
+/* --------------------------------------------------------------------------
+   Template neon leftovers (#27E420) — retint the accents that still surface
+   on core pages: portfolio filter, nav dropdown hover, mobile drawer, social
+   links, scroll-to-top, preloader spinner. Gradient/fill values here are the
+   white-text-safe ones.
+   -------------------------------------------------------------------------- */
+.case-cat-filter button.active,
+.case-cat-filter button:hover {
+  background: var(--gis-grad) !important;
+  background-color: var(--gis-accent) !important;
+  color: #fff !important;
+}
+header.header-1 .main-menu ul li:hover > ul li:hover a {
+  color: var(--gis-accent-text);
+}
+.social-pages a:hover { color: var(--gis-accent-text); }
+.offset-menu #offset-menu-close-btn:hover { color: var(--gis-accent-text); }
+.mobile-nav .sidebar-nav .metismenu a:hover,
+.mobile-nav .sidebar-nav .metismenu a:focus,
+.mobile-nav .sidebar-nav .metismenu a:active {
+  color: #fff;
+  background: var(--gis-accent);
+}
+#scrollUp {
+  background: var(--gis-grad) !important;
+  color: #fff !important;
+}
+.preloader .animation-preloader .spinner { border-top-color: var(--gis-accent-text); }
+.preloader .animation-preloader .txt-loading::after { color: var(--gis-accent-text); }
+.video-play-btn .play-video,
+.video-play-btn .play-video:hover { color: var(--gis-accent-text); }
+
+/* --------------------------------------------------------------------------
+   Scrollbar + selection
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: #05070d; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #24304d, #17203a);
+  border-radius: 8px;
+  border: 2px solid #05070d;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #33507f, #1f2c50); }
+html { scrollbar-color: #24304d #05070d; scrollbar-width: thin; }
+
+/* --------------------------------------------------------------------------
+   Accessibility
+   -------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gis-cyan);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.gis-node-btn:focus-visible { outline-offset: 4px; }
+
+@media (forced-colors: active) {
+  .gis-card, .gis-cap-card, .gis-service-card { border: 1px solid CanvasText; }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — kill the 3D layer, keep the content
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  .gis-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .gis-hero-canvas, .gis-hero-floor, .gis-scroll-cue { display: none !important; }
+  .gis-panel, .gis-chip, .gis-orbit, .gis-universe-core,
+  .footer-1 .footer-widgets-wrapper::before,
+  .gis-impact-link::after { animation: none !important; }
+  .gis-magnetic { transform: none !important; }
+  .gis-tilt, .gis-cap-card { transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

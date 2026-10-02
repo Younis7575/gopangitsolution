@@ -1,10 +1,10 @@
 .gis-news-page,
 .gis-news-detail-page {
-    background: #f6f8fc;
+    background: var(--gis-bg-subtle);
 }
 
 .gis-news-hero {
-    background: linear-gradient(135deg, #081a3a 0%, #0f62fe 100%);
+    background: linear-gradient(135deg, #081a3a 0%, var(--gis-accent) 100%);
     color: #fff;
     padding: 88px 0 118px;
     text-align: center;
@@ -44,7 +44,7 @@
 }
 
 .gis-news-card {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
@@ -55,7 +55,7 @@
 
 .gis-news-card-image {
     aspect-ratio: 16 / 10;
-    background: #d6e4ff center/cover;
+    background: var(--gis-accent-soft) center/cover;
     overflow: hidden;
     position: relative;
 }
@@ -77,7 +77,7 @@
     top: 12px;
     left: 12px;
     z-index: 2;
-    background: #0f62fe;
+    background: var(--gis-accent);
     color: #fff;
     font-size: 11px;
     font-weight: 800;
@@ -107,12 +107,12 @@
 
 .gis-news-flag.company {
     background: rgba(15, 98, 254, 0.1);
-    color: #0f45c0;
+    color: #93b4ff;
 }
 
 .gis-news-flag.external {
     background: rgba(16, 122, 87, 0.1);
-    color: #0f7a4f;
+    color: #6ee7b7;
 }
 
 .gis-news-readmore {
@@ -123,7 +123,7 @@
 /* Toolbar: search + sort */
 .gis-news-toolbar {
     align-items: center;
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 12px;
     box-shadow: 0 12px 30px rgba(16, 24, 40, 0.06);
@@ -137,8 +137,8 @@
 
 .gis-news-search {
     align-items: center;
-    background: #f6f8fc;
-    border: 1px solid #e4e9f2;
+    background: var(--gis-bg-subtle);
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
     display: flex;
     flex: 1 1 320px;
@@ -148,13 +148,13 @@
 }
 
 .gis-news-search i {
-    color: #8a90a2;
+    color: var(--gis-muted);
 }
 
 .gis-news-search input {
     background: transparent;
     border: 0;
-    color: #1a2540;
+    color: var(--gis-ink);
     flex: 1;
     font-size: 15px;
     outline: none;
@@ -167,23 +167,23 @@
 }
 
 .gis-news-count {
-    color: #667085;
+    color: var(--gis-text);
     font-size: 13px;
     font-weight: 700;
 }
 
 .gis-news-sort-label {
-    color: #667085;
+    color: var(--gis-text);
     font-size: 13px;
     font-weight: 700;
     margin: 0;
 }
 
 .gis-news-sort {
-    background: #fff;
-    border: 1px solid #e4e9f2;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
-    color: #1a2540;
+    color: var(--gis-ink);
     font-size: 14px;
     font-weight: 600;
     padding: 9px 12px;
@@ -195,7 +195,7 @@
 }
 
 .gis-skel {
-    background: linear-gradient(90deg, #eef2f9 25%, #e2e8f4 37%, #eef2f9 63%);
+    background: linear-gradient(90deg, var(--gis-bg-subtle) 25%, #e2e8f4 37%, var(--gis-bg-subtle) 63%);
     background-size: 400% 100%;
     animation: gis-skel-shine 1.4s ease infinite;
     border-radius: 6px;
@@ -234,7 +234,7 @@
 }
 
 .gis-news-empty i {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     font-size: 34px;
     margin-bottom: 14px;
 }
@@ -255,7 +255,7 @@
 }
 
 .gis-news-meta {
-    color: #667085;
+    color: var(--gis-text);
     display: flex;
     flex-wrap: wrap;
     font-size: 13px;
@@ -271,7 +271,7 @@
 }
 
 .gis-news-card p {
-    color: #667085;
+    color: var(--gis-text);
     line-height: 1.7;
 }
 
@@ -283,7 +283,7 @@
 .gis-news-loading,
 .gis-news-empty {
     align-items: center;
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
@@ -301,7 +301,7 @@
 }
 
 .gis-news-detail-article {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 22px 60px rgba(16, 24, 40, 0.1);
@@ -312,7 +312,7 @@
 
 .gis-news-detail-image {
     aspect-ratio: 16 / 7;
-    background: #d6e4ff center/cover;
+    background: var(--gis-accent-soft) center/cover;
 }
 
 .gis-news-detail-body {
@@ -326,7 +326,7 @@
 }
 
 .gis-news-detail-content {
-    color: #475467;
+    color: var(--gis-text);
     font-size: 18px;
     line-height: 1.85;
     white-space: pre-line;
@@ -334,9 +334,9 @@
 
 .gis-loader {
     animation: gis-loader-spin 0.8s linear infinite;
-    border: 3px solid #d6e4ff;
+    border: 3px solid var(--gis-border);
     border-radius: 50%;
-    border-top-color: #0f62fe;
+    border-top-color: var(--gis-accent-text);
     display: inline-block;
     height: 34px;
     margin-bottom: 12px;
@@ -402,7 +402,7 @@
 /* External article preview page (/news-external)                      */
 /* ------------------------------------------------------------------ */
 .gis-ext-article {
-    background: #fff;
+    background: var(--gis-surface);
     border: 1px solid rgba(15, 98, 254, 0.1);
     border-radius: 8px;
     box-shadow: 0 22px 60px rgba(16, 24, 40, 0.1);
@@ -413,7 +413,7 @@
 
 .gis-ext-image {
     aspect-ratio: 16 / 8;
-    background: #d6e4ff center/cover;
+    background: var(--gis-accent-soft) center/cover;
     overflow: hidden;
     position: relative;
 }
@@ -429,7 +429,7 @@
     position: absolute;
     top: 16px;
     left: 16px;
-    background: #0f62fe;
+    background: var(--gis-accent);
     color: #fff;
     font-size: 11px;
     font-weight: 800;
@@ -447,7 +447,7 @@
     align-items: center;
     background: rgba(16, 122, 87, 0.08);
     border-radius: 8px;
-    color: #0f7a4f;
+    color: #6ee7b7;
     display: flex;
     font-size: 13px;
     font-weight: 700;
@@ -468,7 +468,7 @@
 }
 
 .gis-ext-content {
-    color: #475467;
+    color: var(--gis-text);
     font-size: 17px;
     line-height: 1.85;
     margin-bottom: 26px;
@@ -476,7 +476,7 @@
 
 .gis-ext-actions {
     align-items: center;
-    border-top: 1px solid #eef1f6;
+    border-top: 1px solid var(--gis-border);
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
@@ -484,7 +484,7 @@
 }
 
 .gis-ext-attribution {
-    color: #8a90a2;
+    color: var(--gis-muted);
     font-size: 13px;
     margin-top: 18px;
 }

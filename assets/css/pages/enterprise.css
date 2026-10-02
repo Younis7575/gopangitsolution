@@ -34,7 +34,7 @@
 
 /* Problem → Solution cards */
 .gis-problem-card {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-left: 3px solid var(--gis-accent);
   border-radius: var(--gis-r-sm);
@@ -63,9 +63,9 @@
   gap: 8px;
   margin: 0;
 }
-.gis-problem-card .gis-problem-a i { color: var(--gis-accent); font-size: 0.85rem; }
+.gis-problem-card .gis-problem-a i { color: var(--gis-accent-text); font-size: 0.85rem; }
 .gis-problem-card .gis-problem-a a { color: var(--gis-text); font-weight: 600; text-decoration: none; }
-.gis-problem-card .gis-problem-a a:hover { color: var(--gis-accent); }
+.gis-problem-card .gis-problem-a a:hover { color: var(--gis-accent-text); }
 
 /* Nav CTA button (desktop) — shared version lives in custom/site.css */
 

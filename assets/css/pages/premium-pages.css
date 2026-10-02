@@ -28,7 +28,7 @@
   z-index: 0;
 }
 .page-banner-wrap .container { position: relative; z-index: 1; }
-/* Override style.css's `.text-white h1..h6 {color:#fff !important}` on light banner */
+/* Override style.css's `.text-white h1..h6 {color: #fff !important}` on light banner */
 .page-banner-wrap .page-heading h1,
 .page-banner-wrap .text-white h1,
 .page-banner-wrap h1 {
@@ -43,7 +43,7 @@
 .page-banner-wrap .text-white p,
 .page-banner-wrap .page-heading p { color: var(--gis-text) !important; }
 .page-banner-wrap .breadcrumb {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: 999px;
   display: inline-flex;
@@ -54,7 +54,7 @@
 .page-banner-wrap .breadcrumb .breadcrumb-item + .breadcrumb-item,
 .page-banner-wrap .breadcrumb .breadcrumb-item::before,
 .page-banner-wrap .breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: var(--gis-muted) !important; font-weight: 500; }
-.page-banner-wrap .breadcrumb .breadcrumb-item a { color: var(--gis-accent) !important; font-weight: 600; }
+.page-banner-wrap .breadcrumb .breadcrumb-item a { color: var(--gis-accent-text) !important; font-weight: 600; }
 .page-banner-wrap .breadcrumb .breadcrumb-item.active { color: var(--gis-ink) !important; }
 
 /* --------------------------------------------------------------------------
@@ -64,7 +64,7 @@
 .section-title { margin-bottom: 42px; }
 .section-title > span,
 .section-title span {
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   display: inline-block;
   font-size: 0.78rem;
   font-weight: 600;
@@ -97,10 +97,10 @@
 .testimonial-carousel-wrapper,
 .compare-table-wrapper,
 .faq-section,
-.cta-banner-wrapper { background: #fff; }
+.cta-banner-wrapper { background: var(--gis-surface); }
 
 .about-wrapper .about-images-video-popup {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   box-shadow: var(--gis-shadow);
@@ -117,7 +117,7 @@
 .single-digit-count,
 .client-review-card,
 .single-work-process {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   box-shadow: none;
@@ -200,7 +200,7 @@
 .project-carousel-nav-prev,
 .project-carousel-nav-next {
   align-items: center;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border-strong);
   border-radius: 10px;
   color: var(--gis-ink);
@@ -212,7 +212,7 @@
 }
 .case-study-carousel-arrow > div:hover,
 .project-carousel-nav-prev:hover,
-.project-carousel-nav-next:hover { border-color: var(--gis-accent); color: var(--gis-accent); }
+.project-carousel-nav-next:hover { border-color: var(--gis-accent); color: var(--gis-accent-text); }
 
 /* Stats band — solid dark */
 .funfact-box-wrapper {
@@ -271,7 +271,7 @@
 .compare-table-wrapper table,
 .compare-table-wrapper .table,
 .table {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   box-shadow: none;
@@ -281,7 +281,7 @@
 /* FAQ */
 .faq-wrapper { background: var(--gis-bg-subtle) !important; }
 .faq-wrapper .faq-img {
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   box-shadow: var(--gis-shadow);
@@ -290,7 +290,7 @@
 .faq-wrapper .faq-img img { border-radius: 10px; }
 .accordion-item { margin-bottom: 12px; overflow: hidden; }
 .accordion-button { color: var(--gis-ink); font-weight: 700; min-height: 60px; }
-.accordion-button:not(.collapsed) { background: var(--gis-accent-soft) !important; color: var(--gis-accent) !important; box-shadow: none; }
+.accordion-button:not(.collapsed) { background: var(--gis-accent-soft) !important; color: var(--gis-accent-text) !important; box-shadow: none; }
 .accordion-button:focus { box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.12); }
 .accordion-body { color: var(--gis-text); line-height: 1.72; }
 
@@ -310,7 +310,7 @@
 .cta-banner-box::before { display: none !important; }
 .cta-banner-box h2,
 .cta-banner-box .section-title h2 { color: var(--gis-ink) !important; }
-.cta-banner-box .section-title span { color: var(--gis-accent); }
+.cta-banner-box .section-title span { color: var(--gis-accent-text); }
 
 /* --------------------------------------------------------------------------
    Responsive

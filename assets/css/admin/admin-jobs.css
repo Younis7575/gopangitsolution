@@ -1,11 +1,11 @@
 .admin-jobs-page {
-    background: #f5f7fb;
-    color: #101828;
+    background: var(--gis-bg-subtle);
+    color: var(--gis-ink);
 }
 
 .admin-header {
-    background: #fff;
-    border-bottom: 1px solid #e6eaf0;
+    background: var(--gis-surface);
+    border-bottom: 1px solid var(--gis-border);
     position: sticky;
     top: 0;
     z-index: 20;
@@ -31,7 +31,7 @@
 }
 
 .admin-link {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     font-weight: 700;
 }
 
@@ -81,7 +81,7 @@
 }
 
 .admin-hero {
-    background: linear-gradient(135deg, #081a3a 0%, #0f62fe 100%);
+    background: linear-gradient(135deg, #081a3a 0%, var(--gis-accent) 100%);
     color: #fff;
     padding: 68px 0 92px;
 }
@@ -99,7 +99,7 @@
 }
 
 .admin-kicker {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     display: inline-block;
     font-size: 12px;
     font-weight: 800;
@@ -123,8 +123,8 @@
 }
 
 .admin-panel {
-    background: #fff;
-    border: 1px solid #e6eaf0;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
     box-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
     padding: 26px;
@@ -160,7 +160,7 @@
 }
 
 .admin-field label {
-    color: #344054;
+    color: var(--gis-text);
     display: block;
     font-size: 14px;
     font-weight: 700;
@@ -170,10 +170,10 @@
 .admin-field input,
 .admin-field textarea,
 .admin-field select {
-    background: #fff;
-    border: 1px solid #d0d5dd;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
-    color: #101828;
+    color: var(--gis-ink);
     outline: none;
     padding: 12px 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -187,7 +187,7 @@
 .admin-field input:focus,
 .admin-field textarea:focus,
 .admin-field select:focus {
-    border-color: #0f62fe;
+    border-color: var(--gis-accent);
     box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.12);
 }
 
@@ -198,10 +198,10 @@
 
 .admin-ghost-btn,
 .admin-action-btn {
-    background: #eef4ff;
-    border: 1px solid #d6e4ff;
+    background: var(--gis-accent-soft);
+    border: 1px solid var(--gis-border);
     border-radius: 999px;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     cursor: pointer;
     font-size: 13px;
     font-weight: 800;
@@ -209,16 +209,16 @@
 }
 
 .admin-action-btn.danger {
-    background: #fff1f3;
+    background: rgba(244, 63, 94, 0.14);
     border-color: #ffd6dd;
-    color: #d92d20;
+    color: #fca5a5;
 }
 
 .admin-status-select {
-    background: #fff;
-    border: 1px solid #d0d5dd;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 999px;
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 13px;
     font-weight: 800;
     padding: 9px 12px;
@@ -233,59 +233,59 @@
 }
 
 .admin-status-pill.pending {
-    background: #fff7ed;
-    color: #c2410c;
+    background: rgba(245, 158, 11, 0.14);
+    color: #fdba74;
 }
 
 .admin-status-pill.approved {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-status-pill.reject {
-    background: #fff1f3;
-    color: #b42318;
+    background: rgba(244, 63, 94, 0.14);
+    color: #fca5a5;
 }
 
 .admin-status-pill.reviewed,
 .admin-status-pill.contacted {
-    background: #eef4ff;
-    color: #0f62fe;
+    background: var(--gis-accent-soft);
+    color: var(--gis-accent-text);
 }
 
 .admin-status-pill.proposal-sent {
     background: #f0f9ff;
-    color: #026aa2;
+    color: #7dd3fc;
 }
 
 .admin-status-pill.rejected {
-    background: #fff1f3;
-    color: #b42318;
+    background: rgba(244, 63, 94, 0.14);
+    color: #fca5a5;
 }
 
 .admin-status-pill.new {
     background: #eff8ff;
-    color: #175cd3;
+    color: #93b4ff;
 }
 
 .admin-status-pill.shortlisted {
     background: #ecfeff;
-    color: #0e7490;
+    color: #67e8f9;
 }
 
 .admin-status-pill.hired {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-status-pill.interviewing {
     background: #fef6ee;
-    color: #b93815;
+    color: #fdba74;
 }
 
 .admin-status-pill.awarded {
-    background: #ecfdf3;
-    color: #05603a;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-card-list {
@@ -294,7 +294,7 @@
 }
 
 .admin-job-card {
-    border: 1px solid #e6eaf0;
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
     padding: 18px;
 }
@@ -306,7 +306,7 @@
 }
 
 .admin-job-meta {
-    color: #667085;
+    color: var(--gis-text);
     display: flex;
     flex-wrap: wrap;
     gap: 8px 14px;
@@ -314,7 +314,7 @@
 }
 
 .admin-job-description {
-    color: #475467;
+    color: var(--gis-text);
     margin-bottom: 14px;
 }
 
@@ -325,25 +325,25 @@
 }
 
 .admin-job-detail-list {
-    color: #667085;
+    color: var(--gis-text);
     display: grid;
     gap: 6px;
     margin: 10px 0 14px;
 }
 
 .admin-job-detail-list span {
-    color: #344054;
+    color: var(--gis-text);
     font-weight: 800;
 }
 
 .admin-cv-link {
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     font-weight: 900;
     white-space: nowrap;
 }
 
 .admin-applicant-note {
-    color: #667085;
+    color: var(--gis-text);
     display: block;
     font-size: 12px;
     line-height: 1.5;
@@ -352,14 +352,14 @@
 }
 
 .admin-loading {
-    color: #667085;
+    color: var(--gis-text);
     font-weight: 700;
 }
 
 .admin-empty {
-    border: 1px dashed #cbd5e1;
+    border: 1px dashed var(--gis-border);
     border-radius: 8px;
-    color: #667085;
+    color: var(--gis-text);
     padding: 18px;
     text-align: center;
 }
@@ -372,13 +372,13 @@
 }
 
 .admin-alert.success {
-    background: #ecfdf3;
-    color: #027a48;
+    background: rgba(16, 185, 129, 0.14);
+    color: #6ee7b7;
 }
 
 .admin-alert.error {
-    background: #fff1f3;
-    color: #b42318;
+    background: rgba(244, 63, 94, 0.14);
+    color: #fca5a5;
 }
 
 .admin-table-wrap {
@@ -393,20 +393,20 @@
 
 .admin-table th,
 .admin-table td {
-    border-bottom: 1px solid #e6eaf0;
+    border-bottom: 1px solid var(--gis-border);
     padding: 14px 12px;
     text-align: left;
     vertical-align: top;
 }
 
 .admin-table th {
-    color: #344054;
+    color: var(--gis-text);
     font-size: 13px;
     text-transform: uppercase;
 }
 
 .admin-table td {
-    color: #475467;
+    color: var(--gis-text);
 }
 
 .admin-filter-bar {
@@ -426,7 +426,7 @@
 }
 
 .admin-pagination span {
-    color: #475467;
+    color: var(--gis-text);
     font-weight: 800;
 }
 
@@ -453,8 +453,8 @@
 }
 
 .admin-modal-panel {
-    background: #fff;
-    border: 1px solid #e6eaf0;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
     box-shadow: 0 32px 90px rgba(16, 24, 40, 0.24);
     max-height: calc(100vh - 48px);
@@ -476,7 +476,7 @@
 }
 
 .admin-confirm-panel p {
-    color: #667085;
+    color: var(--gis-text);
 }
 
 .admin-modal-open {
@@ -490,14 +490,14 @@
 }
 
 .admin-detail-item {
-    background: #f8fafc;
-    border: 1px solid #e6eaf0;
+    background: var(--gis-bg-subtle);
+    border: 1px solid var(--gis-border);
     border-radius: 8px;
     padding: 14px;
 }
 
 .admin-detail-item span {
-    color: #667085;
+    color: var(--gis-text);
     display: block;
     font-size: 12px;
     font-weight: 800;
@@ -507,7 +507,7 @@
 
 .admin-detail-item strong,
 .admin-detail-item p {
-    color: #101828;
+    color: var(--gis-ink);
     display: block;
     font-weight: 800;
     line-height: 1.5;
@@ -516,7 +516,7 @@
 }
 
 .admin-detail-item p {
-    color: #475467;
+    color: var(--gis-text);
     font-weight: 600;
     white-space: pre-wrap;
 }
@@ -636,7 +636,7 @@
 }
 
 .admin-table-wrap {
-    border: 1px solid #e6eaf0;
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
     max-width: 100%;
     overflow-x: auto;

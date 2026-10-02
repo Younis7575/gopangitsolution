@@ -30,14 +30,14 @@
   display: inline-flex;
   gap: 6px;
   align-items: center;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: 999px;
   padding: 7px 15px;
   font-size: 0.82rem;
   margin-bottom: 22px;
 }
-.svc-crumbs a { color: var(--gis-accent); font-weight: 600; }
+.svc-crumbs a { color: var(--gis-accent-text); font-weight: 600; }
 .svc-crumbs span { color: var(--gis-muted); }
 .svc-crumbs i { color: var(--gis-border-strong); font-size: 0.7rem; }
 
@@ -46,7 +46,7 @@
   align-items: center;
   gap: 9px;
   background: var(--gis-accent-soft);
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   border-radius: 999px;
   padding: 8px 16px 8px 12px;
   font-size: 0.78rem;
@@ -91,7 +91,7 @@
   font-weight: 600;
   font-size: 0.9rem;
 }
-.svc-hero-chips i { color: var(--gis-accent); }
+.svc-hero-chips i { color: var(--gis-accent-text); }
 
 .svc-hero-media {
   position: relative;
@@ -108,7 +108,8 @@
   display: flex;
   align-items: center;
   gap: 13px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(8, 11, 20, 0.9);
+  border: 1px solid rgba(127, 166, 255, 0.35);
   backdrop-filter: blur(6px);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
@@ -149,7 +150,7 @@
   left: 0; top: 8px;
   width: 22px; height: 22px;
   background: var(--gis-accent-soft);
-  color: var(--gis-accent);
+  color: var(--gis-accent-text);
   border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-size: 0.68rem;
@@ -180,7 +181,7 @@
    -------------------------------------------------------------------------- */
 .svc-card {
   height: 100%;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   padding: 28px 26px;
@@ -193,7 +194,7 @@
 }
 .svc-card .svc-card-ic {
   width: 54px; height: 54px; border-radius: 13px;
-  background: var(--gis-accent-soft); color: var(--gis-accent);
+  background: var(--gis-accent-soft); color: var(--gis-accent-text);
   display: flex; align-items: center; justify-content: center;
   font-size: 1.35rem; margin-bottom: 20px;
 }
@@ -207,7 +208,7 @@
 .svc-step {
   position: relative;
   height: 100%;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   padding: 30px 24px 26px;
@@ -223,7 +224,7 @@
   font-weight: 800; font-size: 1.05rem;
   box-shadow: 0 8px 20px rgba(15, 98, 254, 0.28);
 }
-.svc-step i { color: var(--gis-accent); font-size: 1.5rem; margin: 8px 0 14px; display: block; }
+.svc-step i { color: var(--gis-accent-text); font-size: 1.5rem; margin: 8px 0 14px; display: block; }
 .svc-step h4 { font-size: 1.12rem; font-weight: 700; margin-bottom: 8px; color: var(--gis-ink); }
 .svc-step p { font-size: 0.92rem; line-height: 1.65; margin: 0; }
 
@@ -233,15 +234,15 @@
 .svc-tech-wrap { display: flex; flex-wrap: wrap; gap: 12px; }
 .svc-tech-chip {
   display: inline-flex; align-items: center; gap: 10px;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: 999px;
   padding: 11px 20px;
   font-weight: 600; font-size: 0.95rem; color: var(--gis-ink);
   transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
-.svc-tech-chip:hover { border-color: var(--gis-accent); color: var(--gis-accent); transform: translateY(-2px); }
-.svc-tech-chip i { color: var(--gis-accent); font-size: 1.05rem; }
+.svc-tech-chip:hover { border-color: var(--gis-accent); color: var(--gis-accent-text); transform: translateY(-2px); }
+.svc-tech-chip i { color: var(--gis-accent-text); font-size: 1.05rem; }
 .svc-tech-band { background: var(--gis-bg-subtle) !important; }
 
 /* --------------------------------------------------------------------------
@@ -250,7 +251,7 @@
 .svc-industry-card {
   height: 100%;
   display: flex; align-items: center; gap: 15px;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   padding: 20px 22px;
@@ -259,7 +260,7 @@
 .svc-industry-card:hover { border-color: var(--gis-border-strong); box-shadow: var(--gis-shadow); transform: translateY(-3px); }
 .svc-industry-card i {
   width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
-  background: var(--gis-accent-soft); color: var(--gis-accent);
+  background: var(--gis-accent-soft); color: var(--gis-accent-text);
   display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
 }
 .svc-industry-card span { font-weight: 700; color: var(--gis-ink); font-size: 1rem; }
@@ -315,7 +316,7 @@
   position: relative;
   height: 100%;
   display: flex; flex-direction: column;
-  background: #fff;
+  background: var(--gis-surface);
   border: 1px solid var(--gis-border);
   border-radius: var(--gis-r);
   padding: 32px 28px;
@@ -334,11 +335,11 @@
 .svc-index-card .svc-card-ic { width: 60px; height: 60px; font-size: 1.5rem; }
 .svc-index-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: var(--gis-ink); }
 .svc-index-card h3 a { color: inherit; }
-.svc-index-card h3 a:hover { color: var(--gis-accent); }
+.svc-index-card h3 a:hover { color: var(--gis-accent-text); }
 .svc-index-card p { font-size: 0.95rem; line-height: 1.68; flex-grow: 1; margin-bottom: 18px; }
 .svc-index-card .svc-index-link {
   display: inline-flex; align-items: center; gap: 8px;
-  color: var(--gis-accent); font-weight: 700; font-size: 0.92rem;
+  color: var(--gis-accent-text); font-weight: 700; font-size: 0.92rem;
 }
 .svc-index-card .svc-index-link i { transition: transform 0.2s ease; }
 .svc-index-card:hover .svc-index-link i { transform: translateX(4px); }
@@ -348,13 +349,13 @@
    -------------------------------------------------------------------------- */
 .svc-related-chip {
   display: inline-flex; align-items: center; gap: 9px;
-  background: #fff; border: 1px solid var(--gis-border);
+  background: var(--gis-surface); border: 1px solid var(--gis-border);
   border-radius: 999px; padding: 10px 18px;
   color: var(--gis-ink); font-weight: 600; font-size: 0.92rem;
   transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
-.svc-related-chip:hover { border-color: var(--gis-accent); color: var(--gis-accent); transform: translateY(-2px); }
-.svc-related-chip i { color: var(--gis-accent); }
+.svc-related-chip:hover { border-color: var(--gis-accent); color: var(--gis-accent-text); transform: translateY(-2px); }
+.svc-related-chip i { color: var(--gis-accent-text); }
 
 /* --------------------------------------------------------------------------
    Section spacing helpers

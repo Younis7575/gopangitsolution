@@ -28,7 +28,7 @@
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 9px;
-    color: #101828;
+    color: var(--gis-ink);
     font-size: 13px;
     font-weight: 600;
     min-width: 130px;
@@ -76,10 +76,10 @@
 
 .an-tab {
     align-items: center;
-    background: #fff;
-    border: 1px solid #e6eaf0;
+    background: var(--gis-surface);
+    border: 1px solid var(--gis-border);
     border-radius: 999px;
-    color: #475467;
+    color: var(--gis-text);
     cursor: pointer;
     display: inline-flex;
     font-size: 13.5px;
@@ -93,12 +93,12 @@
 
 .an-tab:hover {
     border-color: #b9d4ff;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
 }
 
 .an-tab.active {
-    background: #0f62fe;
-    border-color: #0f62fe;
+    background: var(--gis-accent);
+    border-color: var(--gis-accent);
     box-shadow: 0 10px 24px rgba(15, 98, 254, 0.28);
     color: #fff;
 }
@@ -182,9 +182,9 @@
 
 .an-rank-num {
     align-items: center;
-    background: #eef4ff;
+    background: var(--gis-accent-soft);
     border-radius: 8px;
-    color: #0f62fe;
+    color: var(--gis-accent-text);
     display: flex;
     flex-shrink: 0;
     font-size: 12px;
@@ -197,7 +197,7 @@
 .an-rank-main { flex: 1; min-width: 0; }
 
 .an-rank-top {
-    color: #344054;
+    color: var(--gis-text);
     display: flex;
     font-size: 13px;
     font-weight: 700;
@@ -213,13 +213,13 @@
 }
 
 .an-rank-extra {
-    color: #98a2b3;
+    color: var(--gis-muted);
     font-weight: 700;
     margin-left: 8px;
 }
 
 .an-rank-track {
-    background: #eef1f6;
+    background: var(--gis-bg-subtle);
     border-radius: 999px;
     height: 8px;
     overflow: hidden;
@@ -244,9 +244,9 @@
 }
 
 .an-table th {
-    background: #f8fafc;
-    border-bottom: 1px solid #e6eaf0;
-    color: #667085;
+    background: var(--gis-bg-subtle);
+    border-bottom: 1px solid var(--gis-border);
+    color: var(--gis-text);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.02em;
@@ -257,8 +257,8 @@
 }
 
 .an-table td {
-    border-bottom: 1px solid #f2f4f7;
-    color: #344054;
+    border-bottom: 1px solid var(--gis-border);
+    color: var(--gis-text);
     max-width: 220px;
     overflow: hidden;
     padding: 11px 12px;
@@ -266,10 +266,10 @@
     white-space: nowrap;
 }
 
-.an-table tbody tr:hover { background: #f9fafb; }
+.an-table tbody tr:hover { background: var(--gis-bg-subtle); }
 
 .an-empty {
-    color: #98a2b3;
+    color: var(--gis-muted);
     padding: 26px !important;
     text-align: center;
 }
@@ -291,13 +291,13 @@
     padding: 3px 9px;
 }
 
-.an-tag-new { background: #eff8ff; color: #175cd3; }
-.an-tag-ret { background: #ecfdf3; color: #027a48; }
-.an-tag-applied { background: #ecfdf3; color: #05603a; text-transform: capitalize; }
+.an-tag-new { background: #eff8ff; color: #93b4ff; }
+.an-tag-ret { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; }
+.an-tag-applied { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; text-transform: capitalize; }
 .an-muted { color: #c0c7d1; }
 
 .an-search {
-    border: 1px solid #e6eaf0;
+    border: 1px solid var(--gis-border);
     border-radius: 9px;
     font-size: 13px;
     min-width: 240px;
@@ -312,14 +312,14 @@
     margin-top: 16px;
 }
 
-.an-page-info { color: #667085; font-size: 13px; font-weight: 700; }
+.an-page-info { color: var(--gis-text); font-size: 13px; font-weight: 700; }
 .an-page-btns { display: flex; gap: 8px; }
 .an-page-btns button[disabled] { cursor: not-allowed; opacity: 0.45; }
 
 /* ---- Live switch ----------------------------------------------------- */
 .an-switch {
     align-items: center;
-    color: #475467;
+    color: var(--gis-text);
     cursor: pointer;
     display: flex;
     font-size: 13px;
@@ -341,7 +341,7 @@
 }
 
 .an-setting > span {
-    color: #344054;
+    color: var(--gis-text);
     font-size: 13px;
     font-weight: 800;
 }
@@ -349,7 +349,7 @@
 .an-setting select,
 .an-setting input,
 .an-setting textarea {
-    border: 1px solid #d0d5dd;
+    border: 1px solid var(--gis-border);
     border-radius: 9px;
     font-size: 14px;
     padding: 9px 12px;
@@ -412,7 +412,7 @@
 }
 
 .an-table-wrap {
-    border: 1px solid #e6eaf0;
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
     -webkit-overflow-scrolling: touch;
 }
@@ -483,5 +483,5 @@
     .an-panel { display: block !important; }
     .an-panel:not([data-panel="overview"]) { display: none !important; }
     .an-chart-card, .dash-stat-card { break-inside: avoid; box-shadow: none !important; }
-    body { background: #fff !important; }
+    body { background: var(--gis-surface) !important; }
 }

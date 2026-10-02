@@ -5,7 +5,7 @@
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 24px;
-    border-bottom: 1px solid #e4e7ec;
+    border-bottom: 1px solid var(--gis-border);
 }
 .admin-tab {
     background: none;
@@ -14,24 +14,24 @@
     padding: 12px 18px;
     font-size: 15px;
     font-weight: 600;
-    color: #667085;
+    color: var(--gis-text);
     cursor: pointer;
 }
-.admin-tab:hover { color: #0f62fe; }
-.admin-tab.active { color: #081a3a; border-bottom-color: #0f62fe; }
+.admin-tab:hover { color: var(--gis-accent-text); }
+.admin-tab.active { color: var(--gis-ink); border-bottom-color: var(--gis-accent-text); }
 
 .admin-form-actions { margin-top: 18px; }
 
-.admin-modal-comments { margin-top: 24px; border-top: 1px solid #e4e7ec; padding-top: 18px; }
+.admin-modal-comments { margin-top: 24px; border-top: 1px solid var(--gis-border); padding-top: 18px; }
 .admin-modal-comments-title { font-size: 16px; margin-bottom: 12px; }
 .admin-inline-comment {
-    border: 1px solid #e4e7ec;
+    border: 1px solid var(--gis-border);
     border-radius: 10px;
     padding: 14px 16px;
     margin-bottom: 12px;
-    background: #f9fafb;
+    background: var(--gis-bg-subtle);
 }
-.admin-inline-comment p { margin: 8px 0; color: #344054; white-space: pre-wrap; }
+.admin-inline-comment p { margin: 8px 0; color: var(--gis-text); white-space: pre-wrap; }
 .admin-inline-comment-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .admin-detail-item pre {
@@ -43,9 +43,9 @@
     font-size: 12px;
     margin-top: 6px;
 }
-.admin-detail-item p { margin-top: 6px; white-space: pre-wrap; color: #344054; }
+.admin-detail-item p { margin-top: 6px; white-space: pre-wrap; color: var(--gis-text); }
 
-.admin-status-pill.admin { background: #e0e7ff; color: #3538cd; }
+.admin-status-pill.admin { background: #e0e7ff; color: #a5b4fc; }
 
 /* Responsive module polish */
 .admin-tabs,
@@ -76,14 +76,14 @@
     }
 
     .admin-tab {
-        border: 1px solid #e4e7ec;
+        border: 1px solid var(--gis-border);
         border-radius: 8px;
         text-align: center;
         width: 100%;
     }
 
     .admin-tab.active {
-        background: #eef4ff;
+        background: var(--gis-accent-soft);
     }
 
     .admin-inline-comment-actions {
