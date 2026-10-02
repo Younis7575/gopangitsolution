@@ -1,0 +1,196 @@
+/* ==========================================================================
+   Gopang ambient background — fixed particle canvas + depth layers
+   Loads after premium.css and gis-3d.css. Everything here sits at or below
+   z-index 0, so no content is ever covered.
+   ========================================================================== */
+
+/* The particle field is a single fixed canvas appended to <html>. It lives at
+   z-index -2, which places it above the page background colour but below the
+   ambient glow painted by body::before (-1) and far below all content. */
+.gis-particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  contain: strict;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.gis-particles-ready .gis-particles-canvas { opacity: 1; }
+
+/* ------------------------------------------------------------------ orbs --- */
+/* Three slow-drifting blurred blobs. Pure transform animation so they stay on
+   the compositor, and they give the page real depth behind the particle mesh. */
+.gis-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.gis-aurora i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.68;
+  will-change: transform;
+}
+
+.gis-aurora i:nth-child(1) {
+  width: 52vw;
+  height: 52vw;
+  min-width: 360px;
+  min-height: 360px;
+  top: -16vw;
+  right: -12vw;
+  background: radial-gradient(circle, rgba(43, 101, 245, 0.68), transparent 68%);
+  animation: gis-aurora-a 26s ease-in-out infinite alternate;
+}
+
+.gis-aurora i:nth-child(2) {
+  width: 44vw;
+  height: 44vw;
+  min-width: 320px;
+  min-height: 320px;
+  bottom: -14vw;
+  left: -10vw;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.56), transparent 68%);
+  animation: gis-aurora-b 32s ease-in-out infinite alternate;
+}
+
+.gis-aurora i:nth-child(3) {
+  width: 36vw;
+  height: 36vw;
+  min-width: 280px;
+  min-height: 280px;
+  top: 40%;
+  left: 54%;
+  background: radial-gradient(circle, rgba(56, 221, 242, 0.3), transparent 70%);
+  animation: gis-aurora-c 38s ease-in-out infinite alternate;
+}
+
+@keyframes gis-aurora-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-7vw, 6vw, 0) scale(1.16); }
+}
+@keyframes gis-aurora-b {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to   { transform: translate3d(8vw, -7vw, 0) scale(0.94); }
+}
+@keyframes gis-aurora-c {
+  from { transform: translate3d(0, 0, 0) scale(0.9); }
+  to   { transform: translate3d(-6vw, 9vw, 0) scale(1.22); }
+}
+
+/* ------------------------------------------------------------------ grid --- */
+/* A single faint perspective grid anchored to the viewport. It reads as the
+   floor plane of the 3D scene and visually stitches the sections together, so
+   the page feels like one continuous space rather than stacked containers. */
+.gis-ambient-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  contain: strict;
+  background-image:
+    linear-gradient(rgba(127, 166, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 166, 255, 0.075) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(140% 100% at 50% 0%, #000 8%, transparent 68%);
+  mask-image: radial-gradient(140% 100% at 50% 0%, #000 8%, transparent 68%);
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------ glass base --- */
+/* Every glass surface on the site was previously backed by nothing but the
+   page background. That was safe while the backdrop was a static gradient; with
+   a moving particle field behind it, a bright node drifting under a paragraph
+   could drop that text below AA. Each surface below gets an opaque base
+   painted *under* its existing translucent gradient, so the glass still reads
+   as glass (blur, tint, sheen) while the backdrop luminance behind text is
+   pinned to a known dark value.
+
+   The particle field remains fully visible in the gaps between panels and
+   through any surface that is not listed here. */
+.gis-cap-card,
+.gis-service-card,
+.svc-index-card,
+.gis-insight-card,
+.gis-techhub,
+.gis-phone,
+.gis-erp-shell,
+.gis-ai-panel,
+.gis-faq-item,
+.blog-item,
+.single-blog-item,
+.gis-timeline-card {
+  background-color: var(--gis-surface) !important;
+}
+
+/* Surfaces that were pure tint (no gradient) get the raised tone so they still
+   separate from the page. */
+.gis-service-card,
+.svc-index-card,
+.gis-insight-card,
+.gis-phone { background-color: var(--gis-surface-2) !important; }
+
+/* Hero secondary CTA is an outlined button, so it has no fill to protect it.
+   A soft dark plate behind the label guarantees AA over any particle drift. */
+.gis-hero-actions .theme-btn-outline {
+  background-color: rgba(8, 11, 20, 0.72) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ------------------------------------------------------------- escaping --- */
+/* The hero painted an opaque gradient, which would hide the ambient field
+   exactly where it is most wanted. The base goes transparent while the mesh,
+   grid, floor and vignette layers inside it stay, so contrast is unchanged but
+   the particles and aurora now read straight through the hero. */
+.gis-hero { background: transparent; }
+.gis-hero-vignette {
+  background: linear-gradient(100deg, rgba(5, 7, 13, 0.94) 4%, rgba(5, 7, 13, 0.88) 30%, rgba(5, 7, 13, 0.6) 52%, rgba(5, 7, 13, 0.1) 82%);
+}
+
+/* Alternating section tints stay — they give the page its rhythm and keep long
+   text runs readable. Only the alternate tone is nudged toward transparent so
+   the particle field still glows through the seams. */
+.gis-section-alt { background-color: rgba(8, 11, 20, 0.72); }
+
+footer.footer-1,
+.footer-1 { background-color: var(--gis-dark); }
+
+/* ------------------------------------------------------- reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .gis-particles-canvas { opacity: 1; transition: none; }
+  .gis-aurora i { animation: none; }
+  .gis-ambient-grid { opacity: 0.5; }
+}
+
+/* ------------------------------------------------------------- small print --- */
+@media (max-width: 767px) {
+  /* Blur radius and orb size are the two most expensive properties here on a
+     phone, so both come down and the grid is dropped entirely. */
+  .gis-aurora i { filter: blur(48px); opacity: 0.42; }
+  .gis-aurora i:nth-child(3) { display: none; }
+  .gis-ambient-grid { display: none; }
+}
+
+/* Hide the whole layer for print and for pages that opt out. */
+@media print {
+  .gis-particles-canvas,
+  .gis-aurora,
+  .gis-ambient-grid { display: none !important; }
+}
+
+html.no-particles .gis-particles-canvas,
+html.no-particles .gis-aurora,
+html.no-particles .gis-ambient-grid,
+body.no-particles ~ .gis-particles-canvas { display: none !important; }

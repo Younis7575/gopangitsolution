@@ -25,6 +25,19 @@ p { text-wrap: pretty; }
 .section-title span { color: var(--gis-accent-text) !important; }
 .cta-banner-box .section-title span { color: var(--gis-cyan) !important; }
 
+/* The template painted these eyebrows as gradient-clipped text running
+   #5F2DEE -> #256AD7. Both stops are far too dark to read as 12px text on the
+   near-black page (2.97:1), and because the fill comes from a background image
+   rather than `color`, a colour-only contrast audit cannot see the problem.
+   Retinted to the same accent-2 -> cyan -> accent-text ramp the rest of the
+   dark theme uses. */
+.section-title > span,
+.section-title > span::before {
+  background-image: linear-gradient(to right, #a58bff 0%, #7fa6ff 55%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 /* Prose links stay discoverable on dark without underline noise */
 p a:not(.theme-btn):not(.theme-btn-outline),
 .accordion-body a,
