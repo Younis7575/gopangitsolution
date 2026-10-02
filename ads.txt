@@ -1,2 +1,0 @@
-# Google AdSense removed — site now monetizes via Monetag.
-# If Monetag support gives you an ads.txt seller line, add it here.

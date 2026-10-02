@@ -40,7 +40,7 @@ PAGES = [
         "eyebrow": "Legal",
         "heading": "Disclaimer",
         "lead": "What our published guides and estimates are — and what they are not.",
-        "description": "Disclaimer for Gopang IT Solution: how to treat the cost estimates, technical opinions, external links and advertising on this website.",
+        "description": "Disclaimer for Gopang IT Solution: how to treat the cost estimates, technical opinions and external links on this website.",
     },
     {
         "slug": "cookie-policy",
@@ -48,15 +48,15 @@ PAGES = [
         "eyebrow": "Legal",
         "heading": "Cookie Policy",
         "lead": "Every category of cookie this site sets, why, and exactly how to switch them off.",
-        "description": "Cookie Policy for Gopang IT Solution — the cookies and similar technologies we use for functionality, analytics and Google AdSense advertising, and how to control them.",
+        "description": "Cookie Policy for Gopang IT Solution — the cookies and similar technologies we use for functionality and analytics, and how to control them.",
     },
     {
         "slug": "editorial-policy",
         "title": "Editorial Policy",
         "eyebrow": "How We Publish",
         "heading": "Editorial Policy",
-        "lead": "Who writes the articles on this site, how they are reviewed and corrected, and how advertising is kept separate from editorial.",
-        "description": "Editorial policy for the Gopang IT Solution blog: authorship, review process, sourcing, corrections, and the separation of advertising from editorial content.",
+        "lead": "Who writes the articles on this site, how they are reviewed and corrected, and how we keep them free of commercial influence.",
+        "description": "Editorial policy for the Gopang IT Solution blog: authorship, review process, sourcing, corrections, and our independence from commercial influence.",
     },
 ]
 
@@ -69,8 +69,6 @@ CSS_LINKS = """    <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/premium.css?v=6">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">"""
-
-ADS_LOADER = '    <script src="/assets/js/monetag-ads.js" defer></script>'
 
 SCRIPTS = """    <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/modernizr.min.js"></script>
@@ -121,7 +119,6 @@ def render(page: dict, header: str, footer: str) -> str:
 <html lang="en">
 
 <head>
-{ADS_LOADER}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

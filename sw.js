@@ -1,6 +1,18 @@
-self.options = {
-    "domain": "5gvci.com",
-    "zoneId": 11511448
-}
-self.lary = ""
-importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
+// Ad/push service worker removed.
+// This stub stays in place so browsers that already registered the old worker
+// unregister it on their next visit instead of keeping it alive indefinitely.
+self.addEventListener('install', function () {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', function (event) {
+    event.waitUntil(
+        self.registration.unregister().then(function () {
+            return self.clients.matchAll({ type: 'window' });
+        }).then(function (clients) {
+            clients.forEach(function (client) {
+                client.navigate(client.url);
+            });
+        })
+    );
+});

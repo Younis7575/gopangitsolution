@@ -222,8 +222,6 @@ CSS_LINKS = """    <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">"""
 
-ADS_LOADER = '    <script src="/assets/js/monetag-ads.js" defer></script>'
-
 
 # --------------------------------------------------------------------------
 # Shell extraction
@@ -284,7 +282,6 @@ def page_head(title: str, description: str, canonical: str, *, extra: str = "") 
 <html lang="en">
 
 <head>
-{ADS_LOADER}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
