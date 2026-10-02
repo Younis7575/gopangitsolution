@@ -40,9 +40,10 @@
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/style.css?v=2">
     <link rel="stylesheet" href="/assets/css/custom/site.css?v=2">
-    <link rel="stylesheet" href="/assets/css/premium.css?v=12">
-    <link rel="stylesheet" href="/assets/css/pages/home-premium.css?v=12">
+    <link rel="stylesheet" href="/assets/css/premium.css?v=13">
+    <link rel="stylesheet" href="/assets/css/pages/home-premium.css?v=13">
     <link rel="stylesheet" href="/assets/css/pages/enterprise.css?v=3">
+    <link rel="stylesheet" href="/assets/css/pages/gis-3d.css?v=2">
     <link rel="stylesheet" href="/assets/css/gis-experience.css?v=3">
 
     <script type="application/ld+json">
@@ -56,7 +57,7 @@
           "alternateName": "Gopang — Digital Engineering & Technology Partner",
           "url": "https://gopangitsolution.com",
           "logo": "https://gopangitsolution.com/assets/img/logo.svg",
-          "email": "gopangitsolution@gmail.com",
+          "email": "info@gopangitsolution.com",
           "telephone": "+923342322324",
           "sameAs": ["https://www.linkedin.com/company/gopang-itsolution/"],
           "description": "Digital engineering and technology partner designing, building and scaling web platforms, mobile applications, enterprise systems and AI solutions."
@@ -68,7 +69,7 @@
           "image": "https://gopangitsolution.com/assets/img/logo.svg",
           "url": "https://gopangitsolution.com",
           "telephone": "+923342322324",
-          "email": "gopangitsolution@gmail.com",
+          "email": "info@gopangitsolution.com",
           "priceRange": "$$",
           "address": {
             "@type": "PostalAddress",
@@ -172,7 +173,7 @@
         <div class="container d-flex justify-content-between align-items-center">
             <div class="top-left">
                 <a href="tel:+923342322324" aria-label="Call Gopang IT Solution"><i class="fal fa-phone-volume" aria-hidden="true"></i>+92 334 2322324</a>
-                <a href="mailto:gopangitsolution@gmail.com" aria-label="Email Gopang IT Solution"><i class="fal fa-envelope" aria-hidden="true"></i>gopangitsolution@gmail.com</a>
+                <a href="mailto:info@gopangitsolution.com" aria-label="Email Gopang IT Solution"><i class="fal fa-envelope" aria-hidden="true"></i>info@gopangitsolution.com</a>
                 <a href="/contact" aria-label="Office location"><i class="fal fa-map-marker-alt" aria-hidden="true"></i>Islamabad, Pakistan</a>
             </div>
             <div class="top-right d-none d-md-block">
@@ -297,22 +298,23 @@
 
     <main id="main-content">
 
-        <!-- SECTION 01 — CINEMATIC 3D HERO -->
+        <!-- SECTION 01 — HERO: SPLIT COPY + LIVE 3D TECHNOLOGY ECOSYSTEM -->
         <section class="gis-hero" aria-labelledby="hero-heading">
             <div class="gis-hero-bg" aria-hidden="true">
-                <canvas class="gis-hero-canvas" id="gis-hero-canvas"></canvas>
+                <div class="gis-hero-mesh"></div>
+                <div class="gis-hero-grid"></div>
                 <div class="gis-hero-floor"></div>
                 <div class="gis-hero-vignette"></div>
             </div>
             <div class="container gis-hero-inner">
                 <div class="row align-items-center gis-hero-row">
-                    <div class="col-lg-7">
+                    <div class="col-lg-5 gis-hero-copy">
                         <div class="gis-hero-badge gis-reveal">Digital Engineering &amp; Technology Partner</div>
                         <h1 id="hero-heading" class="gis-reveal">Technology That Moves Your <span>Business Forward</span></h1>
-                        <p class="lead gis-reveal">We design, engineer and scale digital products, enterprise platforms and intelligent solutions — web, mobile, Flutter, ERP, AI and cloud — for ambitious businesses in Pakistan and worldwide.</p>
+                        <p class="lead gis-reveal">Gopang IT Solution designs and engineers software development, mobile applications, AI and machine learning, enterprise systems and digital transformation. From Flutter apps to ERP, CRM and cloud platforms, we build production software that businesses run on.</p>
                         <div class="gis-hero-actions gis-reveal">
                             <a href="/contact" class="theme-btn gis-magnetic">Start a Project <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
-                            <a href="/portfolio" class="theme-btn-outline gis-magnetic">Explore Our Work <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="/services" class="theme-btn-outline gis-magnetic">Explore Our Services <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
                         </div>
                         <div class="gis-hero-stats gis-reveal" aria-label="Company facts">
                             <div class="gis-hero-stat"><strong data-stat="projectsDelivered">150+</strong><span>Projects Delivered</span></div>
@@ -320,38 +322,44 @@
                             <div class="gis-hero-stat"><strong data-stat="industriesServed">9+</strong><span>Industries Served</span></div>
                         </div>
                     </div>
-                    <div class="col-lg-5 gis-hero-stage gis-reveal">
-                        <div class="gis-stage" id="gis-stage" data-gis-parallax>
-                            <div class="gis-stage-glow" aria-hidden="true"></div>
-                            <div class="gis-orbit gis-orbit--a" aria-hidden="true"></div>
-                            <div class="gis-orbit gis-orbit--b" aria-hidden="true"></div>
+                    <div class="col-lg-7">
+                        <div class="gis-hero-stage gis-reveal" id="gis-hero-stage" role="img" aria-label="Interactive three-dimensional technology ecosystem: an open laptop running a live dashboard, a floating smartphone, an artificial intelligence neural network, a cloud, a database, connected API nodes, code panels and floating technology cards.">
+                            <canvas class="gis-hero-canvas" id="gis-hero-canvas"></canvas>
+                            <!-- The WebGL scene renders into the canvas above. This CSS
+                                 3D stage is the no-WebGL / no-JS fallback. -->
+                            <div class="gis-stage" id="gis-stage" data-gis-parallax aria-hidden="true">
+                                <div class="gis-stage-glow"></div>
+                                <div class="gis-orbit gis-orbit--a"></div>
+                                <div class="gis-orbit gis-orbit--b"></div>
 
-                            <div class="gis-panel gis-panel-core">
-                                <div class="gis-panel-head">
-                                    <span>What We Build</span>
-                                    <b>Systems online</b>
+                                <div class="gis-panel gis-panel-core">
+                                    <div class="gis-panel-head">
+                                        <span>What We Build</span>
+                                        <b>Systems online</b>
+                                    </div>
+                                    <h3>Full-Stack Digital Engineering</h3>
+                                    <div class="gis-panel-tags">
+                                        <span>Web Platforms</span>
+                                        <span>Flutter Apps</span>
+                                        <span>Enterprise ERP &amp; CRM</span>
+                                        <span>AI &amp; Automation</span>
+                                        <span>E-commerce</span>
+                                        <span>Cloud &amp; DevOps</span>
+                                    </div>
+                                    <div class="gis-panel-meter">
+                                        <div class="gis-meter-row"><span>Product engineering</span><b>Design → Deploy</b></div>
+                                        <div class="gis-meter-track"><i style="--w:92%"></i></div>
+                                        <div class="gis-meter-row"><span>Delivery model</span><b>Agile sprints</b></div>
+                                        <div class="gis-meter-track"><i style="--w:78%"></i></div>
+                                    </div>
                                 </div>
-                                <h3>Full-Stack Digital Engineering</h3>
-                                <div class="gis-panel-tags">
-                                    <span>Web Platforms</span>
-                                    <span>Flutter Apps</span>
-                                    <span>Enterprise ERP &amp; CRM</span>
-                                    <span>AI &amp; Automation</span>
-                                    <span>E-commerce</span>
-                                    <span>Cloud &amp; DevOps</span>
-                                </div>
-                                <div class="gis-panel-meter">
-                                    <div class="gis-meter-row"><span>Product engineering</span><b>Design → Deploy</b></div>
-                                    <div class="gis-meter-track"><i style="--w:92%"></i></div>
-                                    <div class="gis-meter-row"><span>Delivery model</span><b>Agile sprints</b></div>
-                                    <div class="gis-meter-track"><i style="--w:78%"></i></div>
-                                </div>
+
+                                <div class="gis-chip gis-chip--1"><i class="fab fa-react"></i> React &amp; Next.js</div>
+                                <div class="gis-chip gis-chip--2"><i class="fal fa-brain"></i> AI &amp; LLMs</div>
+                                <div class="gis-chip gis-chip--3"><i class="fab fa-aws"></i> Cloud &amp; APIs</div>
+                                <div class="gis-chip gis-chip--4"><i class="fab fa-flutter"></i> Flutter</div>
                             </div>
-
-                            <div class="gis-chip gis-chip--1"><i class="fab fa-react" aria-hidden="true"></i> React &amp; Next.js</div>
-                            <div class="gis-chip gis-chip--2"><i class="fal fa-brain" aria-hidden="true"></i> AI &amp; LLMs</div>
-                            <div class="gis-chip gis-chip--3"><i class="fab fa-aws" aria-hidden="true"></i> Cloud &amp; APIs</div>
-                            <div class="gis-chip gis-chip--4"><i class="fab fa-flutter" aria-hidden="true"></i> Flutter</div>
+                            <div class="gis-hero-hint" aria-hidden="true"><i class="fal fa-arrows-move"></i> Move your cursor to explore</div>
                         </div>
                     </div>
                 </div>
@@ -511,7 +519,7 @@
                 <div class="row g-4">
                     <div class="col-xl-3 col-md-6 gis-reveal">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-code" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="web-development" data-lottie-mount><i class="fal fa-code" aria-hidden="true"></i></div></div>
                             <h3><a href="/web-development">Web Development</a></h3>
                             <p>Corporate sites, web apps and portals built for speed and growth.</p>
                             <ul class="gis-service-list">
@@ -523,7 +531,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="1">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-mobile-alt" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="mobile-app" data-lottie-mount><i class="fal fa-mobile-alt" aria-hidden="true"></i></div></div>
                             <h3><a href="/mobile-app-development">Mobile App Development</a></h3>
                             <p>Flutter apps for iOS and Android, with full backend support.</p>
                             <ul class="gis-service-list">
@@ -535,7 +543,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="2">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-pen-nib" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="ui-ux-design" data-lottie-mount><i class="fal fa-pen-nib" aria-hidden="true"></i></div></div>
                             <h3><a href="/ui-ux-design">UI/UX Design</a></h3>
                             <p>User-centered design that reduces friction and increases conversion.</p>
                             <ul class="gis-service-list">
@@ -547,7 +555,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="3">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-database" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="custom-software" data-lottie-mount><i class="fal fa-database" aria-hidden="true"></i></div></div>
                             <h3><a href="/custom-software-development">Custom Software &amp; ERP</a></h3>
                             <p>Custom enterprise systems that automate and unify your operations.</p>
                             <ul class="gis-service-list">
@@ -559,7 +567,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-shopping-bag" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="ecommerce" data-lottie-mount><i class="fal fa-shopping-bag" aria-hidden="true"></i></div></div>
                             <h3><a href="/ecommerce-development">E-commerce Development</a></h3>
                             <p>Online stores and marketplaces tuned for revenue and retention.</p>
                             <ul class="gis-service-list">
@@ -571,7 +579,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="1">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-plug" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="backend-api" data-lottie-mount><i class="fal fa-plug" aria-hidden="true"></i></div></div>
                             <h3><a href="/backend-api-development">Backend &amp; API Development</a></h3>
                             <p>Reliable APIs and services that power every screen you ship.</p>
                             <ul class="gis-service-list">
@@ -583,7 +591,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="2">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-cloud" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="cloud-devops" data-lottie-mount><i class="fal fa-cloud" aria-hidden="true"></i></div></div>
                             <h3><a href="/cloud-devops">Cloud &amp; DevOps</a></h3>
                             <p>Cloud architecture, CI/CD and monitoring for always-on products.</p>
                             <ul class="gis-service-list">
@@ -595,7 +603,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="3">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-brain" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="ai-machine-learning" data-lottie-mount><i class="fal fa-brain" aria-hidden="true"></i></div></div>
                             <h3><a href="/ai-machine-learning">AI &amp; Machine Learning</a></h3>
                             <p>Practical AI features that cut manual work and improve decisions.</p>
                             <ul class="gis-service-list">
@@ -607,7 +615,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-clipboard-check" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="qa-testing" data-lottie-mount><i class="fal fa-clipboard-check" aria-hidden="true"></i></div></div>
                             <h3><a href="/quality-assurance-testing">QA &amp; Testing</a></h3>
                             <p>Manual and automated testing on real devices before every release.</p>
                             <ul class="gis-service-list">
@@ -619,7 +627,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="1">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-tools" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="maintenance-support" data-lottie-mount><i class="fal fa-tools" aria-hidden="true"></i></div></div>
                             <h3><a href="/maintenance-support">Maintenance &amp; Support</a></h3>
                             <p>Updates, security patches and performance work after launch.</p>
                             <ul class="gis-service-list">
@@ -631,7 +639,7 @@
                     </div>
                     <div class="col-xl-3 col-md-6 gis-reveal" data-gis-delay="2">
                         <article class="gis-service-card">
-                            <div class="gis-service-ic"><i class="fal fa-comments" aria-hidden="true"></i></div>
+                            <div class="gis-service-ic"><div class="gis-lottie" data-lottie="dedicated-team" data-lottie-mount><i class="fal fa-comments" aria-hidden="true"></i></div></div>
                             <h3><a href="/it-consulting">IT Consulting</a></h3>
                             <p>Architecture reviews, roadmaps and build-vs-buy guidance.</p>
                             <ul class="gis-service-list">
@@ -771,42 +779,420 @@
             </div>
         </section>
 
-        <!-- SECTION 08 — TECHNOLOGY UNIVERSE -->
+        <!-- SECTION 07b — MOBILE APP SHOWCASE (3D FLOATING DEVICES) -->
+        <section class="gis-section" id="mobile-apps" aria-labelledby="mobile-heading">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-5 gis-reveal">
+                        <div class="section-title text-start mb-0">
+                            <span>Mobile Engineering</span>
+                            <h2 id="mobile-heading">Flutter Apps That Feel Native</h2>
+                            <p>One Flutter codebase, shipped to iOS and Android with production-grade performance, offline handling and store release. Admin panels, APIs and analytics are part of the build — not an afterthought.</p>
+                        </div>
+                        <ul class="gis-check-list mt-4">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Cross-platform Flutter UI</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Backend APIs &amp; admin panels</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Push, auth &amp; offline sync</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> App store launch support</li>
+                        </ul>
+                        <div class="d-flex flex-wrap gap-3 mt-4">
+                            <a href="/mobile-app-development" class="theme-btn gis-magnetic">Mobile App Development <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="/mobile-app-development" class="theme-btn-outline gis-magnetic">Flutter Apps</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="gis-phonewall gis-reveal" id="gis-phonewall" role="img" aria-label="Three floating smartphone mockups in perspective showing a mobile commerce app, a dashboard app and a Flutter application interface.">
+                            <span class="gis-phonewall-glow" aria-hidden="true"></span>
+                            <span class="gis-phonewall-floor" aria-hidden="true"></span>
+
+                            <figure class="gis-phone gis-phone--a" data-depth="0.9">
+                                <span class="gis-phone-shadow" aria-hidden="true"></span>
+                                <span class="gis-phone-shell" aria-hidden="true"></span>
+                                <span class="gis-phone-screen">
+                                    <span class="gis-phone-notch" aria-hidden="true"></span>
+                                    <span class="gis-phone-appbar">
+                                        <b>Storefront</b>
+                                        <i class="fal fa-bell" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="gis-phone-hero">
+                                        <em>Featured</em>
+                                        <strong>Spring Collection</strong>
+                                        <span class="gis-phone-cta">Shop now</span>
+                                    </span>
+                                    <span class="gis-phone-row"><i class="fal fa-mobile-screen-button"></i><b>New arrivals</b><small>128 items</small></span>
+                                    <span class="gis-phone-row"><i class="fal fa-box"></i><b>Track order</b><small>In transit</small></span>
+                                    <span class="gis-phone-row"><i class="fal fa-heart"></i><b>Wishlist</b><small>14 saved</small></span>
+                                    <span class="gis-phone-nav" aria-hidden="true"><i class="fal fa-home"></i><i class="fal fa-compass"></i><i class="fal fa-cart-plus"></i><i class="fal fa-user"></i></span>
+                                </span>
+                            </figure>
+
+                            <figure class="gis-phone gis-phone--b" data-depth="1.25">
+                                <span class="gis-phone-shadow" aria-hidden="true"></span>
+                                <span class="gis-phone-shell" aria-hidden="true"></span>
+                                <span class="gis-phone-screen">
+                                    <span class="gis-phone-notch" aria-hidden="true"></span>
+                                    <span class="gis-phone-appbar">
+                                        <b>Analytics</b>
+                                        <i class="fal fa-ellipsis-h" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="gis-phone-kpis">
+                                        <span><b>2.4k</b><small>Users</small></span>
+                                        <span><b>68%</b><small>Retention</small></span>
+                                    </span>
+                                    <span class="gis-phone-chart" aria-hidden="true">
+                                        <svg viewBox="0 0 160 70" preserveAspectRatio="none"><polyline points="0,58 22,48 44,52 66,32 88,38 110,18 132,24 160,8" /></svg>
+                                    </span>
+                                    <span class="gis-phone-bars" aria-hidden="true"><i style="--h:38%"></i><i style="--h:56%"></i><i style="--h:44%"></i><i style="--h:72%"></i><i style="--h:60%"></i><i style="--h:88%"></i></span>
+                                    <span class="gis-phone-row"><i class="fal fa-chart-pie"></i><b>Conversion</b><small>+18%</small></span>
+                                    <span class="gis-phone-row"><i class="fal fa-clock"></i><b>Session</b><small>4m 12s</small></span>
+                                    <span class="gis-phone-nav" aria-hidden="true"><i class="fal fa-home"></i><i class="fal fa-chart-line"></i><i class="fal fa-bell"></i><i class="fal fa-user"></i></span>
+                                </span>
+                            </figure>
+
+                            <figure class="gis-phone gis-phone--c" data-depth="0.75">
+                                <span class="gis-phone-shadow" aria-hidden="true"></span>
+                                <span class="gis-phone-shell" aria-hidden="true"></span>
+                                <span class="gis-phone-screen">
+                                    <span class="gis-phone-notch" aria-hidden="true"></span>
+                                    <span class="gis-phone-appbar">
+                                        <b>Flutter App</b>
+                                        <i class="fab fa-flutter" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="gis-phone-ai">
+                                        <em>AI Assistant</em>
+                                        <p>Summarise this week&rsquo;s sales by region</p>
+                                        <span class="gis-phone-typing" aria-hidden="true"><i></i><i></i><i></i></span>
+                                    </span>
+                                    <span class="gis-phone-row"><i class="fal fa-comments"></i><b>AI answers</b><small>Ready</small></span>
+                                    <span class="gis-phone-row"><i class="fal fa-cloud-download-alt"></i><b>Offline cache</b><small>Synced</small></span>
+                                    <span class="gis-phone-row"><i class="fal fa-fingerprint"></i><b>Biometric login</b><small>Enabled</small></span>
+                                    <span class="gis-phone-nav" aria-hidden="true"><i class="fal fa-home"></i><i class="fal fa-bolt"></i><i class="fal fa-cog"></i><i class="fal fa-user"></i></span>
+                                </span>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 07c — ENTERPRISE SOFTWARE -->
+        <section class="gis-section gis-section-alt" id="enterprise" aria-labelledby="enterprise-heading">
+            <div class="container">
+                <div class="row align-items-center g-5 flex-lg-row-reverse">
+                    <div class="col-lg-5 gis-reveal">
+                        <div class="section-title text-start mb-0">
+                            <span>Enterprise Systems</span>
+                            <h2 id="enterprise-heading">ERP &amp; CRM That Replace Spreadsheets</h2>
+                            <p>We build management systems that run the business: sales pipelines, stock, invoicing, HR, approvals and reporting — with role-based access, audit trails and clean APIs into everything else you already use.</p>
+                        </div>
+                        <ul class="gis-check-list mt-4">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> ERP, CRM &amp; billing modules</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Role-based access &amp; audit logs</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Reporting, dashboards &amp; exports</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Integration with existing tools</li>
+                        </ul>
+                        <div class="d-flex flex-wrap gap-3 mt-4">
+                            <a href="/custom-software-development" class="theme-btn gis-magnetic">Custom Software Development <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="/it-consulting" class="theme-btn-outline gis-magnetic">IT Consulting</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="gis-erp gis-reveal" id="gis-erp" role="img" aria-label="Animated enterprise dashboard mockup with KPI tiles, a bar chart, a rising trend line and workflow rows.">
+                            <div class="gis-erp-shell">
+                                <span class="gis-erp-bar" aria-hidden="true"><i></i><i></i><i></i><b>enterprise.gopangitsolution.com</b></span>
+                                <div class="gis-erp-body">
+                                    <aside class="gis-erp-side" aria-hidden="true">
+                                        <span class="gis-erp-logo"><i class="fal fa-cube"></i></span>
+                                        <span class="gis-erp-nav is-on"><i class="fal fa-chart-pie"></i></span>
+                                        <span class="gis-erp-nav"><i class="fal fa-users"></i></span>
+                                        <span class="gis-erp-nav"><i class="fal fa-box"></i></span>
+                                        <span class="gis-erp-nav"><i class="fal fa-file-invoice"></i></span>
+                                        <span class="gis-erp-nav"><i class="fal fa-cog"></i></span>
+                                    </aside>
+                                    <div class="gis-erp-main">
+                                        <div class="gis-erp-kpis">
+                                            <span class="gis-erp-kpi"><em>Revenue</em><b data-count="1284000" data-prefix="$">$0</b><small class="up"><i class="fal fa-arrow-up"></i> 12.4%</small></span>
+                                            <span class="gis-erp-kpi"><em>Orders</em><b data-count="8462">0</b><small class="up"><i class="fal fa-arrow-up"></i> 8.1%</small></span>
+                                            <span class="gis-erp-kpi"><em>Active users</em><b data-count="2417">0</b><small class="up"><i class="fal fa-arrow-up"></i> 5.6%</small></span>
+                                            <span class="gis-erp-kpi"><em>Open tickets</em><b data-count="37">0</b><small class="down"><i class="fal fa-arrow-down"></i> 2.2%</small></span>
+                                        </div>
+                                        <div class="gis-erp-panels">
+                                            <div class="gis-erp-chart">
+                                                <span class="gis-erp-title">Quarterly performance</span>
+                                                <div class="gis-erp-bars" aria-hidden="true">
+                                                    <i style="--h:44%"></i><i style="--h:62%"></i><i style="--h:38%"></i><i style="--h:74%"></i>
+                                                    <i style="--h:55%"></i><i style="--h:86%"></i><i style="--h:68%"></i><i style="--h:96%"></i>
+                                                    <i style="--h:72%"></i><i style="--h:88%"></i><i style="--h:60%"></i><i style="--h:100%"></i>
+                                                </div>
+                                            </div>
+                                            <div class="gis-erp-trend">
+                                                <span class="gis-erp-title">Pipeline velocity</span>
+                                                <svg viewBox="0 0 300 130" preserveAspectRatio="none" aria-hidden="true">
+                                                    <defs>
+                                                        <linearGradient id="erpFill" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="0%" stop-color="#38ddf2" stop-opacity=".45" />
+                                                            <stop offset="100%" stop-color="#38ddf2" stop-opacity="0" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <polyline class="gis-erp-line" points="0,108 30,96 60,102 90,74 120,82 150,54 180,62 210,34 240,42 270,18 300,8" />
+                                                    <polygon class="gis-erp-fill" points="0,108 30,96 60,102 90,74 120,82 150,54 180,62 210,34 240,42 270,18 300,8 300,130 0,130" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="gis-erp-table" aria-hidden="true">
+                                            <span class="gis-erp-tr is-head"><b>Workflow</b><b>Owner</b><b>Stage</b><b>Value</b></span>
+                                            <span class="gis-erp-tr"><b>Enterprise rollout</b><b>Delivery</b><b class="tag tag-live">In progress</b><b>$48,000</b></span>
+                                            <span class="gis-erp-tr"><b>Mobile release</b><b>Engineering</b><b class="tag tag-ok">On track</b><b>$22,500</b></span>
+                                            <span class="gis-erp-tr"><b>Data migration</b><b>Platform</b><b class="tag tag-wait">Queued</b><b>$16,800</b></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="gis-erp-glow" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 07d — AI -->
+        <section class="gis-section" id="ai" aria-labelledby="ai-heading">
+            <div class="gis-ai-glow" aria-hidden="true"></div>
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-5 gis-reveal">
+                        <div class="gis-ai-visual" id="gis-ai-visual" role="img" aria-label="Animated three-dimensional neural network with a glowing core, travelling signals and floating code snippets.">
+                            <span class="gis-ai-core" aria-hidden="true"><i></i><i></i><i></i></span>
+                            <svg class="gis-ai-wires" viewBox="0 0 420 420" aria-hidden="true">
+                                <g class="gis-ai-wires-g">
+                                    <path d="M60 90 L160 140" /><path d="M60 210 L160 190" /><path d="M60 330 L160 250" />
+                                    <path d="M160 140 L260 190" /><path d="M160 190 L260 190" /><path d="M160 250 L260 190" />
+                                    <path d="M260 190 L360 90" /><path d="M260 190 L360 210" /><path d="M260 190 L360 330" />
+                                </g>
+                            </svg>
+                            <span class="gis-ai-node" style="--ax:14%;--ay:21%;--ad:0s" aria-hidden="true"></span>
+                            <span class="gis-ai-node" style="--ax:14%;--ay:50%;--ad:-1.4s" aria-hidden="true"></span>
+                            <span class="gis-ai-node" style="--ax:14%;--ay:79%;--ad:-2.3s" aria-hidden="true"></span>
+                            <span class="gis-ai-node is-hidden" style="--ax:38%;--ay:33%;--ad:-0.6s" aria-hidden="true"></span>
+                            <span class="gis-ai-node is-hidden" style="--ax:38%;--ay:45%;--ad:-1.9s" aria-hidden="true"></span>
+                            <span class="gis-ai-node is-hidden" style="--ax:38%;--ay:60%;--ad:-0.3s" aria-hidden="true"></span>
+                            <span class="gis-ai-node is-hidden" style="--ax:62%;--ay:45%;--ad:-2.6s" aria-hidden="true"></span>
+                            <span class="gis-ai-node" style="--ax:86%;--ay:21%;--ad:-0.9s" aria-hidden="true"></span>
+                            <span class="gis-ai-node" style="--ax:86%;--ay:50%;--ad:-1.7s" aria-hidden="true"></span>
+                            <span class="gis-ai-node" style="--ax:86%;--ay:79%;--ad:-0.4s" aria-hidden="true"></span>
+                            <span class="gis-ai-chip" style="--cx:6%;--cy:66%;--cd:-1.1s" aria-hidden="true"><code>model.predict(x)</code></span>
+                            <span class="gis-ai-chip" style="--cx:70%;--cy:8%;--cd:-2.2s" aria-hidden="true"><code>embed()</code></span>
+                            <span class="gis-ai-chip" style="--cx:64%;--cy:88%;--cd:-0.5s" aria-hidden="true"><code>pipeline.run()</code></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 gis-reveal">
+                        <div class="section-title text-start mb-0">
+                            <span>Artificial Intelligence</span>
+                            <h2 id="ai-heading">Build Smarter With AI</h2>
+                            <p>Gopang IT Solution builds machine learning models, LLM assistants and workflow automation that plug into the systems you already run. We focus on the unglamorous, high-value work: forecasting, scoring, document handling, search and repetitive process automation.</p>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <div class="gis-ai-feature">
+                                    <div class="gis-lottie" data-lottie="ai-machine-learning" data-lottie-mount><i class="fal fa-brain" aria-hidden="true"></i></div>
+                                    <div><h3>Machine Learning</h3><p>Forecasting, scoring, classification and recommendation models trained on your own data.</p></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="gis-ai-feature">
+                                    <div class="gis-lottie" data-lottie="custom-software" data-lottie-mount><i class="fal fa-robot" aria-hidden="true"></i></div>
+                                    <div><h3>LLM Assistants</h3><p>Retrieval-grounded assistants that answer from your documents, inside your product.</p></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="gis-ai-feature">
+                                    <div class="gis-lottie" data-lottie="backend-api" data-lottie-mount><i class="fal fa-diagram-project" aria-hidden="true"></i></div>
+                                    <div><h3>Workflow Automation</h3><p>Document processing, data entry and approvals replaced with reliable pipelines.</p></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="gis-ai-feature">
+                                    <div class="gis-lottie" data-lottie="analytics" data-lottie-mount><i class="fal fa-chart-line" aria-hidden="true"></i></div>
+                                    <div><h3>Data &amp; Insights</h3><p>Pipelines, dashboards and alerting that turn scattered data into decisions.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-3 mt-4">
+                            <a href="/ai-machine-learning" class="theme-btn gis-magnetic">AI &amp; Machine Learning <i class="fal fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="/contact" class="theme-btn-outline gis-magnetic">Talk to an engineer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 08 — 3D TECHNOLOGY HUB -->
         <section class="gis-section gis-section-alt" id="technology" aria-labelledby="tech-heading">
             <div class="container">
                 <div class="col-12 col-xl-6 offset-xl-3 text-center mb-5">
                     <div class="section-title gis-reveal">
                         <span>Technology Universe</span>
                         <h2 id="tech-heading">Built for Scale</h2>
-                        <p>Technologies we run in production — chosen per project, not per fashion. Hover a node to see how we use it.</p>
+                        <p>The stack Gopang IT Solution runs in production. Hover or focus any node to see what it does and where we use it.</p>
                     </div>
                 </div>
 
-                <div class="gis-universe-wrap gis-reveal">
-                    <div class="gis-universe" id="gis-universe">
-                        <div class="gis-universe-core">
-                            <i class="fal fa-cube" aria-hidden="true"></i>
-                            <span>Gopang<br>Tech Core</span>
+                <div class="gis-techhub gis-reveal">
+                    <div class="gis-techhub-stage" id="gis-techhub" role="group" aria-label="Gopang technology stack: an interactive three-dimensional hub with connected technology nodes">
+                        <div class="gis-techhub-scene">
+
+                            <svg class="gis-techhub-links" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+                                <defs>
+                                    <linearGradient id="gisLinkGrad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#38ddf2" stop-opacity="0.85" />
+                                        <stop offset="55%" stop-color="#4f7dff" stop-opacity="0.6" />
+                                        <stop offset="100%" stop-color="#7c5cff" stop-opacity="0.85" />
+                                    </linearGradient>
+                                </defs>
+                                <g class="gis-techhub-wires">
+                                    <path d="M500 310 L120 92" /><path d="M500 310 L250 44" /><path d="M500 310 L500 52" />
+                                    <path d="M500 310 L750 44" /><path d="M500 310 L880 92" />
+                                    <path d="M500 310 L930 250" /><path d="M500 310 L930 420" /><path d="M500 310 L820 570" />
+                                    <path d="M500 310 L620 600" /><path d="M500 310 L380 600" /><path d="M500 310 L180 570" />
+                                    <path d="M500 310 L70 420" /><path d="M500 310 L70 250" />
+                                </g>
+                                <g class="gis-techhub-pulses">
+                                    <path d="M500 310 L120 92" /><path d="M500 310 L500 52" /><path d="M500 310 L880 92" />
+                                    <path d="M500 310 L930 250" /><path d="M500 310 L930 420" /><path d="M500 310 L620 600" />
+                                    <path d="M500 310 L180 570" /><path d="M500 310 L70 420" /><path d="M500 310 L70 250" />
+                                    <path d="M500 310 L250 44" /><path d="M500 310 L750 44" /><path d="M500 310 L820 570" />
+                                    <path d="M500 310 L380 600" />
+                                </g>
+                            </svg>
+
+                            <div class="gis-techhub-core" data-techhub-core>
+                                <span class="gis-techhub-core-ring" aria-hidden="true"></span>
+                                <span class="gis-techhub-core-ring" aria-hidden="true"></span>
+                                <span class="gis-techhub-core-box">
+                                    <i class="fal fa-cube" aria-hidden="true"></i>
+                                    <b>GOPANG<br />TECHNOLOGY</b>
+                                </span>
+                            </div>
+
+                            <div class="gis-technode" data-cat="frontend" style="--tx:12%;--ty:15%;--tz:70px;--d:0s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Flutter" data-icon="fab fa-flutter"
+                                    data-desc="One codebase, native feel on iOS and Android."
+                                    data-capability="Gopang builds and ships Flutter apps with production backends and store release support.">
+                                    <i class="fab fa-flutter" aria-hidden="true"></i><span>Flutter</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="frontend" style="--tx:25%;--ty:7%;--tz:120px;--d:-1.2s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="React" data-icon="fab fa-react"
+                                    data-desc="Component-driven interfaces for complex products."
+                                    data-capability="React powers our dashboards, portals and customer-facing applications.">
+                                    <i class="fab fa-react" aria-hidden="true"></i><span>React</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="frontend" style="--tx:50%;--ty:8%;--tz:40px;--d:-2.1s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Next.js" data-icon="fas fa-bolt"
+                                    data-desc="Server-rendered React for SEO and fast first paint."
+                                    data-capability="We use Next.js where search visibility and first-load speed are critical.">
+                                    <i class="fas fa-bolt" aria-hidden="true"></i><span>Next.js</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="frontend" style="--tx:75%;--ty:7%;--tz:130px;--d:-0.6s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Vue" data-icon="fab fa-vuejs"
+                                    data-desc="Lightweight, fast-building interfaces for admin tooling."
+                                    data-capability="Vue handles internal tools and rapid prototypes at Gopang.">
+                                    <i class="fab fa-vuejs" aria-hidden="true"></i><span>Vue</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="frontend" style="--tx:88%;--ty:15%;--tz:60px;--d:-1.7s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Laravel" data-icon="fab fa-laravel"
+                                    data-desc="A proven PHP framework for business-heavy platforms."
+                                    data-capability="Laravel underpins our ERP, CRM and content-heavy business systems.">
+                                    <i class="fab fa-laravel" aria-hidden="true"></i><span>Laravel</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="backend" style="--tx:93%;--ty:40%;--tz:100px;--d:-0.9s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Node.js" data-icon="fab fa-node-js"
+                                    data-desc="Realtime, event-driven APIs and services."
+                                    data-capability="Node.js runs our realtime backends, queues and integrations.">
+                                    <i class="fab fa-node-js" aria-hidden="true"></i><span>Node.js</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="backend" style="--tx:93%;--ty:68%;--tz:150px;--d:-2.6s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="PHP" data-icon="fab fa-php"
+                                    data-desc="Dependable, hosting-friendly application backends."
+                                    data-capability="PHP keeps integrations and maintenance work cheap and stable.">
+                                    <i class="fab fa-php" aria-hidden="true"></i><span>PHP</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="backend" style="--tx:82%;--ty:92%;--tz:80px;--d:-0.3s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="APIs" data-icon="fal fa-plug"
+                                    data-desc="Clean REST contracts between every part of your system."
+                                    data-capability="Gopang designs API layers that let frontends and ERPs evolve independently.">
+                                    <i class="fal fa-plug" aria-hidden="true"></i><span>APIs</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="backend" style="--tx:62%;--ty:97%;--tz:120px;--d:-1.4s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Python" data-icon="fab fa-python"
+                                    data-desc="Data pipelines, automation and machine learning services."
+                                    data-capability="Python powers our AI, automation and data-processing work.">
+                                    <i class="fab fa-python" aria-hidden="true"></i><span>Python</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="ai" style="--tx:38%;--ty:97%;--tz:90px;--d:-2.2s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="AI &amp; ML" data-icon="fal fa-brain"
+                                    data-desc="Forecasting, scoring, classification and automation."
+                                    data-capability="We add machine learning where it removes real manual work for your team.">
+                                    <i class="fal fa-brain" aria-hidden="true"></i><span>AI &amp; ML</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="ai" style="--tx:18%;--ty:92%;--tz:140px;--d:-0.7s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="LLMs" data-icon="fal fa-robot"
+                                    data-desc="Assistants and retrieval features inside your product."
+                                    data-capability="Gopang embeds LLM assistants into existing systems rather than bolting on chat.">
+                                    <i class="fal fa-robot" aria-hidden="true"></i><span>LLMs</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="cloud" style="--tx:7%;--ty:68%;--tz:70px;--d:-1.9s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="Firebase" data-icon="fas fa-fire"
+                                    data-desc="Auth, push notifications and rapid MVPs."
+                                    data-capability="Firebase gets our MVPs to market quickly, then we migrate as scale demands.">
+                                    <i class="fas fa-fire" aria-hidden="true"></i><span>Firebase</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="cloud" style="--tx:7%;--ty:40%;--tz:110px;--d:-1.1s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="MongoDB" data-icon="fas fa-leaf"
+                                    data-desc="Flexible documents for high-volume event data."
+                                    data-capability="MongoDB suits event streams and loosely-structured catalogues.">
+                                    <i class="fas fa-leaf" aria-hidden="true"></i><span>MongoDB</span>
+                                </button>
+                            </div>
+                            <div class="gis-technode" data-cat="cloud" style="--tx:12%;--ty:15%;--tz:30px;--d:-0.2s">
+                                <button type="button" class="gis-technode-btn" aria-describedby="gis-techhub-tip"
+                                    data-name="MySQL" data-icon="fas fa-database"
+                                    data-desc="Relational integrity for transactional business data."
+                                    data-capability="MySQL backs our ERP, finance and order-processing workloads.">
+                                    <i class="fas fa-database" aria-hidden="true"></i><span>MySQL</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- outer ring -->
-                        <div class="gis-node" data-cat="frontend" style="--x:50%;--y:8%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:90deg"></span><span class="gis-node-btn" tabindex="0" data-info="React interfaces for dashboards, portals and customer-facing products."><i class="fab fa-react" aria-hidden="true"></i>React</span></div>
-                        <div class="gis-node" data-cat="frontend" style="--x:79.7%;--y:20.3%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:135deg"></span><span class="gis-node-btn" tabindex="0" data-info="Next.js for SSR, SEO-critical sites and fast first paint."><i class="fas fa-bolt" aria-hidden="true"></i>Next.js</span></div>
-                        <div class="gis-node" data-cat="frontend" style="--x:92%;--y:50%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:180deg"></span><span class="gis-node-btn" tabindex="0" data-info="Vue for lightweight admin tools and rapid prototypes."><i class="fab fa-vuejs" aria-hidden="true"></i>Vue</span></div>
-                        <div class="gis-node" data-cat="frontend" style="--x:79.7%;--y:79.7%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:225deg"></span><span class="gis-node-btn" tabindex="0" data-info="Flutter for one codebase shipping to iOS and Android."><i class="fab fa-flutter" aria-hidden="true"></i>Flutter</span></div>
-                        <div class="gis-node" data-cat="backend" style="--x:50%;--y:92%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:270deg"></span><span class="gis-node-btn" tabindex="0" data-info="Node.js APIs for realtime, event-driven product backends."><i class="fab fa-node-js" aria-hidden="true"></i>Node.js</span></div>
-                        <div class="gis-node" data-cat="backend" style="--x:20.3%;--y:79.7%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:315deg"></span><span class="gis-node-btn" tabindex="0" data-info="Laravel for ERP, CRM and content-heavy business platforms."><i class="fab fa-laravel" aria-hidden="true"></i>Laravel</span></div>
-                        <div class="gis-node" data-cat="backend" style="--x:8%;--y:50%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:0deg"></span><span class="gis-node-btn" tabindex="0" data-info="PHP for dependable hosting-friendly applications and integrations."><i class="fab fa-php" aria-hidden="true"></i>PHP</span></div>
-                        <div class="gis-node" data-cat="cloud" style="--x:20.3%;--y:20.3%"><span class="gis-node-line" aria-hidden="true" style="--dist:42%;--rot:45deg"></span><span class="gis-node-btn" tabindex="0" data-info="AWS for scalable infrastructure, storage and managed services."><i class="fab fa-aws" aria-hidden="true"></i>AWS</span></div>
-
-                        <!-- inner ring -->
-                        <div class="gis-node" data-cat="cloud" style="--x:60.4%;--y:28.4%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:115.7deg"></span><span class="gis-node-btn" tabindex="0" data-info="DigitalOcean for simple, cost-effective production servers."><i class="fas fa-server" aria-hidden="true"></i>DigitalOcean</span></div>
-                        <div class="gis-node" data-cat="cloud" style="--x:73.4%;--y:44.6%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:167.1deg"></span><span class="gis-node-btn" tabindex="0" data-info="MySQL for transactional business and ERP data."><i class="fas fa-database" aria-hidden="true"></i>MySQL</span></div>
-                        <div class="gis-node" data-cat="cloud" style="--x:68.8%;--y:65%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:218.6deg"></span><span class="gis-node-btn" tabindex="0" data-info="MongoDB for flexible schemas and high-volume event data."><i class="fas fa-leaf" aria-hidden="true"></i>MongoDB</span></div>
-                        <div class="gis-node" data-cat="cloud" style="--x:50%;--y:74%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:270deg"></span><span class="gis-node-btn" tabindex="0" data-info="Firebase for auth, push notifications and rapid MVP backends."><i class="fas fa-fire" aria-hidden="true"></i>Firebase</span></div>
-                        <div class="gis-node" data-cat="ai" style="--x:31.2%;--y:65%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:321.4deg"></span><span class="gis-node-btn" tabindex="0" data-info="Python for data pipelines, automation and machine learning."><i class="fab fa-python" aria-hidden="true"></i>Python</span></div>
-                        <div class="gis-node" data-cat="ai" style="--x:26.6%;--y:44.6%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:12.9deg"></span><span class="gis-node-btn" tabindex="0" data-info="Machine learning models for forecasting, scoring and classification."><i class="fal fa-brain" aria-hidden="true"></i>ML</span></div>
-                        <div class="gis-node" data-cat="ai" style="--x:39.6%;--y:28.4%"><span class="gis-node-line" aria-hidden="true" style="--dist:24%;--rot:64.3deg"></span><span class="gis-node-btn" tabindex="0" data-info="LLM assistants and retrieval features embedded in your product."><i class="fal fa-robot" aria-hidden="true"></i>LLMs</span></div>
+                        <div class="gis-techhub-tip" id="gis-techhub-tip" role="status" aria-live="polite">
+                            <b class="gis-techhub-tip-name">Gopang Technology</b>
+                            <span class="gis-techhub-tip-desc">Hover a node to see the stack.</span>
+                            <span class="gis-techhub-tip-cap"></span>
+                        </div>
                     </div>
 
                     <div class="gis-universe-legend">
@@ -816,7 +1202,7 @@
                         </div>
                         <div class="gis-legend-card" data-cat="backend">
                             <h3>Backend</h3>
-                            <p>Node.js, Laravel and PHP services with clean APIs and predictable release cycles.</p>
+                            <p>Node.js, Laravel, PHP and API layers with predictable release cycles.</p>
                         </div>
                         <div class="gis-legend-card" data-cat="cloud">
                             <h3>Cloud &amp; Database</h3>
@@ -1113,7 +1499,7 @@
                             </div>
                             <div class="gis-contact-item">
                                 <i class="fal fa-envelope" aria-hidden="true"></i>
-                                <div><strong>Email</strong><br><a href="mailto:gopangitsolution@gmail.com" class="text-white">gopangitsolution@gmail.com</a></div>
+                                <div><strong>Email</strong><br><a href="mailto:info@gopangitsolution.com" class="text-white">info@gopangitsolution.com</a></div>
                             </div>
                             <div class="gis-contact-item">
                                 <i class="fal fa-clock" aria-hidden="true"></i>
@@ -1157,8 +1543,8 @@
                                         <textarea class="form-control" id="contact-message" name="message" rows="5" required placeholder="Tell us about your project goals and timeline"></textarea>
                                     </div>
                                     <div class="col-12">
-                                        <button type="submit" class="theme-btn gis-magnetic">Request a Proposal</button>
-                                        <div class="gis-form-feedback" hidden role="status"></div>
+                                        <button type="submit" class="theme-btn gis-magnetic gis-submit">Start Your Project <i class="fal fa-arrow-right" aria-hidden="true"></i></button>
+                                        <div class="gis-form-feedback" hidden role="status" aria-live="polite"></div>
                                     </div>
                                 </div>
                             </form>
@@ -1248,7 +1634,7 @@
                             <div class="get-in-touch">
                                 <div class="single-contact-info"><div class="icon id1"><i class="fal fa-map-marker-alt" aria-hidden="true"></i></div><div class="contact-info"><span>Islamabad, Pakistan</span></div></div>
                                 <div class="single-contact-info"><div class="icon id2"><i class="fal fa-phone" aria-hidden="true"></i></div><div class="contact-info"><a href="tel:+923342322324" class="text-white">+92 334 2322324</a></div></div>
-                                <div class="single-contact-info"><div class="icon id3"><i class="fal fa-envelope" aria-hidden="true"></i></div><div class="contact-info"><a href="mailto:gopangitsolution@gmail.com" class="text-white">gopangitsolution@gmail.com</a></div></div>
+                                <div class="single-contact-info"><div class="icon id3"><i class="fal fa-envelope" aria-hidden="true"></i></div><div class="contact-info"><a href="mailto:info@gopangitsolution.com" class="text-white">info@gopangitsolution.com</a></div></div>
                                 <div class="single-contact-info"><div class="icon id4"><i class="fal fa-clock" aria-hidden="true"></i></div><div class="contact-info"><span>Mon - Fri: 9:00 AM - 6:00 PM (PKT)</span></div></div>
                             </div>
                         </div>
@@ -1282,8 +1668,11 @@
     <script src="/assets/js/metismenu.js" defer></script>
     <script src="/assets/js/active.js?v=5" defer></script>
     <script src="/assets/js/company.js" defer></script>
-    <script src="/assets/js/premium.js?v=5" defer></script>
-    <script src="/assets/js/gis-experience.js?v=2" defer></script>
+    <script src="/assets/js/premium.js?v=6" defer></script>
+    <script src="/assets/js/gis-experience.js?v=3" defer></script>
+    <script src="/assets/js/gis-lottie.js?v=1" defer></script>
+    <script src="/assets/js/gis-motion.js?v=2" defer></script>
+    <script src="/assets/js/gis-hero3d.js?v=6" defer></script>
     <!-- Gopang Analytics --><script src="/assets/js/analytics-tracker.js" defer></script>
 </body>
 

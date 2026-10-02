@@ -771,6 +771,30 @@ select.form-select option { background: #0b1020; color: var(--gis-ink); }
 .gis-form-feedback { margin-top: 16px; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; }
 .gis-form-success { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
 
+/* --------------------------------------------------------------------------   
+   Data tables — Bootstrap ships light-theme cell colours, which are unreadable
+   on the dark surfaces.
+   -------------------------------------------------------------------------- */
+.table,
+.table > :not(caption) > * > * {
+  color: var(--gis-text);
+  background-color: transparent;
+  border-color: var(--gis-border) !important;
+}
+.table > thead > tr > th {
+  color: var(--gis-ink);
+  background-color: var(--gis-surface-2);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.table > tbody > tr > td { color: var(--gis-text); }
+.table > tbody > tr:hover > td { color: var(--gis-ink); background-color: rgba(127, 166, 255, 0.06); }
+.table strong,
+.table b { color: var(--gis-ink); }
+.table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-striped-bg: rgba(127, 166, 255, 0.045); }
+.table thead th:first-child,
+.table tbody td:first-child { color: var(--gis-ink); }
+
 /* --------------------------------------------------------------------------
    CTA banner — light, framed, premium (no stacked dark before footer)
    -------------------------------------------------------------------------- */

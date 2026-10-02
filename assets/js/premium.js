@@ -4,7 +4,7 @@
   var SITE = {
     whatsapp: '923342322324',
     whatsappMsg: 'Hello, I am interested in your IT services and would like a free consultation.',
-    email: 'gopangitsolution@gmail.com'
+    email: 'info@gopangitsolution.com'
   };
 
   document.documentElement.style.scrollBehavior = 'smooth';
@@ -93,16 +93,98 @@
 
   function initContactForms() {
     document.querySelectorAll('.gis-contact-form').forEach(function (form) {
+      // Real client-side validation with per-field messaging, so the form has
+      // genuine success / error states rather than only a post-submit banner.
+      var setState = function (field, ok, message) {
+        var wrap = field.closest('.col-12, .col-md-6') || field.parentNode;
+        var holder = wrap.querySelector('.gis-field-msg');
+        if (!holder) {
+          holder = document.createElement('span');
+          holder.className = 'gis-field-msg';
+          holder.setAttribute('aria-live', 'polite');
+          wrap.appendChild(holder);
+        }
+        holder.textContent = ok ? '' : message;
+        field.classList.toggle('is-invalid', !ok);
+        field.classList.toggle('is-valid', ok);
+        field.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      };
+
+      var RULES = {
+        name: function (v) {
+          if (!v.trim()) return 'Please enter your name.';
+          if (v.trim().length < 2) return 'That name looks too short.';
+          return '';
+        },
+        email: function (v) {
+          if (!v.trim()) return 'Please enter your email address.';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'Enter a valid email address.';
+          return '';
+        },
+        phone: function (v) {
+          if (!v.trim()) return '';
+          if (!/^[+()\d\s-]{7,20}$/.test(v.trim())) return 'Enter a valid phone number.';
+          return '';
+        },
+        message: function (v) {
+          if (!v.trim()) return 'Tell us a little about your project.';
+          if (v.trim().length < 10) return 'A sentence or two helps us reply properly.';
+          return '';
+        }
+      };
+
+      var check = function (field) {
+        var rule = RULES[field.name];
+        if (!rule) return true;
+        var msg = rule(field.value);
+        setState(field, !msg, msg);
+        return !msg;
+      };
+
+      Object.keys(RULES).forEach(function (name) {
+        var field = form.querySelector('[name="' + name + '"]');
+        if (!field) return;
+        field.addEventListener('blur', function () { check(field); });
+        field.addEventListener('input', function () {
+          if (field.classList.contains('is-invalid')) check(field);
+        });
+      });
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+
+        var ok = true;
+        var firstBad = null;
+        Object.keys(RULES).forEach(function (name) {
+          var field = form.querySelector('[name="' + name + '"]');
+          if (!field) return;
+          if (!check(field) && ok) {
+            ok = false;
+            firstBad = field;
+          }
+        });
+
+        var feedback = form.querySelector('.gis-form-feedback');
+        var button = form.querySelector('button[type="submit"]');
+
+        if (!ok) {
+          if (feedback) {
+            feedback.hidden = false;
+            feedback.className = 'gis-form-feedback gis-form-error';
+            feedback.textContent = 'Please correct the highlighted fields and try again.';
+          }
+          if (firstBad) {
+            firstBad.focus();
+            firstBad.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+          return;
+        }
+
         var name = form.querySelector('[name="name"]');
         var email = form.querySelector('[name="email"]');
         var phone = form.querySelector('[name="phone"]');
         var message = form.querySelector('[name="message"]');
         var service = form.querySelector('[name="service"]');
-        var feedback = form.querySelector('.gis-form-feedback');
-
-        if (!name || !email || !message) return;
 
         var body = [
           'Name: ' + name.value,
@@ -119,19 +201,34 @@
           'mailto:' +
           SITE.email +
           '?subject=' +
-          encodeURIComponent('Consultation Request - Gopang IT Solution') +
+          encodeURIComponent('New Project Request - Gopang IT Solution') +
           '&body=' +
           encodeURIComponent(body);
 
+        if (button) {
+          button.disabled = true;
+          button.classList.add('is-loading');
+        }
         if (feedback) {
           feedback.hidden = false;
           feedback.className = 'gis-form-feedback gis-form-success';
           feedback.textContent =
-            'Thank you! Your message is ready to send. We will respond within 24 business hours.';
+            'Thank you, ' + name.value.trim().split(' ')[0] + '. Your project request is ready to send and we will respond within 24 business hours.';
         }
+        form.classList.add('is-sent');
 
         window.location.href = mailto;
-        form.reset();
+
+        setTimeout(function () {
+          if (button) {
+            button.disabled = false;
+            button.classList.remove('is-loading');
+          }
+          form.reset();
+          form.querySelectorAll('.is-valid').forEach(function (f) {
+            f.classList.remove('is-valid');
+          });
+        }, 1200);
       });
     });
   }
