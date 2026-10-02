@@ -277,11 +277,14 @@ def initials(name: str) -> str:
     return "".join(p[0] for p in parts[:2]).upper()
 
 
+SW_CLEANUP = '    <script src="/assets/js/sw-cleanup.js" defer></script>'
+
 def page_head(title: str, description: str, canonical: str, *, extra: str = "") -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 
 <head>
+{SW_CLEANUP}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

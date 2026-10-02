@@ -70,6 +70,8 @@ CSS_LINKS = """    <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/pages/premium-pages.css?v=4">
     <link rel="stylesheet" href="/assets/css/pages/blog.css?v=1">"""
 
+SW_CLEANUP = '    <script src="/assets/js/sw-cleanup.js" defer></script>'
+
 SCRIPTS = """    <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/modernizr.min.js"></script>
     <script src="/assets/js/jquery.easing.js"></script>
@@ -119,6 +121,7 @@ def render(page: dict, header: str, footer: str) -> str:
 <html lang="en">
 
 <head>
+{SW_CLEANUP}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
