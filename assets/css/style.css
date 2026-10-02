@@ -4593,7 +4593,7 @@ header.header-3 .main-menu ul > li > ul ul {
   height: 100%;
   content: "";
   z-index: -1;
-  background-image: url("../img/home3/square-shape.png");
+  background-image: url("../img/home3/square-shape.opt.webp");
   background-size: cover;
   background-repeat: no-repeat;
   opacity: .2;

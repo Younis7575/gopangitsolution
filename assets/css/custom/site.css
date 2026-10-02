@@ -170,7 +170,7 @@ header.header-1.gis-main-header .header-right-element {
 
 .gis-careers-hero {
     background: linear-gradient(135deg, rgba(8, 26, 58, 0.96) 0%, rgba(15, 98, 254, 0.9) 100%),
-        url("/assets/img/project/1.jpg") center/cover;
+        url("../../img/project/1.opt.webp") center/cover;
     color: #fff;
     overflow: hidden;
     padding: 96px 0 122px;
