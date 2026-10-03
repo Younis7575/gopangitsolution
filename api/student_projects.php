@@ -43,7 +43,9 @@ function sp_consultation_categories()
 {
     return [
         'mobile-app'          => 'Mobile App',
+        'flutter-app'         => 'Flutter App',
         'web-application'     => 'Web Application',
+        'react-nextjs'        => 'React / Next.js',
         'ui-ux-design'        => 'UI/UX Design',
         'ai-machine-learning' => 'AI / Machine Learning',
         'data-science'        => 'Data Science',
@@ -60,20 +62,33 @@ function sp_consultation_categories()
 function sp_project_categories()
 {
     return [
+        'flutter-mobile-app'   => 'Flutter Mobile App',
+        'android-app'          => 'Android App',
+        'ios-app'              => 'iOS App',
+        'web-application'      => 'Web Application',
+        'react-nextjs'         => 'React / Next.js',
+        'ui-ux-design'         => 'UI/UX Design',
+        'ai-machine-learning'  => 'AI / Machine Learning',
+        'data-science'         => 'Data Science',
+        'cyber-security'       => 'Cyber Security',
+        'desktop-application'  => 'Desktop Application',
+        'erp-crm'              => 'ERP / CRM',
+        'ecommerce'            => 'E-Commerce',
+        'backend-api'          => 'Backend / API',
+        'cloud-devops'         => 'Cloud / DevOps',
+        'other'                => 'Other',
+    ];
+}
+
+/**
+ * Category codes used by rows submitted before the current vocabulary. They
+ * keep resolving to a readable label so old records never render as a raw slug.
+ */
+function sp_legacy_category_aliases()
+{
+    return [
         'mobile-application'  => 'Mobile Application',
-        'web-application'     => 'Web Application',
-        'flutter-application' => 'Flutter Application',
-        'react-nextjs'        => 'React / Next.js',
-        'ui-ux-design'        => 'UI/UX Design',
-        'ai-machine-learning' => 'AI / Machine Learning',
-        'data-science'        => 'Data Science',
-        'cyber-security'      => 'Cyber Security',
-        'desktop-application' => 'Desktop Application',
-        'erp-crm'             => 'ERP / CRM',
-        'ecommerce'           => 'E-Commerce',
-        'backend-api'         => 'Backend / API',
-        'cloud-devops'        => 'Cloud / DevOps',
-        'other'               => 'Other',
+        'flutter-application' => 'Flutter Mobile App',
     ];
 }
 
@@ -88,6 +103,71 @@ function sp_durations()
         '6-plus-months'     => '6+ Months',
         'not-sure'          => 'Not Sure',
     ];
+}
+
+/** Degree / programme options for the academic information group. */
+function sp_degrees()
+{
+    return [
+        'bs-computer-science'   => 'BS Computer Science',
+        'bs-software-engineering' => 'BS Software Engineering',
+        'bs-information-technology' => 'BS Information Technology',
+        'bs-artificial-intelligence' => 'BS Artificial Intelligence',
+        'bs-data-science'       => 'BS Data Science',
+        'bs-cyber-security'     => 'BS Cyber Security',
+        'bs-electronics'        => 'BS Electronics',
+        'bs-business-administration' => 'BS Business Administration',
+        'bcs'                   => 'BCS (Bachelor of Computer Studies)',
+        'bs-electrical-engineering' => 'BS Electrical Engineering',
+        'ms-computer-science'   => 'MS Computer Science',
+        'phd'                   => 'PhD / Research',
+        'other'                 => 'Other',
+    ];
+}
+
+/** How far along the student already is, which changes what we quote. */
+function sp_project_stages()
+{
+    return [
+        'idea'                    => 'Idea',
+        'requirements_ready'      => 'Requirements Ready',
+        'design_ready'            => 'Design Ready',
+        'development_started'     => 'Development Started',
+        'existing_needs_completion' => 'Existing Project Needs Completion',
+        'existing_needs_fixing'   => 'Existing Project Needs Fixing',
+    ];
+}
+
+/** Yes / No / Partially, used for the "do you already have X" questions. */
+function sp_yes_no_partial()
+{
+    return [
+        'yes'       => 'Yes',
+        'no'        => 'No',
+        'partially' => 'Partially',
+    ];
+}
+
+/** File types a student may attach to a request. */
+function sp_upload_extensions()
+{
+    return ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg'];
+}
+
+function sp_upload_mimes()
+{
+    return [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/png',
+        'image/jpeg',
+    ];
+}
+
+function sp_allowed_attachment_mimes_text()
+{
+    return 'PDF, DOC, DOCX, PNG, JPG or JPEG (max ' . round(STUDENT_MAX_FILE_SIZE / 1048576, 1) . ' MB per file)';
 }
 
 function sp_showcase_categories()
@@ -130,7 +210,8 @@ function sp_project_statuses()
         'pending_review'          => 'Pending Review',
         'contacted'               => 'Contacted',
         'consultation_required'   => 'Consultation Required',
-        'proposal_sent'           => 'Proposal Sent',
+        'requirements_review'     => 'Requirements Review',
+        'quote_prepared'          => 'Quote Prepared',
         'negotiation'             => 'Negotiation',
         'approved'                => 'Approved',
         'in_development'          => 'In Development',
@@ -139,6 +220,18 @@ function sp_project_statuses()
         'cancelled'               => 'Cancelled',
         'archived'                => 'Archived',
     ];
+}
+
+/** Statuses that mean a request is still moving through the pipeline. */
+function sp_open_project_statuses()
+{
+    return ['pending_review', 'contacted', 'consultation_required', 'requirements_review', 'quote_prepared', 'negotiation', 'approved', 'in_development'];
+}
+
+/** Older rows used "proposal_sent"; map them onto the current vocabulary. */
+function sp_normalise_project_status($status)
+{
+    return $status === 'proposal_sent' ? 'requirements_review' : (string) $status;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,12 +249,17 @@ function init_student_schema()
         email VARCHAR(200) NOT NULL,
         university VARCHAR(220) NULL,
         degree VARCHAR(220) NULL,
+        semester VARCHAR(60) NULL,
+        supervisor_name VARCHAR(200) NULL,
         project_category VARCHAR(60) NOT NULL,
         custom_category VARCHAR(180) NULL,
+        project_title VARCHAR(240) NULL,
         short_description VARCHAR(600) NOT NULL,
         long_description TEXT NOT NULL,
         preferred_date VARCHAR(20) NOT NULL,
         preferred_time VARCHAR(10) NOT NULL,
+        end_time VARCHAR(10) NULL,
+        timezone VARCHAR(60) NULL,
         duration_minutes INT NOT NULL DEFAULT 30,
         google_meet_link VARCHAR(500) NULL,
         status VARCHAR(30) NOT NULL DEFAULT 'pending',
@@ -185,10 +283,18 @@ function init_student_schema()
         email VARCHAR(200) NOT NULL,
         university VARCHAR(220) NULL,
         degree VARCHAR(220) NULL,
+        semester VARCHAR(60) NULL,
+        supervisor_name VARCHAR(200) NULL,
         project_category VARCHAR(60) NOT NULL,
         custom_category VARCHAR(180) NULL,
+        project_title VARCHAR(240) NULL,
         short_description VARCHAR(600) NOT NULL,
         long_description TEXT NOT NULL,
+        project_stage VARCHAR(60) NULL,
+        has_uiux VARCHAR(20) NULL,
+        has_backend VARCHAR(20) NULL,
+        has_source_code VARCHAR(20) NULL,
+        expected_completion_date VARCHAR(20) NULL,
         project_duration VARCHAR(60) NULL,
         custom_duration VARCHAR(180) NULL,
         budget_min DECIMAL(14,2) NULL,
@@ -196,7 +302,9 @@ function init_student_schema()
         currency VARCHAR(10) NOT NULL DEFAULT 'PKR',
         status VARCHAR(40) NOT NULL DEFAULT 'pending_review',
         quoted_amount DECIMAL(14,2) NULL,
+        final_cost DECIMAL(14,2) NULL,
         assigned_consultant VARCHAR(200) NULL,
+        assigned_developer VARCHAR(200) NULL,
         assigned_team VARCHAR(200) NULL,
         meeting_link VARCHAR(500) NULL,
         admin_notes TEXT NULL,
@@ -205,6 +313,7 @@ function init_student_schema()
         attachment_key VARCHAR(400) NULL,
         attachment_name VARCHAR(255) NULL,
         attachment_type VARCHAR(120) NULL,
+        attachments_json TEXT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NULL DEFAULT NULL,
         INDEX(status), INDEX(project_category), INDEX(email), INDEX(created_at)
@@ -284,6 +393,46 @@ function init_student_schema()
         error_log('Consultation slot index: ' . $e->getMessage());
     }
 
+    /* Columns added after the first release. ensure_column is a no-op on a
+       fresh install and a cheap ALTER on an existing table, so the module can
+       grow without a separate migration step. */
+    $additions = [
+        'consultation_requests' => [
+            'semester'         => 'VARCHAR(60) NULL',
+            'supervisor_name'  => 'VARCHAR(200) NULL',
+            'project_title'    => 'VARCHAR(240) NULL',
+            'end_time'         => 'VARCHAR(10) NULL',
+            'timezone'         => "VARCHAR(60) NULL DEFAULT 'Asia/Karachi (PKT, UTC+5)'",
+            'attachments_json' => 'TEXT NULL',
+        ],
+        'project_requests' => [
+            'semester'                 => 'VARCHAR(60) NULL',
+            'supervisor_name'          => 'VARCHAR(200) NULL',
+            'project_title'            => 'VARCHAR(240) NULL',
+            'project_stage'            => 'VARCHAR(60) NULL',
+            'has_uiux'                 => 'VARCHAR(20) NULL',
+            'has_backend'              => 'VARCHAR(20) NULL',
+            'has_source_code'          => 'VARCHAR(20) NULL',
+            'expected_completion_date' => 'VARCHAR(20) NULL',
+            'final_cost'               => 'DECIMAL(14,2) NULL',
+            'assigned_developer'       => 'VARCHAR(200) NULL',
+            'attachments_json'         => 'TEXT NULL',
+        ],
+    ];
+    foreach ($additions as $table => $columns) {
+        foreach ($columns as $column => $definition) {
+            safely_ensure_column($table, $column, $definition);
+        }
+    }
+
+    /* Any row still on the retired "proposal_sent" status moves onto the
+       vocabulary the admin panel now offers. */
+    try {
+        db()->exec("UPDATE project_requests SET status = 'requirements_review' WHERE status = 'proposal_sent'");
+    } catch (Throwable $e) {
+        error_log('Project status migration: ' . $e->getMessage());
+    }
+
     /* Status is not part of the unique key (SQLite cannot do partial indexes
        portably through this helper), so a freed slot is released by rewriting
        the date/time onto a sentinel row instead of deleting the record. */
@@ -325,6 +474,8 @@ function sp_seed_settings()
         'slot_days_ahead'      => '30',
         'slot_notice_hours'   => '4',
         'slot_blocked_dates'  => '',
+        'slot_working_days'   => '1,2,3,4,5,6',
+        'slot_holidays'       => '',
         'consultation_email'  => ADMIN_EMAIL,
     ];
     foreach ($defaults as $k => $v) {
@@ -349,6 +500,44 @@ function sp_slot_duration()
 function sp_slot_minutes_to_string($minutes)
 {
     return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
+}
+
+/** Working days as ISO weekday numbers (1 = Monday … 7 = Sunday). */
+function sp_working_days()
+{
+    $raw = (string) sp_setting('slot_working_days', '1,2,3,4,5,6');
+    $days = array_values(array_filter(array_map('intval', explode(',', $raw)), fn($d) => $d >= 1 && $d <= 7));
+    return $days ?: [1, 2, 3, 4, 5];
+}
+
+/** Dates the clinic is closed: configured holidays plus ad-hoc blocked dates. */
+function sp_closed_dates()
+{
+    $raw = (string) sp_setting('slot_blocked_dates', '') . ',' . (string) sp_setting('slot_holidays', '');
+    $dates = array_values(array_unique(array_filter(array_map('trim', explode(',', $raw)))));
+    return $dates;
+}
+
+function sp_availability_summary()
+{
+    $days = sp_working_days();
+    $names = [];
+    foreach ($days as $d) {
+        $names[] = date('D', strtotime('2026-01-05 +' . ($d - 1) . ' days')); // a known Monday
+    }
+    return [
+        'working_days' => $days,
+        'working_day_names' => $names,
+        'start_time' => sp_setting('slot_start_time', '11:00'),
+        'end_time' => sp_setting('slot_end_time', '18:00'),
+        'duration_minutes' => sp_slot_duration(),
+        'days_ahead' => max(1, (int) sp_setting('slot_days_ahead', 30)),
+        'notice_hours' => max(0, (int) sp_setting('slot_notice_hours', 4)),
+        'blocked_dates' => array_values(array_filter(array_map('trim', explode(',', (string) sp_setting('slot_blocked_dates', ''))))),
+        'holidays' => array_values(array_filter(array_map('trim', explode(',', (string) sp_setting('slot_holidays', ''))))),
+        'timezone' => 'Asia/Karachi (PKT, UTC+5)',
+        'timezone_label' => 'Pakistan Standard Time (PKT / UTC+5)',
+    ];
 }
 
 /**
@@ -378,7 +567,13 @@ function sp_available_slots($date, $pdo)
         return ['slots' => [], 'reason' => 'out_of_range'];
     }
 
-    $blocked = array_values(array_filter(array_map('trim', explode(',', (string) sp_setting('slot_blocked_dates', '')))));
+    $blocked = sp_closed_dates();
+
+    /* Closed days: an explicit holiday / blocked date, or a weekday that is not
+       part of the configured working week. */
+    if (in_array($date, $blocked, true) || !in_array((int) date('N', $dateTs), sp_working_days(), true)) {
+        return ['slots' => [], 'reason' => 'closed'];
+    }
 
     /* Which times are already taken. A slot is only occupied while the booking
        is in a status that still expects to happen. */
@@ -403,7 +598,6 @@ function sp_available_slots($date, $pdo)
     for ($t = $startTs; $t + ($duration * 60) <= $endTs; $t += ($duration * 60)) {
         $label = date('H:i', $t);
         if (in_array($label, $taken, true)) { continue; }
-        if (in_array($date, $blocked, true)) { continue; }
         if ($date === $today && $t < $earliest) { continue; }
         $slots[] = $label;
     }
@@ -487,12 +681,17 @@ function sp_consultation_payload(array $post)
         'whatsapp_display' => $wa['display'],
         'university' => clean_text($post['university'] ?? '', 220) ?: null,
         'degree' => clean_text($post['degree'] ?? '', 220) ?: null,
+        'semester' => clean_text($post['semester'] ?? '', 60) ?: null,
+        'supervisor_name' => clean_text($post['supervisor_name'] ?? '', 200) ?: null,
         'project_category' => $category,
         'custom_category' => $custom ?: null,
+        'project_title' => clean_text($post['project_title'] ?? '', 240) ?: null,
         'short_description' => $short,
         'long_description' => $long,
         'preferred_date' => $date,
         'preferred_time' => $time,
+        'end_time' => sp_slot_minutes_to_string((int) date('H', strtotime($time ?: '00:00')) * 60 + (int) date('i', strtotime($time ?: '00:00')) + sp_slot_duration()),
+        'timezone' => 'Asia/Karachi (PKT, UTC+5)',
         'duration_minutes' => sp_slot_duration(),
         'consent_given' => !empty($post['consent']) ? 1 : 0,
     ];
@@ -514,6 +713,9 @@ function sp_validate_consultation(array $p)
 
     if (mb_strlen($p['short_description']) < 10) { $errors['short_description'] = 'Add a short description (at least 10 characters).'; }
     if (mb_strlen($p['long_description']) < 20) { $errors['detailed_description'] = 'Describe your project in a little more detail.'; }
+    if ($p['project_title'] !== null && mb_strlen($p['project_title']) < 3) {
+        $errors['project_title'] = 'Give your project a short title.';
+    }
 
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $p['preferred_date'])) {
         $errors['preferred_date'] = 'Choose a consultation date.';
@@ -542,6 +744,9 @@ function sp_project_payload(array $post)
     $min = isset($post['budget_min']) && $post['budget_min'] !== '' ? (float) $post['budget_min'] : null;
     $max = isset($post['budget_max']) && $post['budget_max'] !== '' ? (float) $post['budget_max'] : null;
 
+    $yesNo = sp_yes_no_partial();
+    $stage = strtolower(clean_text($post['project_stage'] ?? '', 60));
+
     return [
         'name' => $name,
         'email' => $email,
@@ -549,10 +754,19 @@ function sp_project_payload(array $post)
         'whatsapp_display' => $wa['display'],
         'university' => clean_text($post['university'] ?? '', 220) ?: null,
         'degree' => clean_text($post['degree'] ?? '', 220) ?: null,
+        'semester' => clean_text($post['semester'] ?? '', 60) ?: null,
+        'supervisor_name' => clean_text($post['supervisor_name'] ?? '', 200) ?: null,
         'project_category' => $category,
         'custom_category' => $custom ?: null,
+        'project_title' => clean_text($post['project_title'] ?? '', 240) ?: null,
         'short_description' => $short,
         'long_description' => $long,
+        'project_stage' => $stage ?: null,
+        'has_uiux' => isset($yesNo[$post['has_uiux'] ?? '']) ? $post['has_uiux'] : null,
+        'has_backend' => isset($yesNo[$post['has_backend'] ?? '']) ? $post['has_backend'] : null,
+        'has_source_code' => isset($yesNo[$post['has_source_code'] ?? '']) ? $post['has_source_code'] : null,
+        'expected_completion_date' => preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($post['expected_completion_date'] ?? ''))
+            ? clean_text($post['expected_completion_date'], 20) : null,
         'project_duration' => $duration ?: null,
         'custom_duration' => $customDuration ?: null,
         'budget_min' => $min,
@@ -577,6 +791,17 @@ function sp_validate_project(array $p)
 
     if (mb_strlen($p['short_description']) < 10) { $errors['short_description'] = 'Add a short description (at least 10 characters).'; }
     if (mb_strlen($p['long_description']) < 20) { $errors['detailed_description'] = 'Describe your project in a little more detail.'; }
+    if ($p['project_title'] !== null && mb_strlen($p['project_title']) < 3) {
+        $errors['project_title'] = 'Give your project a short title.';
+    }
+
+    $stages = sp_project_stages();
+    if ($p['project_stage'] !== null && !isset($stages[$p['project_stage']])) {
+        $errors['project_stage'] = 'Choose the stage your project is at.';
+    }
+    foreach (['has_uiux', 'has_backend', 'has_source_code'] as $flag) {
+        if ($p[$flag] === null) { $errors[$flag] = 'Choose Yes, No or Partially.'; }
+    }
 
     if ($p['project_duration'] !== null) {
         $durations = sp_durations();
@@ -673,9 +898,15 @@ function sp_email_consultation_admin($booking)
         'Student           : ' . $booking['name'],
         'WhatsApp          : ' . ($booking['whatsapp_display'] ?: $booking['whatsapp']),
         'Email             : ' . $booking['email'],
+        'University        : ' . ($booking['university'] ?: '—'),
+        'Degree            : ' . ($booking['degree'] ?: '—'),
+        'Semester / Year   : ' . ($booking['semester'] ?: '—'),
+        'Supervisor        : ' . ($booking['supervisor_name'] ?: '—'),
+        'Project title     : ' . ($booking['project_title'] ?: '—'),
         'Category          : ' . sp_label(sp_consultation_categories(), $booking['project_category'], $booking['custom_category']),
         'Preferred date    : ' . $booking['preferred_date'],
-        'Preferred time    : ' . $booking['preferred_time'] . ' (' . $booking['duration_minutes'] . ' minutes)',
+        'Preferred time    : ' . $booking['preferred_time'] . ' – ' . ($booking['end_time'] ?: '—') . ' PKT',
+        'Duration          : ' . $booking['duration_minutes'] . ' minutes',
         'Status            : Pending confirmation',
         '',
         'Short description :',
@@ -700,7 +931,7 @@ function sp_email_consultation_student($booking)
         'Booking reference : ' . $booking['booking_reference'],
         'Project category  : ' . sp_label(sp_consultation_categories(), $booking['project_category'], $booking['custom_category']),
         'Date              : ' . $booking['preferred_date'],
-        'Time              : ' . $booking['preferred_time'] . ' (Pakistan Standard Time)',
+        'Time              : ' . $booking['preferred_time'] . (($booking['end_time'] ?? '') ? ' – ' . $booking['end_time'] : '') . ' (Pakistan Standard Time)',
         'Duration          : ' . $booking['duration_minutes'] . ' minutes',
         'Status            : Pending Confirmation',
         $meet,
@@ -723,17 +954,30 @@ function sp_email_project_admin($request)
         $budget = $request['currency'] . ' ' . number_format((float) ($request['budget_min'] ?? 0))
             . ' - ' . number_format((float) ($request['budget_max'] ?? 0));
     }
+    $yesNo = sp_yes_no_partial();
+    $files = sp_decode_attachments($request['attachments_json'] ?? null);
     $lines = [
         'A new Final Year Project request has been submitted.',
         '',
-        'Request ID     : ' . $request['request_reference'],
-        'Student        : ' . $request['name'],
-        'WhatsApp       : ' . ($request['whatsapp_display'] ?: $request['whatsapp']),
-        'Email          : ' . $request['email'],
-        'Category       : ' . sp_label(sp_project_categories(), $request['project_category'], $request['custom_category']),
-        'Duration       : ' . sp_label(sp_durations(), (string) $request['project_duration'], $request['custom_duration']),
-        'Budget range   : ' . $budget,
-        'Status         : Pending Review',
+        'Request ID        : ' . $request['request_reference'],
+        'Student           : ' . $request['name'],
+        'WhatsApp          : ' . ($request['whatsapp_display'] ?: $request['whatsapp']),
+        'Email             : ' . $request['email'],
+        'University        : ' . ($request['university'] ?: '—'),
+        'Degree            : ' . ($request['degree'] ?: '—'),
+        'Semester / Year   : ' . ($request['semester'] ?: '—'),
+        'Supervisor        : ' . ($request['supervisor_name'] ?: '—'),
+        'Project title     : ' . ($request['project_title'] ?: '—'),
+        'Category          : ' . sp_label(sp_project_categories(), $request['project_category'], $request['custom_category']),
+        'Project stage     : ' . ($request['project_stage'] ? (sp_project_stages()[$request['project_stage']] ?? $request['project_stage']) : '—'),
+        'Has UI/UX         : ' . ($yesNo[$request['has_uiux'] ?? ''] ?? '—'),
+        'Has backend / API : ' . ($yesNo[$request['has_backend'] ?? ''] ?? '—'),
+        'Has source code   : ' . ($yesNo[$request['has_source_code'] ?? ''] ?? '—'),
+        'Duration          : ' . sp_label(sp_durations(), (string) $request['project_duration'], $request['custom_duration']),
+        'Expected finish   : ' . ($request['expected_completion_date'] ?: '—'),
+        'Budget range      : ' . $budget,
+        'Attachments       : ' . ($files ? implode(', ', array_column($files, 'fileName')) : 'None'),
+        'Status            : Pending Review',
         '',
         'Short description :',
         $request['short_description'],
@@ -776,7 +1020,103 @@ function sp_email_project_student($request)
 function sp_label(array $map, $key, $custom = null)
 {
     if ($custom) { return $custom; }
-    return $map[$key] ?? ucfirst(str_replace('-', ' ', (string) $key));
+    if (isset($map[$key])) { return $map[$key]; }
+    $alias = sp_legacy_category_aliases();
+    if (isset($alias[$key])) { return $alias[$key]; }
+    return ucfirst(str_replace('-', ' ', (string) $key));
+}
+
+/** Sent when a consultant confirms or moves a booking. */
+function sp_email_consultation_status($booking, $status)
+{
+    $labels = sp_consultation_statuses();
+    $label = $labels[$status] ?? $status;
+
+    if ($status === 'confirmed') {
+        $subject = 'Your consultation is confirmed — ' . $booking['booking_reference'];
+        $body = [
+            'Hello ' . $booking['name'] . ',',
+            '',
+            'Your consultation is confirmed.',
+            '',
+            'Booking reference : ' . $booking['booking_reference'],
+            'Date              : ' . $booking['preferred_date'],
+            'Time              : ' . $booking['preferred_time'] . (($booking['end_time'] ?? '') ? ' – ' . $booking['end_time'] : '') . ' (Pakistan Standard Time)',
+            'Duration          : ' . $booking['duration_minutes'] . ' minutes',
+        ];
+        if (!empty($booking['google_meet_link'])) {
+            $body[] = 'Google Meet link : ' . $booking['google_meet_link'];
+        }
+        $body[] = '';
+        $body[] = 'Please join a few minutes early and check your audio and camera.';
+    } elseif ($status === 'rescheduled') {
+        $subject = 'Your consultation was rescheduled — ' . $booking['booking_reference'];
+        $body = [
+            'Hello ' . $booking['name'] . ',',
+            '',
+            'Your consultation time has been updated.',
+            '',
+            'Booking reference : ' . $booking['booking_reference'],
+            'New date          : ' . $booking['preferred_date'],
+            'New time          : ' . $booking['preferred_time'] . (($booking['end_time'] ?? '') ? ' – ' . $booking['end_time'] : '') . ' (Pakistan Standard Time)',
+        ];
+        if (!empty($booking['google_meet_link'])) {
+            $body[] = 'Google Meet link : ' . $booking['google_meet_link'];
+        }
+        $body[] = '';
+        $body[] = 'If the new time does not work for you, reply to this email or contact us on WhatsApp.';
+    } elseif (in_array($status, ['cancelled', 'no_show'], true)) {
+        $subject = 'Consultation ' . strtolower($label) . ' — ' . $booking['booking_reference'];
+        $body = [
+            'Hello ' . $booking['name'] . ',',
+            '',
+            'Your consultation request ' . $booking['booking_reference'] . ' is now marked as ' . $label . '.',
+            '',
+            'You are welcome to book another slot at any time:',
+            'https://gopangitsolution.com/student-projects/consultation',
+        ];
+    } else {
+        return;
+    }
+
+    $body[] = '';
+    $body[] = 'Gopang IT Solution';
+    $body[] = ADMIN_EMAIL;
+    sp_send_mail($booking['email'], $subject, implode("\n", $body));
+}
+
+/** Sent when a project request moves to a new stage, e.g. quote prepared. */
+function sp_email_project_status($request, $status)
+{
+    $labels = sp_project_statuses();
+    $label = $labels[$status] ?? $status;
+    $next = [
+        'quote_prepared' => 'We have prepared a quotation. Reply to this email or book a free consultation to discuss the scope.',
+        'approved'       => 'Your project has been approved and is scheduled to start development.',
+        'in_development' => 'Development has started on your project. We will keep you updated on progress.',
+        'completed'      => 'Your project has been delivered. We will share the handover details and documentation.',
+        'rejected'       => 'We are unable to take this project forward. Please contact us if you would like to discuss why.',
+        'cancelled'      => 'This project request has been cancelled.',
+        'consultation_required' => 'Please book a free 30-minute consultation so we can understand the project properly.',
+    ][$status] ?? null;
+
+    if ($next === null) { return; }
+
+    $lines = [
+        'Hello ' . $request['name'] . ',',
+        '',
+        'There is an update on your project request ' . $request['request_reference'] . ' (' . ($request['project_title'] ?: 'Untitled project') . ').',
+        '',
+        'Status : ' . $label,
+        '',
+        $next,
+        '',
+        !empty($request['meeting_link']) ? 'Meeting link : ' . $request['meeting_link'] : '',
+        '',
+        'Gopang IT Solution',
+        ADMIN_EMAIL,
+    ];
+    sp_send_mail($request['email'], 'Project status updated — ' . $request['request_reference'], implode("\n", array_filter($lines, fn($l) => $l !== '' || true)));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -806,19 +1146,65 @@ function sp_admin_email()
 
 function sp_store_attachment($field, $subdir, $required = false)
 {
-    $exts = ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg', '.zip'];
-    $mimes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'image/png', 'image/jpeg',
-        'application/zip', 'application/x-zip-compressed',
-    ];
+    $exts = array_map(fn($e) => '.' . $e, sp_upload_extensions());
+    $mimes = sp_upload_mimes();
     $stored = store_upload($field, $subdir, $exts, $mimes, STUDENT_MAX_FILE_SIZE, $required);
     if (isset($stored['error'])) {
         error_response($stored['error'], 422);
     }
     return $stored['value'] ?? null;
+}
+
+/**
+ * Store every file the student attached under a multi-file input
+ * (name="attachments[]"). Each file is validated server-side by extension and
+ * MIME type, written outside the web root with a random name, and the stored
+ * keys are returned as a JSON blob for the admin record.
+ *
+ * @return array<int,array{key:string,fileName:string,fileType:string,fileSize:int}>
+ */
+function sp_store_attachments($field, $subdir, $maxFiles = 5)
+{
+    if (empty($_FILES[$field]) || !is_array($_FILES[$field]['name'])) {
+        return [];
+    }
+
+    $exts = array_map(fn($e) => '.' . $e, sp_upload_extensions());
+    $mimes = sp_upload_mimes();
+    $count = min($maxFiles, count($_FILES[$field]['name']));
+    $out = [];
+
+    for ($i = 0; $i < $count; $i++) {
+        if (($_FILES[$field]['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) { continue; }
+        /* store_upload() reads a single $_FILES key, so each file is presented
+           to it under its own temporary name. */
+        $_FILES[$field . '_single'] = [
+            'name' => $_FILES[$field]['name'][$i],
+            'type' => $_FILES[$field]['type'][$i],
+            'tmp_name' => $_FILES[$field]['tmp_name'][$i],
+            'error' => $_FILES[$field]['error'][$i],
+            'size' => $_FILES[$field]['size'][$i],
+        ];
+        $stored = store_upload($field . '_single', $subdir, $exts, $mimes, STUDENT_MAX_FILE_SIZE, false);
+        unset($_FILES[$field . '_single']);
+
+        if (isset($stored['error'])) {
+            /* Never leave half an upload set behind on a validation failure. */
+            foreach ($out as $saved) { @unlink(UPLOAD_DIR . '/' . $saved['key']); }
+            error_response($stored['error'], 422, ['attachments' => $stored['error']]);
+        }
+        if (!empty($stored['value'])) { $out[] = $stored['value']; }
+    }
+
+    return $out;
+}
+
+/** Read the stored attachment list back out for the admin detail view. */
+function sp_decode_attachments(?string $json): array
+{
+    if (!$json) { return []; }
+    $decoded = json_decode($json, true);
+    return is_array($decoded) ? $decoded : [];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -838,6 +1224,11 @@ function sp_submit_consultation($pdo)
     /* Re-check the slot server-side: the client list is a convenience, never
        the authority. This is what actually prevents double booking. */
     $availability = sp_available_slots($p['preferred_date'], $pdo);
+    if ($availability['reason'] === 'closed') {
+        error_response('Our consultation clinic is closed on that date. Please choose another day.', 422, [
+            'preferred_date' => 'We do not hold consultations on this date.',
+        ]);
+    }
     if ($availability['reason'] !== 'ok') {
         error_response('That consultation date is no longer available. Please choose another date.', 422, [
             'preferred_date' => 'This date is not available for booking.',
@@ -850,24 +1241,34 @@ function sp_submit_consultation($pdo)
     }
 
     $attachment = sp_store_attachment('attachment', 'student/consultations', false);
+    $attachments = sp_store_attachments('attachments', 'student/consultations');
+    if ($attachment) {
+        array_unshift($attachments, $attachment);
+    }
     $reference = sp_next_reference('consultation_requests', 'booking_reference', 'CONS');
 
     try {
         $pdo->prepare(
             'INSERT INTO consultation_requests
-             (booking_reference,name,whatsapp,whatsapp_display,email,university,degree,project_category,custom_category,
-              short_description,long_description,preferred_date,preferred_time,duration_minutes,status,consent_given,
-              ip_hash,attachment_key,attachment_name,attachment_type)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+             (booking_reference,name,whatsapp,whatsapp_display,email,university,degree,semester,supervisor_name,
+              project_category,custom_category,project_title,short_description,long_description,preferred_date,
+              preferred_time,end_time,timezone,duration_minutes,status,consent_given,
+              ip_hash,attachment_key,attachment_name,attachment_type,attachments_json)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
         )->execute([
             $reference, $p['name'], $p['whatsapp'], $p['whatsapp_display'], $p['email'], $p['university'], $p['degree'],
-            $p['project_category'], $p['custom_category'], $p['short_description'], $p['long_description'],
-            $p['preferred_date'], $p['preferred_time'], $p['duration_minutes'], 'pending', $p['consent_given'],
-            sp_student_ip_hash(), $attachment['key'] ?? null, $attachment['fileName'] ?? null, $attachment['fileType'] ?? null,
+            $p['semester'], $p['supervisor_name'],
+            $p['project_category'], $p['custom_category'], $p['project_title'], $p['short_description'], $p['long_description'],
+            $p['preferred_date'], $p['preferred_time'], $p['end_time'], $p['timezone'], $p['duration_minutes'], 'pending',
+            $p['consent_given'],
+            sp_student_ip_hash(), $attachment['key'] ?? ($attachments[0]['key'] ?? null),
+            $attachment['fileName'] ?? ($attachments[0]['fileName'] ?? null),
+            $attachment['fileType'] ?? ($attachments[0]['fileType'] ?? null),
+            $attachments ? json_encode(array_values($attachments)) : null,
         ]);
     } catch (Throwable $e) {
         /* Unique index fired: another student took the slot first. */
-        if ($attachment && !empty($attachment['key'])) { @unlink(UPLOAD_DIR . '/' . $attachment['key']); }
+        foreach ($attachments as $saved) { @unlink(UPLOAD_DIR . '/' . $saved['key']); }
         error_log('Consultation insert failed: ' . $e->getMessage());
         error_response('That time slot has just been booked by someone else. Please choose another slot.', 409, [
             'preferred_time' => 'This time slot is no longer available.',
@@ -907,24 +1308,35 @@ function sp_submit_project($pdo)
     }
 
     $attachment = sp_store_attachment('attachment', 'student/projects', false);
+    $attachments = sp_store_attachments('attachments', 'student/projects');
+    if ($attachment) {
+        array_unshift($attachments, $attachment);
+    }
     $reference = sp_next_reference('project_requests', 'request_reference', 'FYP');
 
     try {
         $pdo->prepare(
             'INSERT INTO project_requests
-             (request_reference,name,whatsapp,whatsapp_display,email,university,degree,project_category,custom_category,
-              short_description,long_description,project_duration,custom_duration,budget_min,budget_max,currency,status,
-              consent_given,ip_hash,attachment_key,attachment_name,attachment_type)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+             (request_reference,name,whatsapp,whatsapp_display,email,university,degree,semester,supervisor_name,
+              project_category,custom_category,project_title,short_description,long_description,
+              project_stage,has_uiux,has_backend,has_source_code,expected_completion_date,
+              project_duration,custom_duration,budget_min,budget_max,currency,status,
+              consent_given,ip_hash,attachment_key,attachment_name,attachment_type,attachments_json)
+             VALUES (' . implode(',', array_fill(0, 31, '?')) . ')'
         )->execute([
             $reference, $p['name'], $p['whatsapp'], $p['whatsapp_display'], $p['email'], $p['university'], $p['degree'],
-            $p['project_category'], $p['custom_category'], $p['short_description'], $p['long_description'],
+            $p['semester'], $p['supervisor_name'],
+            $p['project_category'], $p['custom_category'], $p['project_title'], $p['short_description'], $p['long_description'],
+            $p['project_stage'], $p['has_uiux'], $p['has_backend'], $p['has_source_code'], $p['expected_completion_date'],
             $p['project_duration'], $p['custom_duration'], $p['budget_min'], $p['budget_max'], $p['currency'],
             'pending_review', $p['consent_given'], sp_student_ip_hash(),
-            $attachment['key'] ?? null, $attachment['fileName'] ?? null, $attachment['fileType'] ?? null,
+            $attachment['key'] ?? ($attachments[0]['key'] ?? null),
+            $attachment['fileName'] ?? ($attachments[0]['fileName'] ?? null),
+            $attachment['fileType'] ?? ($attachments[0]['fileType'] ?? null),
+            $attachments ? json_encode(array_values($attachments)) : null,
         ]);
     } catch (Throwable $e) {
-        if ($attachment && !empty($attachment['key'])) { @unlink(UPLOAD_DIR . '/' . $attachment['key']); }
+        foreach ($attachments as $saved) { @unlink(UPLOAD_DIR . '/' . $saved['key']); }
         error_log('Project request insert failed: ' . $e->getMessage());
         error_response('We could not save your request. Please try again.', 500);
     }
@@ -966,9 +1378,13 @@ function sp_public_consultation(array $row)
         'email' => $row['email'],
         'project_category' => $row['project_category'],
         'project_category_label' => sp_label(sp_consultation_categories(), $row['project_category'], $row['custom_category']),
+        'project_title' => $row['project_title'] ?: $row['short_description'],
         'short_description' => $row['short_description'],
         'preferred_date' => $row['preferred_date'],
         'preferred_time' => $row['preferred_time'],
+        'end_time' => $row['end_time'] ?: null,
+        'timezone' => $row['timezone'] ?: 'Asia/Karachi (PKT, UTC+5)',
+        'timezone_label' => 'Pakistan Standard Time (PKT / UTC+5)',
         'duration_minutes' => (int) $row['duration_minutes'],
         'google_meet_link' => $row['google_meet_link'] ?: null,
         'status' => $row['status'],
@@ -985,7 +1401,11 @@ function sp_public_project(array $row)
         'email' => $row['email'],
         'project_category' => $row['project_category'],
         'project_category_label' => sp_label(sp_project_categories(), $row['project_category'], $row['custom_category']),
+        'project_title' => $row['project_title'] ?: $row['short_description'],
         'short_description' => $row['short_description'],
+        'project_stage' => $row['project_stage'] ?: null,
+        'project_stage_label' => $row['project_stage'] ? (sp_project_stages()[$row['project_stage']] ?? $row['project_stage']) : null,
+        'expected_completion_date' => $row['expected_completion_date'] ?: null,
         'project_duration' => $row['project_duration'],
         'duration_label' => sp_label(sp_durations(), (string) $row['project_duration'], $row['custom_duration']),
         'budget_min' => $row['budget_min'],
@@ -1014,6 +1434,25 @@ function sp_lookup_consultation($pdo, $reference)
         error_response('No booking found for that reference and email.', 404);
     }
     json_response(['success' => true, 'message' => 'Booking fetched', 'data' => sp_public_consultation($row)]);
+}
+
+/**
+ * Project request lookup. Same rule as the consultation lookup: the reference
+ * alone is never enough, the matching email must be supplied too.
+ */
+function sp_lookup_project($pdo, $reference)
+{
+    $email = strtolower(clean_text($_GET['email'] ?? '', 200));
+    if (!is_valid_email($email)) {
+        error_response('Enter the email address used for the request.', 422, ['email' => 'Enter a valid email address.']);
+    }
+    $stmt = $pdo->prepare('SELECT * FROM project_requests WHERE request_reference = ? AND LOWER(email) = ?');
+    $stmt->execute([$reference, $email]);
+    $row = $stmt->fetch();
+    if (!$row) {
+        error_response('No project request found for that reference and email.', 404);
+    }
+    json_response(['success' => true, 'message' => 'Project request fetched', 'data' => sp_public_project($row)]);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1096,7 +1535,11 @@ function sp_admin_dashboard($pdo)
     };
 
     $consultationByStatus = $counts('consultation_requests', 'status');
-    $projectByStatus = $counts('project_requests', 'status');
+    $projectByStatus = [];
+    foreach ($counts('project_requests', 'status') as $status => $n) {
+        $k = sp_normalise_project_status($status);
+        $projectByStatus[$k] = ($projectByStatus[$k] ?? 0) + $n;
+    }
 
     $consultationTotal = array_sum($consultationByStatus);
     $projectTotal = array_sum($projectByStatus);
@@ -1106,6 +1549,11 @@ function sp_admin_dashboard($pdo)
     )->fetchColumn();
     $projectToday = (int) $pdo->query(
         "SELECT COUNT(*) FROM project_requests WHERE DATE(created_at) = CURRENT_DATE"
+    )->fetchColumn();
+
+    $upcomingCount = (int) $pdo->query(
+        "SELECT COUNT(*) FROM consultation_requests
+         WHERE preferred_date >= CURRENT_DATE AND status IN ('pending','confirmed','rescheduled')"
     )->fetchColumn();
 
     $upcoming = $pdo->query(
@@ -1158,10 +1606,14 @@ function sp_admin_dashboard($pdo)
                 'today' => $projectToday,
                 'by_status' => $projectByStatus,
                 'pending_review' => $projectByStatus['pending_review'] ?? 0,
+                'under_review' => ($projectByStatus['contacted'] ?? 0) + ($projectByStatus['consultation_required'] ?? 0)
+                    + ($projectByStatus['requirements_review'] ?? 0),
+                'quoted' => $projectByStatus['quote_prepared'] ?? 0,
+                'approved' => $projectByStatus['approved'] ?? 0,
                 'in_development' => $projectByStatus['in_development'] ?? 0,
                 'completed' => $projectByStatus['completed'] ?? 0,
-                'approved' => $projectByStatus['approved'] ?? 0,
             ],
+            'consultation_upcoming' => $upcomingCount,
             'upcoming_consultations' => $upcoming,
             'today_sessions' => $todaySessions,
             'trend' => $trend,
@@ -1188,18 +1640,20 @@ function sp_admin_consultations($method, $path, $pdo, $id = null, $action = null
 
         $sort = sp_sort_clause($_GET['sort'] ?? 'newest');
         $stmt = $pdo->prepare(
-            'SELECT id, booking_reference, name, whatsapp, whatsapp_display, email, project_category, custom_category,
-                    short_description, preferred_date, preferred_time, duration_minutes, status, google_meet_link,
-                    attachment_key, created_at
+            'SELECT id, booking_reference, name, whatsapp, whatsapp_display, email, university, degree, semester,
+                    supervisor_name, project_category, custom_category, project_title, short_description,
+                    preferred_date, preferred_time, end_time, timezone, duration_minutes, status, google_meet_link,
+                    attachment_key, attachments_json, created_at
              FROM consultation_requests' . $where . ' ORDER BY ' . $sort .
              ' LIMIT ' . (int) $limit . ' OFFSET ' . (int) (($page - 1) * $limit)
         );
         $stmt->execute($params);
         $rows = $stmt->fetchAll();
         foreach ($rows as &$r) {
-            $r['whatsapp_link'] = sp_whatsapp_link($r['whatsapp']);
+            $r['whatsapp_link'] = sp_whatsapp_link($r['whatsapp'], 'Hello ' . $r['name'] . ', regarding your consultation request ' . $r['booking_reference'] . '.');
             $r['category_label'] = sp_label(sp_consultation_categories(), $r['project_category'], $r['custom_category']);
             $r['status_label'] = sp_consultation_statuses()[$r['status']] ?? $r['status'];
+            $r['attachments'] = sp_decode_attachments($r['attachments_json'] ?? null);
             $r['has_attachment'] = !empty($r['attachment_key']);
         }
         json_response(['success' => true, 'message' => 'Consultations fetched', 'data' => $rows, 'meta' => pagination_meta($page, $limit, $total)]);
@@ -1215,6 +1669,14 @@ function sp_admin_consultations($method, $path, $pdo, $id = null, $action = null
         stream_upload($row['attachment_key'], $row['attachment_name'], $row['attachment_type']);
     }
 
+    /* ?i=<n> picks one of several student uploads. */
+    if ($method === 'GET' && $action === 'file') {
+        $files = sp_decode_attachments($row['attachments_json'] ?? null);
+        $index = (int) ($_GET['i'] ?? 0);
+        if (!isset($files[$index])) { error_response('Attachment not found', 404); }
+        stream_upload($files[$index]['key'], $files[$index]['fileName'], $files[$index]['fileType']);
+    }
+
     if ($method === 'GET' && $action === 'activity') {
         $log = $pdo->prepare('SELECT * FROM consultation_activity_logs WHERE consultation_id = ? ORDER BY id DESC');
         $log->execute([$id]);
@@ -1226,9 +1688,11 @@ function sp_admin_consultations($method, $path, $pdo, $id = null, $action = null
         $log->execute([$id]);
         unset($row['ip_hash'], $row['consent_given']);
         $row['activity'] = $log->fetchAll();
-        $row['whatsapp_link'] = sp_whatsapp_link($row['whatsapp']);
+        $row['whatsapp_link'] = sp_whatsapp_link($row['whatsapp'], 'Hello ' . $row['name'] . ', regarding your consultation request ' . $row['booking_reference'] . '.');
         $row['category_label'] = sp_label(sp_consultation_categories(), $row['project_category'], $row['custom_category']);
         $row['status_label'] = sp_consultation_statuses()[$row['status']] ?? $row['status'];
+        $row['attachments'] = sp_decode_attachments($row['attachments_json'] ?? null);
+        unset($row['attachments_json']);
         json_response(['success' => true, 'message' => 'Consultation fetched', 'data' => $row]);
     }
 
@@ -1259,7 +1723,12 @@ function sp_admin_consultations($method, $path, $pdo, $id = null, $action = null
             $row['booking_reference'] . ' is now ' . $allowed[$new] . '.', $row['booking_reference'], $id);
 
         $stmt->execute([$id]);
-        json_response(['success' => true, 'message' => 'Consultation status updated', 'data' => $stmt->fetch()]);
+        $updated = $stmt->fetch();
+        $updated['status_label'] = $allowed[$new];
+        $updated['category_label'] = sp_label(sp_consultation_categories(), $updated['project_category'], $updated['custom_category']);
+        sp_email_consultation_status($updated, $new);
+
+        json_response(['success' => true, 'message' => 'Consultation status updated', 'data' => $updated]);
     }
 
     if ($method === 'POST' && $action === 'meet-link') {
@@ -1386,19 +1855,23 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
 
         $sort = sp_sort_clause($_GET['sort'] ?? 'newest');
         $stmt = $pdo->prepare(
-            'SELECT id, request_reference, name, whatsapp, whatsapp_display, email, project_category, custom_category,
-                    short_description, project_duration, custom_duration, budget_min, budget_max, currency, status,
-                    quoted_amount, attachment_key, created_at
+            'SELECT id, request_reference, name, whatsapp, whatsapp_display, email, university, semester,
+                    project_category, custom_category, project_title, short_description, project_stage,
+                    project_duration, custom_duration, expected_completion_date, budget_min, budget_max, currency,
+                    status, quoted_amount, final_cost, assigned_consultant, assigned_developer, attachment_key,
+                    attachments_json, created_at
              FROM project_requests' . $where . ' ORDER BY ' . $sort .
              ' LIMIT ' . (int) $limit . ' OFFSET ' . (int) (($page - 1) * $limit)
         );
         $stmt->execute($params);
         $rows = $stmt->fetchAll();
         foreach ($rows as &$r) {
-            $r['whatsapp_link'] = sp_whatsapp_link($r['whatsapp']);
+            $r['whatsapp_link'] = sp_whatsapp_link($r['whatsapp'], 'Hello ' . $r['name'] . ', regarding your project request ' . $r['request_reference'] . '.');
             $r['category_label'] = sp_label(sp_project_categories(), $r['project_category'], $r['custom_category']);
             $r['duration_label'] = sp_label(sp_durations(), (string) $r['project_duration'], $r['custom_duration']);
             $r['status_label'] = sp_project_statuses()[$r['status']] ?? $r['status'];
+            $r['stage_label'] = $r['project_stage'] ? (sp_project_stages()[$r['project_stage']] ?? $r['project_stage']) : null;
+            $r['attachments'] = sp_decode_attachments($r['attachments_json'] ?? null);
             $r['has_attachment'] = !empty($r['attachment_key']);
         }
         json_response(['success' => true, 'message' => 'Project requests fetched', 'data' => $rows, 'meta' => pagination_meta($page, $limit, $total)]);
@@ -1414,6 +1887,13 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
         stream_upload($row['attachment_key'], $row['attachment_name'], $row['attachment_type']);
     }
 
+    if ($method === 'GET' && $action === 'file') {
+        $files = sp_decode_attachments($row['attachments_json'] ?? null);
+        $index = (int) ($_GET['i'] ?? 0);
+        if (!isset($files[$index])) { error_response('Attachment not found', 404); }
+        stream_upload($files[$index]['key'], $files[$index]['fileName'], $files[$index]['fileType']);
+    }
+
     if ($method === 'GET' && $action === 'activity') {
         $log = $pdo->prepare('SELECT * FROM project_activity_logs WHERE project_request_id = ? ORDER BY id DESC');
         $log->execute([$id]);
@@ -1425,10 +1905,17 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
         $log->execute([$id]);
         unset($row['ip_hash'], $row['consent_given']);
         $row['activity'] = $log->fetchAll();
-        $row['whatsapp_link'] = sp_whatsapp_link($row['whatsapp']);
+        $row['whatsapp_link'] = sp_whatsapp_link($row['whatsapp'], 'Hello ' . $row['name'] . ', regarding your project request ' . $row['request_reference'] . '.');
         $row['category_label'] = sp_label(sp_project_categories(), $row['project_category'], $row['custom_category']);
         $row['duration_label'] = sp_label(sp_durations(), (string) $row['project_duration'], $row['custom_duration']);
         $row['status_label'] = sp_project_statuses()[$row['status']] ?? $row['status'];
+        $row['stage_label'] = $row['project_stage'] ? (sp_project_stages()[$row['project_stage']] ?? $row['project_stage']) : null;
+        $yesNo = sp_yes_no_partial();
+        $row['has_uiux_label'] = $yesNo[$row['has_uiux'] ?? ''] ?? null;
+        $row['has_backend_label'] = $yesNo[$row['has_backend'] ?? ''] ?? null;
+        $row['has_source_code_label'] = $yesNo[$row['has_source_code'] ?? ''] ?? null;
+        $row['attachments'] = sp_decode_attachments($row['attachments_json'] ?? null);
+        unset($row['attachments_json']);
         json_response(['success' => true, 'message' => 'Project request fetched', 'data' => $row]);
     }
 
@@ -1446,7 +1933,12 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
             $row['request_reference'] . ' is now ' . sp_project_statuses()[$new] . '.', $row['request_reference'], $id);
 
         $stmt->execute([$id]);
-        json_response(['success' => true, 'message' => 'Project status updated', 'data' => $stmt->fetch()]);
+        $updated = $stmt->fetch();
+        $updated['status_label'] = sp_project_statuses()[$new] ?? $new;
+        $updated['category_label'] = sp_label(sp_project_categories(), $updated['project_category'], $updated['custom_category']);
+        sp_email_project_status($updated, $new);
+
+        json_response(['success' => true, 'message' => 'Project status updated', 'data' => $updated]);
     }
 
     if ($method === 'POST' && $action === 'notes') {
@@ -1469,19 +1961,35 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
             $quoted !== null ? 'Quotation set to ' . number_format($quoted, 2) . ' ' . $row['currency'] . '.' : 'Quotation cleared.',
             $row['quoted_amount'], $quoted);
         $stmt->execute([$id]);
-        json_response(['success' => true, 'message' => 'Quotation saved', 'data' => $stmt->fetch()]);
+        $updated = $stmt->fetch();
+        sp_email_project_status($updated, $row['status']);
+        json_response(['success' => true, 'message' => 'Quotation saved', 'data' => $updated]);
+    }
+
+    if ($method === 'POST' && $action === 'final-cost') {
+        $body = read_json_body() ?: [];
+        $final = isset($body['final_cost']) && $body['final_cost'] !== '' ? (float) $body['final_cost'] : null;
+        if ($final !== null && $final < 0) { error_response('Final cost cannot be negative.', 422); }
+        $pdo->prepare('UPDATE project_requests SET final_cost = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute([$final, $id]);
+        sp_log_activity('project_activity_logs', 'project_request_id', $id, 'final_cost_set',
+            $final !== null ? 'Final cost set to ' . number_format($final, 2) . ' ' . $row['currency'] . '.' : 'Final cost cleared.',
+            $row['final_cost'], $final);
+        $stmt->execute([$id]);
+        json_response(['success' => true, 'message' => 'Final cost saved', 'data' => $stmt->fetch()]);
     }
 
     if ($method === 'POST' && $action === 'assign') {
         $body = read_json_body() ?: [];
         $consultant = clean_text($body['assigned_consultant'] ?? '', 200) ?: null;
+        $developer = clean_text($body['assigned_developer'] ?? '', 200) ?: null;
         $team = clean_text($body['assigned_team'] ?? '', 200) ?: null;
-        $pdo->prepare('UPDATE project_requests SET assigned_consultant = ?, assigned_team = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-            ->execute([$consultant, $team, $id]);
+        $pdo->prepare('UPDATE project_requests SET assigned_consultant = ?, assigned_developer = ?, assigned_team = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute([$consultant, $developer, $team, $id]);
         sp_log_activity('project_activity_logs', 'project_request_id', $id, 'assigned',
-            'Consultant: ' . ($consultant ?: '—') . ' · Team: ' . ($team ?: '—'),
-            trim(($row['assigned_consultant'] ?? '') . '|' . ($row['assigned_team'] ?? '')),
-            trim(($consultant ?? '') . '|' . ($team ?? '')));
+            'Consultant: ' . ($consultant ?: '—') . ' · Developer: ' . ($developer ?: '—') . ' · Team: ' . ($team ?: '—'),
+            trim(($row['assigned_consultant'] ?? '') . '|' . ($row['assigned_developer'] ?? '') . '|' . ($row['assigned_team'] ?? '')),
+            trim(($consultant ?? '') . '|' . ($developer ?? '') . '|' . ($team ?? '')));
         $stmt->execute([$id]);
         json_response(['success' => true, 'message' => 'Assignment saved', 'data' => $stmt->fetch()]);
     }
@@ -1519,9 +2027,23 @@ function sp_admin_projects($method, $path, $pdo, $id = null, $action = null)
         }
         foreach ([
             'short_description' => 600, 'long_description' => 12000, 'admin_notes' => 12000,
-            'assigned_consultant' => 200, 'assigned_team' => 200, 'university' => 220, 'degree' => 220,
+            'assigned_consultant' => 200, 'assigned_developer' => 200, 'assigned_team' => 200,
+            'university' => 220, 'degree' => 220, 'semester' => 60, 'supervisor_name' => 200,
+            'project_title' => 240, 'expected_completion_date' => 20,
         ] as $key => $max) {
             if (array_key_exists($key, $body)) { $fields[$key] = clean_text($body[$key], $max) ?: null; }
+        }
+        if (array_key_exists('project_stage', $body)) {
+            $stage = strtolower(clean_text($body['project_stage'], 60));
+            $fields['project_stage'] = ($stage !== '' && isset(sp_project_stages()[$stage])) ? $stage : null;
+        }
+        foreach (['has_uiux', 'has_backend', 'has_source_code'] as $flag) {
+            if (!array_key_exists($flag, $body)) { continue; }
+            $value = strtolower(clean_text($body[$flag], 20));
+            $fields[$flag] = isset(sp_yes_no_partial()[$value]) ? $value : null;
+        }
+        if (array_key_exists('final_cost', $body)) {
+            $fields['final_cost'] = ($body['final_cost'] === '' || $body['final_cost'] === null) ? null : (float) $body['final_cost'];
         }
         if (array_key_exists('project_duration', $body)) {
             $d = strtolower(clean_text($body['project_duration'], 60));
@@ -1700,13 +2222,19 @@ function sp_admin_settings($method, $pdo)
                     'consultation_categories' => sp_consultation_categories(),
                     'project_categories' => sp_project_categories(),
                     'durations' => sp_durations(),
+                    'degrees' => sp_degrees(),
+                    'project_stages' => sp_project_stages(),
+                    'yes_no_partial' => sp_yes_no_partial(),
                     'showcase_categories' => sp_showcase_categories(),
                     'consultation_statuses' => sp_consultation_statuses(),
                     'project_statuses' => sp_project_statuses(),
                 ],
+                'availability' => sp_availability_summary(),
                 'limits' => [
                     'max_file_size' => STUDENT_MAX_FILE_SIZE,
-                    'allowed_extensions' => ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'zip'],
+                    'allowed_extensions' => sp_upload_extensions(),
+                    'allowed_types_text' => sp_allowed_attachment_mimes_text(),
+                    'max_files' => 5,
                     'rate_limit' => STUDENT_RATE_LIMIT,
                     'rate_window' => STUDENT_RATE_WINDOW,
                 ],
@@ -1716,7 +2244,10 @@ function sp_admin_settings($method, $pdo)
 
     if ($method === 'PATCH' || $method === 'PUT') {
         $body = read_json_body() ?: [];
-        $allowed = ['slot_duration_minutes', 'slot_start_time', 'slot_end_time', 'slot_days_ahead', 'slot_notice_hours', 'slot_blocked_dates'];
+        $allowed = [
+            'slot_duration_minutes', 'slot_start_time', 'slot_end_time', 'slot_days_ahead', 'slot_notice_hours',
+            'slot_blocked_dates', 'slot_working_days', 'slot_holidays',
+        ];
         $changed = [];
 
         foreach ($allowed as $key) {
@@ -1728,13 +2259,22 @@ function sp_admin_settings($method, $pdo)
             if (in_array($key, ['slot_start_time', 'slot_end_time'], true) && $value !== '' && !preg_match('/^\d{2}:\d{2}$/', $value)) {
                 error_response('Times must be in HH:MM format.', 422, [$key => 'Use HH:MM.']);
             }
-            if ($key === 'slot_blocked_dates') {
-                $dates = array_values(array_filter(array_map('trim', explode(',', $value))));
+            if ($key === 'slot_working_days') {
+                $days = array_values(array_unique(array_filter(array_map('intval', explode(',', $value)), fn($d) => $d >= 1 && $d <= 7)));
+                if (!$days) {
+                    error_response('Select at least one working day.', 422, ['slot_working_days' => 'Pick the days you hold consultations.']);
+                }
+                sort($days);
+                $value = implode(',', $days);
+            }
+            if (in_array($key, ['slot_blocked_dates', 'slot_holidays'], true)) {
+                $dates = array_values(array_unique(array_filter(array_map('trim', explode(',', $value)))));
                 foreach ($dates as $d) {
                     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $d)) {
-                        error_response('Blocked dates must be YYYY-MM-DD.', 422, ['slot_blocked_dates' => 'Invalid date: ' . $d]);
+                        error_response('Dates must be YYYY-MM-DD.', 422, [$key => 'Invalid date: ' . $d]);
                     }
                 }
+                sort($dates);
                 $value = implode(',', $dates);
             }
             if (in_array($key, ['slot_days_ahead', 'slot_notice_hours'], true)) {
@@ -1746,6 +2286,37 @@ function sp_admin_settings($method, $pdo)
 
         json_response(['success' => true, 'message' => 'Settings saved', 'data' => ['updated' => $changed]]);
     }
+}
+
+/**
+ * Availability admin: the configured clinic window plus every upcoming booking,
+ * so the admin can see what is already committed before changing the calendar.
+ */
+function sp_admin_availability($pdo)
+{
+    require_admin();
+
+    $summary = sp_availability_summary();
+    $summary['booked'] = $pdo->query(
+        "SELECT preferred_date AS date, preferred_time AS start_time, end_time, status, booking_reference, name
+         FROM consultation_requests
+         WHERE preferred_date >= CURRENT_DATE AND status IN ('pending','confirmed','rescheduled')
+         ORDER BY preferred_date ASC, preferred_time ASC LIMIT 200"
+    )->fetchAll();
+
+    $open = [];
+    for ($i = 0; $i < 14; $i++) {
+        $date = date('Y-m-d', strtotime('+' . $i . ' days'));
+        $result = sp_available_slots($date, $pdo);
+        $open[$date] = [
+            'available' => $result['reason'] === 'ok',
+            'reason' => $result['reason'],
+            'slot_count' => count($result['slots']),
+        ];
+    }
+    $summary['next_two_weeks'] = $open;
+
+    json_response(['success' => true, 'message' => 'Availability fetched', 'data' => $summary]);
 }
 
 function sp_admin_notifications($method, $pdo, $id = null)
@@ -1792,13 +2363,22 @@ function handle_student_module($method, $path, $pdo)
                 'consultation_categories' => sp_consultation_categories(),
                 'project_categories' => sp_project_categories(),
                 'durations' => sp_durations(),
+                'degrees' => sp_degrees(),
+                'project_stages' => sp_project_stages(),
+                'yes_no_partial' => sp_yes_no_partial(),
                 'showcase_categories' => sp_showcase_categories(),
                 'duration_minutes' => sp_slot_duration(),
                 'slot_start_time' => sp_setting('slot_start_time', '11:00'),
                 'slot_end_time' => sp_setting('slot_end_time', '18:00'),
                 'days_ahead' => (int) sp_setting('slot_days_ahead', 30),
+                'working_days' => sp_working_days(),
+                'closed_dates' => sp_closed_dates(),
+                'timezone' => 'Asia/Karachi (PKT, UTC+5)',
+                'timezone_label' => 'Pakistan Standard Time (PKT / UTC+5)',
                 'max_file_size' => STUDENT_MAX_FILE_SIZE,
-                'allowed_extensions' => ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'zip'],
+                'allowed_extensions' => sp_upload_extensions(),
+                'allowed_types_text' => sp_allowed_attachment_mimes_text(),
+                'max_files' => 5,
                 'privacy_policy_url' => '/privacy-policy',
             ],
         ]);
@@ -1817,6 +2397,11 @@ function handle_student_module($method, $path, $pdo)
                 'duration_minutes' => $result['duration'] ?? sp_slot_duration(),
                 'available' => $result['reason'] === 'ok',
                 'reason' => $result['reason'],
+                'timezone' => 'Asia/Karachi (PKT, UTC+5)',
+                'timezone_label' => 'Pakistan Standard Time (PKT / UTC+5)',
+                'end_time' => $result['reason'] === 'ok'
+                    ? sp_slot_minutes_to_string((int) date('H', strtotime($result['slots'][0])) * 60 + (int) date('i', strtotime($result['slots'][0])) + (int) ($result['duration'] ?? sp_slot_duration()))
+                    : null,
             ],
         ]);
     }
@@ -1831,6 +2416,10 @@ function handle_student_module($method, $path, $pdo)
 
     if ($method === 'GET' && preg_match('#^/api/student/consultations/([A-Za-z0-9-]+)$#', $path, $m)) {
         return sp_lookup_consultation($pdo, $m[1]);
+    }
+
+    if ($method === 'GET' && preg_match('#^/api/student/projects/([A-Za-z0-9-]+)$#', $path, $m)) {
+        return sp_lookup_project($pdo, $m[1]);
     }
 
     if ($method === 'GET' && $path === '/api/student/showcase') {
@@ -1872,6 +2461,10 @@ function handle_student_module($method, $path, $pdo)
 
     if (($method === 'GET' || $method === 'PATCH' || $method === 'PUT') && $path === '/api/admin/student/settings') {
         return sp_admin_settings($method, $pdo);
+    }
+
+    if ($method === 'GET' && $path === '/api/admin/student/availability') {
+        return sp_admin_availability($pdo);
     }
 
     if (preg_match('#^/api/admin/student/notifications(?:/(\d+))?$#', $path, $m)) {

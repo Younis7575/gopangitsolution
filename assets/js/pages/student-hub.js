@@ -1,10 +1,13 @@
 /* ==========================================================================
    Student Project Hub — front-end behaviour.
 
-   Serves both /student-projects (landing: ecosystem, journey, showcase) and
-   /student-projects/consultation (slot picker + both forms + lookup). Every
-   block guards on its own root element, so one file can be loaded on both
-   pages without branching on the URL.
+   Serves /student-projects (landing: ecosystem, journey, showcase),
+   /student-projects/consultation (slot picker + booking + lookup) and
+   /student-projects/project-request (the full development brief). Every block
+   guards on its own root element, so one file covers all three pages and each
+   page only wires up the parts it actually contains. The two forms are
+   deliberately separate flows with separate endpoints — nothing here merges
+   them into one submission.
 
    Server-side validation is authoritative: the API re-checks every field and
    re-checks slot availability before inserting. The client only gives faster
@@ -364,7 +367,7 @@
 
         var alertBox = $('#sp-form-alert');
         var result = $('#sp-result');
-        var lastPanel = 'book';
+        var lastPanel = form ? 'book' : 'request';
         var dateInput = $('#c-date');
         var slotWrap = $('#c-slots');
         var slotNote = $('#c-slots-note');
@@ -409,7 +412,7 @@
             }
         }
 
-        /* ---------- tabs ---------- */
+        /* ---------- tabs (only on pages that still have two panels) ---------- */
         $$('.sp-tab').forEach(function (tab) {
             tab.addEventListener('click', function () {
                 var target = tab.dataset.panel;
@@ -460,19 +463,35 @@
                 config = (body && body.data) || {};
                 fillSelect($('#c-category'), config.consultation_categories || {});
                 fillSelect($('#p-category'), config.project_categories || {});
+                fillSelect($('#c-degree'), config.degrees || {});
+                fillSelect($('#p-degree'), config.degrees || {});
+                fillSelect($('#p-stage'), config.project_stages || {});
                 fillSelect($('#p-duration'), config.durations || {});
                 var duration = $('#p-duration');
                 if (duration) {
                     duration.insertAdjacentHTML(
                         'beforeend', '<option value="custom">Something else</option>');
                 }
-                if (config.max_file_size) {
-                    var mb = Math.round(config.max_file_size / (1024 * 1024));
+                var help = config.allowed_types_text;
+                if (help) {
                     ['#c-file-help', '#p-file-help'].forEach(function (sel) {
                         var el = $(sel);
-                        if (el) { el.textContent += ' Maximum ' + mb + ' MB.'; }
+                        if (el && el.getAttribute('data-types') === null) {
+                            el.textContent = 'Accepted: ' + help + '.';
+                            el.setAttribute('data-types', '');
+                        }
                     });
                 }
+                ['#c-category', '#p-category', '#c-degree', '#p-degree'].forEach(function (sel) {
+                    var select = $(sel);
+                    if (select) {
+                        select.addEventListener('change', function () {
+                            var isDegree = sel === '#c-degree' || sel === '#p-degree';
+                            toggleCustom(select, select.closest('form').querySelector(
+                                isDegree ? '[data-custom-degree]' : '[data-custom-category]'));
+                        });
+                    }
+                });
                 initDateBounds();
             })
             .catch(function () {
@@ -505,7 +524,7 @@
             }).join('');
             timeInput.value = '';
             slotNote.textContent = (config ? config.slot_start_time + '–' + config.slot_end_time : '') +
-                ' · ' + (config ? config.duration_minutes : 30) + ' minutes each. Times are Pakistan Standard Time.';
+                ' · ' + (config ? config.duration_minutes : 30) + ' minutes each · Pakistan Standard Time (PKT / UTC+5)';
         }
 
         var slotToken = 0;
@@ -529,6 +548,10 @@
                     if (data.reason === 'out_of_range') {
                         renderSlots([], 'That date is outside the booking window. Please choose a date within the next ' +
                             (config ? config.days_ahead : 30) + ' days.');
+                        return;
+                    }
+                    if (data.reason === 'closed') {
+                        renderSlots([], 'We do not hold consultations on this date — it is outside our working days or blocked. Please choose another day.');
                         return;
                     }
                     if (data.available && (!data.slots || !data.slots.length)) {
@@ -569,7 +592,20 @@
                 button.textContent = 'Sending…';
                 alert('busy', 'Submitting your request…');
 
-                fetch(url, { method: 'POST', body: new FormData(form) })
+                var payload = new FormData(form);
+
+                /* "Other" degree is stored as free text rather than the literal
+                   string "other", so the consultant sees the real programme.
+                   The value is patched on the FormData rather than assigned to
+                   the select: a select with no matching option deselects
+                   itself and then drops out of the submission entirely. */
+                var degree = $('[name="degree"]', form);
+                var custom = $('[name="custom_degree"]', form);
+                if (degree && custom && degree.value === 'other' && custom.value.trim()) {
+                    payload.set('degree', custom.value.trim());
+                }
+
+                fetch(url, { method: 'POST', body: payload })
                     .then(function (r) {
                         return r.json().then(function (body) {
                             return { status: r.status, body: body };
@@ -637,30 +673,23 @@
             form.addEventListener('submit', submit(form, API + '/student/consultations', statusEl, button, function (data) {
                 lastPanel = 'book';
                 showResult({
-                    title: 'Your consultation request is in',
-                    text: 'We have emailed your booking reference. Our team will review the request, confirm the slot and share a Google Meet link. You can check the status any time below.',
+                    title: 'Request Received',
+                    text: 'Your consultation request has been received. Our team will review your project details and confirm your meeting. You get a confirmation email with this reference, and the Google Meet link appears once the slot is confirmed.',
                     reference: data.booking_reference,
                     rows: [
-                        ['Booking reference', data.booking_reference],
-                        ['Name', data.name],
-                        ['Project category', data.project_category_label],
+                        ['Request ID', data.booking_reference],
+                        ['Student name', data.name],
+                        ['Project', data.project_title || data.short_description],
+                        ['Category', data.project_category_label],
                         ['Date', data.preferred_date],
-                        ['Time', data.preferred_time + ' (Pakistan Standard Time)'],
+                        ['Time', data.preferred_time + (data.end_time ? ' – ' + data.end_time : '') + ' · PKT (UTC+5)'],
                         ['Duration', (data.duration_minutes || 30) + ' minutes'],
-                        ['Summary', data.short_description],
-                        ['Status', data.status_label || 'Pending']
+                        ['Status', data.status_label === 'Pending' ? 'Pending Confirmation' : (data.status_label || 'Pending Confirmation')]
                     ]
                 });
                 form.reset();
                 if (slotWrap) { renderSlots([], 'Choose a date to see open slots.'); }
             }));
-
-            var cat = $('#c-category');
-            if (cat) {
-                cat.addEventListener('change', function () {
-                    toggleCustom(cat, $('[data-custom-category]', form));
-                });
-            }
         }
 
         if (projectForm) {
@@ -669,28 +698,23 @@
             projectForm.addEventListener('submit', submit(projectForm, API + '/student/projects', pStatus, pButton, function (data) {
                 lastPanel = 'request';
                 showResult({
-                    title: 'Your project request has been submitted',
-                    text: 'We have emailed your request reference. A consultant will review the brief and come back with a quotation and plan. Nothing is approved automatically — you decide after you see it.',
+                    title: 'Request Received',
+                    text: 'We have emailed your request reference. A consultant will review the brief, your stage and your budget range, then contact you with scope and a quotation. Nothing is approved automatically and no final price is promised here.',
                     reference: data.request_reference,
                     rows: [
-                        ['Request reference', data.request_reference],
-                        ['Name', data.name],
-                        ['Project category', data.project_category_label],
+                        ['Request ID', data.request_reference],
+                        ['Project title', data.project_title || data.short_description],
+                        ['Category', data.project_category_label],
+                        ['Project stage', data.project_stage_label || '—'],
                         ['Expected duration', data.duration_label],
+                        ['Expected completion', data.expected_completion_date || 'To be agreed'],
                         ['Budget range', money(data.budget_min, data.budget_max, data.currency || 'PKR')],
-                        ['Summary', data.short_description],
-                        ['Status', data.status_label || 'Pending review']
+                        ['Status', data.status_label || 'Pending Review']
                     ]
                 });
                 projectForm.reset();
             }));
 
-            var pCat = $('#p-category');
-            if (pCat) {
-                pCat.addEventListener('change', function () {
-                    toggleCustom(pCat, $('[data-custom-category]', projectForm));
-                });
-            }
             var duration = $('#p-duration');
             if (duration) {
                 duration.addEventListener('change', function () {
@@ -710,6 +734,10 @@
                 $$('.sp-tabs').forEach(function (t) { t.hidden = false; });
                 var tab = $('.sp-tab[data-panel="' + lastPanel + '"]') || $('.sp-tab');
                 if (tab) { tab.click(); }
+                ['#sp-panel-book', '#sp-panel-request'].forEach(function (sel) {
+                    var panel = $(sel);
+                    if (panel) { panel.hidden = (sel !== '#sp-panel-' + lastPanel); }
+                });
                 clearAlert();
             });
         }
@@ -736,6 +764,10 @@
         var lookupForm = $('#sp-lookup-form');
         if (lookupForm) {
             var lookupResult = $('#sp-lookup-result');
+            /* The consultation page looks up bookings, the project-request page
+               looks up development requests — same box, different endpoint. */
+            var lookupKind = $('#sp-project-form') || lookupForm.closest('.sp-result').querySelector('#sp-panel-request')
+                ? 'projects' : 'consultations';
             lookupForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 clearErrors(lookupForm);
@@ -747,7 +779,7 @@
                 lookupResult.innerHTML = '<p class="mb-0" style="color:var(--gis-text);">Checking…</p>';
 
                 btn.disabled = true;
-                fetch(API + '/student/consultations/' + encodeURIComponent(ref) + '?email=' + encodeURIComponent(email), {
+                fetch(API + '/student/' + lookupKind + '/' + encodeURIComponent(ref) + '?email=' + encodeURIComponent(email), {
                     headers: { Accept: 'application/json' }
                 })
                     .then(function (r) {
@@ -757,16 +789,28 @@
                         btn.disabled = false;
                         if (res.status === 200 && res.body && res.body.success) {
                             var d = res.body.data;
-                            var rows = [
-                                ['Booking reference', d.booking_reference],
-                                ['Name', d.name],
-                                ['Category', d.project_category_label],
-                                ['Date', d.preferred_date],
-                                ['Time', d.preferred_time + ' (Pakistan Standard Time)'],
-                                ['Summary', d.short_description],
-                                ['Status', d.status_label]
-                            ];
-                            if (d.google_meet_link) { rows.push(['Google Meet', d.google_meet_link]); }
+                            var rows;
+                            if (lookupKind === 'projects') {
+                                rows = [
+                                    ['Request reference', d.request_reference],
+                                    ['Project title', d.project_title || d.short_description],
+                                    ['Category', d.project_category_label],
+                                    ['Stage', d.stage_label || '—'],
+                                    ['Expected duration', d.duration_label],
+                                    ['Budget range', money(d.budget_min, d.budget_max, d.currency || 'PKR')],
+                                    ['Status', d.status_label]
+                                ];
+                            } else {
+                                rows = [
+                                    ['Booking reference', d.booking_reference],
+                                    ['Name', d.name],
+                                    ['Project', d.project_title || d.short_description],
+                                    ['Date', d.preferred_date],
+                                    ['Time', d.preferred_time + (d.end_time ? ' – ' + d.end_time : '') + ' · PKT (UTC+5)'],
+                                    ['Status', d.status_label]
+                                ];
+                                if (d.google_meet_link) { rows.push(['Google Meet', d.google_meet_link]); }
+                            }
                             lookupResult.innerHTML =
                                 '<h3 style="font-family:var(--gis-display);font-size:1.05rem;margin-bottom:14px;">Booking status</h3>' +
                                 '<dl class="sp-summary mb-0" style="margin:0;">' +

@@ -74,7 +74,9 @@
             opt.headers['Content-Type'] = 'application/json';
             opt.body = JSON.stringify(opt.body);
         }
-        if (opt.method && opt.method !== 'GET') {
+        /* Every call is authenticated, including the GET reads — the API
+           rejects an unauthenticated admin request whatever the verb. */
+        if (token) {
             opt.headers.Authorization = 'Bearer ' + token;
         }
         var res = await fetch(API + path, opt);
@@ -287,19 +289,49 @@
 
                 var budget = isConsult
                     ? '<span class="sp-nowrap">—</span>'
-                    : '<span class="sp-nowrap">' + esc(money(r.budget_max || r.budget_min, r.currency)) + '</span>';
+                    : '<span class="sp-nowrap">' + esc(money(r.budget_min, r.currency)) + ' – ' + esc(money(r.budget_max, r.currency)) + '</span>';
 
+                var student = '<td>' + esc(r.name) + '<br><small style="color:var(--gis-muted);">' + esc(r.email) + '</small></td>';
+
+                if (isConsult) {
+                    /* Request ID · Student · University · WhatsApp · Email ·
+                       Project Title · Category · Date · Time · Status · Created */
+                    return '<tr data-row="' + esc(r.id) + '">' +
+                        '<td><span class="sp-ref">' + esc(ref) + '</span></td>' +
+                        student +
+                        '<td>' + esc(r.university || '—') + (r.semester ? '<br><small style="color:var(--gis-muted);">Sem ' + esc(r.semester) + '</small>' : '') + '</td>' +
+                        '<td><a href="' + esc(r.whatsapp_link || '#') + '" target="_blank" rel="noopener noreferrer" class="sp-nowrap">' + esc(r.whatsapp_display || r.whatsapp || '—') + '</a></td>' +
+                        '<td>' + esc(r.email) + '</td>' +
+                        '<td>' + esc(r.project_title || r.short_description) + '</td>' +
+                        '<td>' + esc(r.category_label) + '</td>' +
+                        '<td><span class="sp-nowrap">' + esc(r.preferred_date) + '</span></td>' +
+                        '<td><span class="sp-nowrap">' + esc(r.preferred_time) + (r.end_time ? ' – ' + esc(r.end_time) : '') + '</span></td>' +
+                        '<td>' + statusPill(r.status, r.status_label) + '</td>' +
+                        '<td><span class="sp-nowrap" style="color:var(--gis-muted);">' + esc(stamp(r.created_at)) + '</span></td>' +
+                        '<td><div class="sp-row-actions">' +
+                            '<button data-open="' + esc(r.id) + '" class="ok"><i class="fal fa-eye"></i> View</button>' +
+                            (r.has_attachment ? '<a href="' + API + '/consultations/' + esc(r.id) + '/attachment" target="_blank" rel="noopener noreferrer" title="' + esc(r.attachment_name || 'Attachment') + '"><i class="fal fa-paperclip"></i></a>' : '') +
+                        '</div></td>' +
+                    '</tr>';
+                }
+
+                /* Request ID · Student · University · Category · Project ·
+                   Duration · Budget Min · Budget Max · Status · Date · Actions */
                 return '<tr data-row="' + esc(r.id) + '">' +
-                    '<td><span class="sp-ref">' + esc(ref) + '</span><br><small style="color:var(--gis-muted);">' + esc(stamp(r.created_at)) + '</small></td>' +
-                    '<td>' + esc(r.name) + '<br><small style="color:var(--gis-muted);">' + esc(r.email) + '</small></td>' +
+                    '<td><span class="sp-ref">' + esc(ref) + '</span></td>' +
+                    student +
+                    '<td>' + esc(r.university || '—') + '</td>' +
                     '<td>' + esc(r.category_label) + '</td>' +
-                    '<td>' + when + '</td>' +
-                    '<td>' + budget + '</td>' +
+                    '<td>' + esc(r.project_title || r.short_description) + (r.stage_label ? '<br><small style="color:var(--gis-muted);">' + esc(r.stage_label) + '</small>' : '') + '</td>' +
+                    '<td><span class="sp-nowrap">' + esc(r.duration_label || '—') + '</span></td>' +
+                    '<td><span class="sp-nowrap">' + esc(money(r.budget_min, r.currency)) + '</span></td>' +
+                    '<td><span class="sp-nowrap">' + esc(money(r.budget_max, r.currency)) + '</span></td>' +
                     '<td>' + statusPill(r.status, r.status_label) + '</td>' +
+                    '<td><span class="sp-nowrap" style="color:var(--gis-muted);">' + esc(stamp(r.created_at)) + '</span></td>' +
                     '<td><div class="sp-row-actions">' +
-                        '<button data-open="' + esc(r.id) + '" class="ok"><i class="fal fa-eye"></i> Open</button>' +
-                        (r.whatsapp_link ? '<a href="' + esc(r.whatsapp_link) + '" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>' : '') +
-                        (r.has_attachment ? '<a href="' + API + '/' + kind + 's/' + esc(r.id) + '/attachment" target="_blank" rel="noopener noreferrer" title="' + esc(r.attachment_name || 'Attachment') + '"><i class="fal fa-paperclip"></i></a>' : '') +
+                        '<button data-open="' + esc(r.id) + '" class="ok"><i class="fal fa-eye"></i> View</button>' +
+                        (r.whatsapp_link ? '<a href="' + esc(r.whatsapp_link) + '" target="_blank" rel="noopener noreferrer" title="WhatsApp student"><i class="fab fa-whatsapp"></i></a>' : '') +
+                        (r.has_attachment ? '<a href="' + API + '/projects/' + esc(r.id) + '/attachment" target="_blank" rel="noopener noreferrer" title="' + esc(r.attachment_name || 'Attachment') + '"><i class="fal fa-paperclip"></i></a>' : '') +
                     '</div></td>' +
                 '</tr>';
             }).join('');
@@ -351,18 +383,62 @@
             $dSub.textContent = row.name + ' · ' + row.category_label;
 
             var meetLink = isConsult ? row.google_meet_link : row.meeting_link;
+            var whatsappHtml = row.whatsapp_link
+                ? '<a href="' + esc(row.whatsapp_link) + '" target="_blank" rel="noopener noreferrer">' +
+                  esc(row.whatsapp_display || row.whatsapp) + '</a>'
+                : esc(row.whatsapp_display || row.whatsapp);
+
             var detail =
-                '<section><h3>Request</h3><dl class="sp-detail-list">' +
                     field('Name', row.name) +
                     field('Email', row.email, row.email ? '<a href="mailto:' + esc(row.email) + '">' + esc(row.email) + '</a>' : '') +
-                    field('WhatsApp', row.whatsapp_display || row.whatsapp, row.whatsapp_link ? '<a href="' + esc(row.whatsapp_link) + '" target="_blank" rel="noopener noreferrer">' + esc(row.whatsapp_display || row.whatsapp) + '</a>' : esc(row.whatsapp_display || row.whatsapp)) +
+                    field('WhatsApp', row.whatsapp_display || row.whatsapp, whatsappHtml) +
                     field('University', row.university) +
                     field('Degree', row.degree) +
+                    field('Semester / Year', row.semester) +
+                    field('Supervisor', row.supervisor_name) +
                     field('Category', row.category_label) +
+                    field('Project title', row.project_title) +
                     field('Summary', row.short_description) +
-                    field('Submitted', stamp(row.created_at)) +
-                '</dl></section>' +
-                '<section><h3>Description</h3><p style="color:var(--gis-text);line-height:1.7;font-size:0.9rem;white-space:pre-wrap;margin:0;">' + esc(row.long_description) + '</p></section>';
+                    field('Submitted', stamp(row.created_at));
+
+            if (!isConsult) {
+                detail +=
+                    field('Project stage', row.stage_label) +
+                    field('Has UI/UX design', row.has_uiux_label) +
+                    field('Has backend / API', row.has_backend_label) +
+                    field('Has source code', row.has_source_code_label) +
+                    field('Expected duration', row.duration_label) +
+                    field('Expected completion', row.expected_completion_date) +
+                    field('Budget range', money(row.budget_min, row.currency) + ' – ' + money(row.budget_max, row.currency)) +
+                    field('Quoted amount', row.quoted_amount == null ? null : money(row.quoted_amount, row.currency)) +
+                    field('Final cost', row.final_cost == null ? null : money(row.final_cost, row.currency)) +
+                    field('Consultant', row.assigned_consultant) +
+                    field('Developer', row.assigned_developer) +
+                    field('Team', row.assigned_team) +
+                    field('Meeting link', meetLink, meetLink ? '<a href="' + esc(meetLink) + '" target="_blank" rel="noopener noreferrer">' + esc(meetLink) + '</a>' : '') +
+                    (row.attachments && row.attachments.length
+                        ? field('Uploaded files',
+                            row.attachments.map(function (f, i) {
+                                return '<a href="' + API + '/' + kind + 's/' + esc(row.id) + '/file?i=' + i +
+                                    '" target="_blank" rel="noopener noreferrer"><i class="fal fa-paperclip"></i> ' + esc(f.fileName) + '</a>';
+                            }).join('<br>'), true)
+                        : field('Uploaded files', null));
+            } else {
+                detail +=
+                    field('Meeting date', row.preferred_date) +
+                    field('Start time', row.preferred_time) +
+                    field('End time', row.end_time) +
+                    field('Timezone', row.timezone) +
+                    field('Duration', (row.duration_minutes || 30) + ' minutes') +
+                    field('Google Meet link', meetLink, meetLink ? '<a href="' + esc(meetLink) + '" target="_blank" rel="noopener noreferrer">' + esc(meetLink) + '</a>' : '') +
+                    (row.attachments && row.attachments.length
+                        ? field('Uploaded files',
+                            row.attachments.map(function (f, i) {
+                                return '<a href="' + API + '/consultations/' + esc(row.id) + '/file?i=' + i +
+                                    '" target="_blank" rel="noopener noreferrer"><i class="fal fa-paperclip"></i> ' + esc(f.fileName) + '</a>';
+                            }).join('<br>'), true)
+                        : field('Uploaded files', null));
+            }
 
             var controls;
             if (isConsult) {
@@ -385,6 +461,8 @@
                     '<section><h3>Commercials</h3><div class="sp-form-grid">' +
                         '<div class="sp-field"><label for="sp-d-quote">Quoted amount (PKR)</label>' +
                             '<input type="number" id="sp-d-quote" min="0" step="100" value="' + esc(row.quoted_amount == null ? '' : row.quoted_amount) + '"></div>' +
+                        '<div class="sp-field"><label for="sp-d-final">Final cost (PKR)</label>' +
+                            '<input type="number" id="sp-d-final" min="0" step="100" value="' + esc(row.final_cost == null ? '' : row.final_cost) + '"></div>' +
                         '<div class="sp-field"><label for="sp-d-budget">Student budget range</label>' +
                             '<input type="text" id="sp-d-budget" value="' + esc(money(row.budget_min, row.currency) + (row.budget_max ? ' – ' + money(row.budget_max, row.currency) : '')) + '" disabled></div>' +
                         '<div class="sp-field"><label for="sp-d-duration">Duration</label>' +
@@ -393,6 +471,8 @@
                     '<section><h3>Assignment</h3><div class="sp-form-grid">' +
                         '<div class="sp-field"><label for="sp-d-consultant">Consultant</label>' +
                             '<input type="text" id="sp-d-consultant" value="' + esc(row.assigned_consultant || '') + '" placeholder="Name of the consultant"></div>' +
+                        '<div class="sp-field"><label for="sp-d-developer">Developer</label>' +
+                            '<input type="text" id="sp-d-developer" value="' + esc(row.assigned_developer || '') + '" placeholder="Developer building the project"></div>' +
                         '<div class="sp-field"><label for="sp-d-team">Team</label>' +
                             '<input type="text" id="sp-d-team" value="' + esc(row.assigned_team || '') + '" placeholder="Team or squad"></div>' +
                         '<div class="sp-field wide"><label for="sp-d-meet">Meeting link</label>' +
@@ -412,7 +492,8 @@
                     statusSelect(kind, row.status) +
                 '</div></div></section>' +
                 controls +
-                '<section><h3>Description</h3><dl class="sp-detail-list">' + detail + '</dl></section>' +
+                '<section><h3>Request details</h3><dl class="sp-detail-list">' + detail + '</dl></section>' +
+                '<section><h3>Description</h3><p class="sp-detail-text">' + esc(row.long_description) + '</p></section>' +
                 '<section><h3>Internal notes</h3><div class="sp-field" id="sp-notes-field">' +
                     '<label for="sp-d-notes">Notes (never shown to the student)</label>' +
                     '<textarea id="sp-d-notes" rows="4">' + esc(row.admin_notes || '') + '</textarea>' +
@@ -421,18 +502,19 @@
                     (activity ? '<ul class="sp-timeline">' + activity + '</ul>' : '<p style="color:var(--gis-muted);font-size:0.86rem;margin:0;">No activity recorded yet.</p>') +
                 '</section>';
 
-            /* Drop the duplicated "Request"/"Description" block built above. */
-            var dup = $dBody.querySelectorAll('section')[2];
-            if (dup && /Description/.test(dup.querySelector('h3').textContent)) { dup.remove(); }
-
             $dFoot.innerHTML =
                 '<button type="button" class="theme-btn" data-act="save-status">Save status</button>' +
                 (isConsult
                     ? '<button type="button" class="admin-ghost-btn" data-act="save-meet">Save Meet link</button>' +
                       '<button type="button" class="admin-ghost-btn" data-act="save-schedule">Save schedule</button>'
                     : '<button type="button" class="admin-ghost-btn" data-act="save-quote">Save quote</button>' +
+                      '<button type="button" class="admin-ghost-btn" data-act="save-final">Save final cost</button>' +
                       '<button type="button" class="admin-ghost-btn" data-act="save-assign">Save assignment</button>' +
                       '<button type="button" class="admin-ghost-btn" data-act="save-meeting">Save meeting link</button>') +
+                (current.whatsapp_link
+                    ? '<a class="admin-ghost-btn" href="' + esc(current.whatsapp_link) + '" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp Student</a>'
+                    : '') +
+                (current.email ? '<a class="admin-ghost-btn" href="mailto:' + esc(current.email) + '"><i class="fal fa-envelope" aria-hidden="true"></i> Email Student</a>' : '') +
                 '<button type="button" class="admin-ghost-btn" data-act="save-notes">Save notes</button>' +
                 '<button type="button" class="admin-ghost-btn" data-act="archive">Archive</button>';
         }
@@ -479,10 +561,20 @@
                 } else if (action === 'save-quote') {
                     await req('/' + kind + 's/' + id + '/quote', { method: 'POST', body: { quoted_amount: $('#sp-d-quote').value } });
                     toast('Quotation saved.');
+                } else if (action === 'save-final') {
+                    await req('/' + kind + 's/' + id + '/final-cost', {
+                        method: 'POST',
+                        body: { final_cost: $('#sp-d-final').value }
+                    });
+                    toast('Final cost saved.');
                 } else if (action === 'save-assign') {
                     await req('/' + kind + 's/' + id + '/assign', {
                         method: 'POST',
-                        body: { assigned_consultant: $('#sp-d-consultant').value, assigned_team: $('#sp-d-team').value }
+                        body: {
+                            assigned_consultant: $('#sp-d-consultant').value,
+                            assigned_developer: $('#sp-d-developer').value,
+                            assigned_team: $('#sp-d-team').value
+                        }
                     });
                     toast('Assignment saved.');
                 } else if (action === 'save-meeting') {
@@ -538,6 +630,16 @@
                 var map = kind === 'project' ? CONFIG.project_statuses : CONFIG.consultation_statuses;
                 sel.innerHTML = '<option value="">All statuses</option>' +
                     Object.keys(map).map(function (k) { return '<option value="' + esc(k) + '">' + esc(map[k]) + '</option>'; }).join('');
+            }
+            /* The category list lives in the vocabulary too, so the filter can
+               never drift out of sync with what the public form offers. */
+            var catSel = $('[name="project_category"]', $filters);
+            if (catSel) {
+                var cats = kind === 'project'
+                    ? (v.project_categories || {})
+                    : (v.consultation_categories || {});
+                catSel.innerHTML = '<option value="">All categories</option>' +
+                    Object.keys(cats).map(function (k) { return '<option value="' + esc(k) + '">' + esc(cats[k]) + '</option>'; }).join('');
             }
         }).catch(function () { /* filters still work without the vocabulary */ });
 
@@ -695,6 +797,45 @@
         var $vocab = $('#sp-vocabulary');
         var $notif = $('#sp-notifications');
 
+        /* A read-only picture of what the public booking page will actually
+           offer, so the admin is never guessing about the calendar. */
+        async function loadAvailability() {
+            var grid = $('#sp-avail-grid');
+            var booked = $('#sp-avail-booked');
+            if (!grid || !booked) { return; }
+            try {
+                var body = await req('/availability');
+                var a = body.data || {};
+                var week = a.next_two_weeks || {};
+                grid.innerHTML = Object.keys(week).map(function (date) {
+                    var info = week[date];
+                    var state = info.available ? (info.slot_count ? 'open' : 'full') : 'closed';
+                    var label = info.available
+                        ? info.slot_count + ' slot' + (info.slot_count === 1 ? '' : 's')
+                        : (info.reason === 'closed' ? 'clinic closed' : 'not bookable');
+                    return '<div class="sp-avail-day is-' + state + '">' +
+                        '<strong>' + esc(date) + '</strong>' +
+                        '<span>' + esc(label) + '</span></div>';
+                }).join('');
+
+                var rows = a.booked || [];
+                booked.innerHTML = rows.length
+                    ? '<div class="sp-booked-list">' + rows.map(function (r) {
+                        return '<div class="sp-booked-row">' +
+                            '<span class="sp-ref">' + esc(r.booking_reference) + '</span>' +
+                            '<span>' + esc(r.name) + '</span>' +
+                            '<span class="sp-nowrap">' + esc(r.date) + ' · ' + esc(r.start_time) +
+                                (r.end_time ? ' – ' + esc(r.end_time) : '') + ' PKT</span>' +
+                            statusPill(r.status) +
+                            '</div>';
+                    }).join('') + '</div>'
+                    : '<p class="admin-empty" style="margin:0;">No upcoming bookings.</p>';
+            } catch (e) {
+                grid.innerHTML = '<p class="admin-empty" style="margin:0;">Could not load availability.</p>';
+            }
+        }
+        loadAvailability();
+
         async function loadNotifications() {
             if (!$notif) { return; }
             try {
@@ -725,6 +866,15 @@
                 var el = $form.elements[k];
                 if (el) { el.value = s[k]; }
             });
+            /* Working days are checkboxes, so the comma list is spread back
+               across them after the generic key loop above. */
+            var dayBoxes = $$('[data-working-day]', $form);
+            if (dayBoxes.length) {
+                var active = String(s.slot_working_days || '1,2,3,4,5').split(',');
+                dayBoxes.forEach(function (box) {
+                    box.checked = active.indexOf(box.dataset.workingDay) !== -1;
+                });
+            }
             var limits = d.limits || {};
             var info = $('#sp-limits');
             if (info) {
@@ -739,6 +889,9 @@
                     ['Project statuses', d.vocabulary.project_statuses, 'New requests always start at Pending Review.'],
                     ['Consultation categories', d.vocabulary.consultation_categories, null],
                     ['Project categories', d.vocabulary.project_categories, null],
+                    ['Degrees / programs', d.vocabulary.degrees, null],
+                    ['Project stages', d.vocabulary.project_stages, null],
+                    ['Yes / No / Partially', d.vocabulary.yes_no_partial, null],
                     ['Durations', d.vocabulary.durations, null],
                     ['Showcase categories', d.vocabulary.showcase_categories, null]
                 ];
@@ -764,9 +917,14 @@
 
             var data = {};
             new FormData($form).forEach(function (v, k) { data[k] = v; });
+            var days = $$('[data-working-day]', $form)
+                .filter(function (box) { return box.checked; })
+                .map(function (box) { return box.dataset.workingDay; });
+            if ($$('[data-working-day]', $form).length) { data.slot_working_days = days.join(','); }
             try {
                 await req('/settings', { method: 'PATCH', body: data });
-                toast('Settings saved. New slots use these rules immediately.');
+                toast('Availability saved. New slots use these rules immediately.');
+                loadAvailability();
             } catch (x) {
                 toast(x.message, 'error');
                 if (x.errors) {

@@ -14,6 +14,8 @@ Disallow: /admin-project-hiring
 Disallow: /admin-projects
 Disallow: /admin-solutions
 Disallow: /admin-submissions
+Disallow: /admin-student-projects
+Disallow: /student-projects/admin
 
 # Utility endpoints and form-only pages
 Disallow: /api/

@@ -432,6 +432,75 @@
 }
 .sp-settings-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
 
+/* ---------------------------------------------------------------------------
+   Availability admin — working-day picker + a read-only calendar preview
+   ------------------------------------------------------------------------ */
+.sp-day-picker { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 8px; }
+.sp-day-picker label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--gis-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--gis-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.sp-day-picker input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sp-day-picker label:has(input:checked) {
+  border-color: transparent;
+  background: var(--gis-grad);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(43, 101, 245, 0.26);
+}
+.sp-day-picker label:has(input:focus-visible) { outline: 2px solid var(--gis-accent-text); outline-offset: 3px; }
+
+.sp-availability-preview { margin-top: 26px; }
+.sp-availability-preview h3 {
+  font-family: var(--gis-display);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--gis-ink);
+}
+.sp-avail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.sp-avail-day {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--gis-border);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.82rem;
+  color: var(--gis-muted);
+}
+.sp-avail-day strong { color: var(--gis-ink); font-size: 0.86rem; }
+.sp-avail-day.is-open { border-color: rgba(56, 221, 242, 0.4); background: rgba(56, 221, 242, 0.07); }
+.sp-avail-day.is-full { border-color: rgba(255, 186, 73, 0.4); background: rgba(255, 186, 73, 0.07); }
+.sp-avail-day.is-closed { opacity: 0.6; }
+
+.sp-booked-list { display: grid; gap: 8px; }
+.sp-booked-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 14px;
+  border-radius: 11px;
+  border: 1px solid var(--gis-border);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.84rem;
+  color: var(--gis-text);
+}
+
 @media (max-width: 991.98px) {
   .sp-showcase-row { grid-template-columns: minmax(0, 1fr); }
   .sp-showcase-thumb { width: 100%; height: 130px; }

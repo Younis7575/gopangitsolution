@@ -1,0 +1,882 @@
+/* ==========================================================================
+   Homepage Student Project Hub.
+
+   One conversion block on / that introduces the two separate journeys (free
+   consultation vs project development). It is styled from the same premium
+   tokens as the rest of the site, so it reads as part of Gopang's identity
+   rather than a bolted-on widget.
+
+   Everything decorative lives here; the copy, the two CTAs and the five steps
+   are real markup, so the section still reads correctly without JavaScript.
+   ========================================================================== */
+
+.sh-hub {
+  position: relative;
+  overflow: hidden;
+  padding: 92px 0 96px;
+}
+
+.sh-hub__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 78% 12%, rgba(43, 101, 245, 0.20), transparent 62%),
+    radial-gradient(720px 480px at 14% 78%, rgba(56, 221, 242, 0.12), transparent 64%);
+}
+.sh-hub__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(127, 166, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 166, 255, 0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(closest-side at 50% 40%, #000, transparent 78%);
+  mask-image: radial-gradient(closest-side at 50% 40%, #000, transparent 78%);
+}
+
+.sh-hub > .container { position: relative; z-index: 2; }
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.sh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 166, 255, 0.42);
+  background: rgba(43, 101, 245, 0.12);
+  color: var(--gis-accent-text);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.sh-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gis-cyan);
+  box-shadow: 0 0 0 4px rgba(56, 221, 242, 0.18);
+}
+
+.sh-head {
+  max-width: 780px;
+  margin-bottom: 44px;
+}
+.sh-head h2 {
+  font-family: var(--gis-display);
+  font-size: clamp(2rem, 3.6vw, 3.05rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.sh-head h2 span {
+  background: var(--gis-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sh-head__sub {
+  font-size: clamp(1.02rem, 1.35vw, 1.18rem);
+  line-height: 1.7;
+  color: var(--gis-ink);
+  margin-bottom: 14px;
+}
+.sh-head__body { color: var(--gis-text); line-height: 1.75; font-size: 0.98rem; margin: 0; }
+
+/* --------------------------------------------------------------------------
+   3D Student Project Hub visual
+   -------------------------------------------------------------------------- */
+.sh-stage {
+  position: relative;
+  min-height: 460px;
+  margin-bottom: 54px;
+  perspective: 1400px;
+}
+.sh-stage__scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.sh-device {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%) translateZ(60px);
+  width: min(430px, 82%);
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  padding: 10px;
+  background: linear-gradient(150deg, rgba(24, 34, 60, 0.95), rgba(9, 13, 24, 0.98));
+  border: 1px solid rgba(127, 166, 255, 0.30);
+  box-shadow:
+    0 42px 90px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(56, 221, 242, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: shFloat 9s ease-in-out infinite;
+}
+.sh-device__screen {
+  position: relative;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgba(43, 101, 245, 0.34), transparent 58%),
+    linear-gradient(160deg, #0a1020, #060911);
+  padding: 14px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+}
+.sh-device__bar { display: flex; gap: 6px; }
+.sh-device__bar i {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+.sh-device__bar i:first-child { background: #ff6b6b; }
+.sh-device__bar i:nth-child(2) { background: #ffd166; }
+.sh-device__bar i:last-child { background: #38ddf2; }
+
+.sh-dash { display: grid; gap: 8px; align-content: start; }
+.sh-dash__title {
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gis-muted);
+}
+.sh-dash__kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sh-dash__kpi {
+  padding: 8px 9px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(127, 166, 255, 0.16);
+}
+.sh-dash__kpi b {
+  display: block;
+  font-family: var(--gis-display);
+  font-size: 0.92rem;
+  color: var(--gis-ink);
+  line-height: 1.1;
+}
+.sh-dash__kpi span { font-size: 0.54rem; color: var(--gis-muted); letter-spacing: 0.06em; }
+
+.sh-dash__bars { display: flex; align-items: flex-end; gap: 6px; height: 62px; }
+.sh-dash__bars i {
+  flex: 1;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(180deg, var(--gis-cyan), rgba(43, 101, 245, 0.55));
+  animation: shBar 3.6s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+.sh-dash__rows { display: grid; gap: 6px; }
+.sh-dash__row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.56rem;
+  color: var(--gis-muted);
+}
+.sh-dash__row::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gis-cyan);
+  flex: 0 0 auto;
+}
+.sh-dash__row i {
+  display: block; height: 4px; border-radius: 3px; flex: 1;
+  background: linear-gradient(90deg, rgba(127, 166, 255, 0.5), rgba(127, 166, 255, 0.08));
+}
+.sh-dash__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gis-muted);
+}
+.sh-dash__foot b { color: var(--gis-cyan); font-weight: 700; }
+
+.sh-phone {
+  position: absolute;
+  right: 6%;
+  bottom: 6%;
+  width: clamp(104px, 15%, 148px);
+  aspect-ratio: 9 / 18.5;
+  border-radius: 20px;
+  padding: 7px;
+  background: linear-gradient(160deg, rgba(30, 42, 72, 0.96), rgba(8, 12, 22, 0.98));
+  border: 1px solid rgba(127, 166, 255, 0.34);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  transform: translateZ(140px) rotateY(-12deg) rotateZ(4deg);
+  animation: shFloatPhone 7s ease-in-out infinite;
+}
+.sh-phone__screen {
+  height: 100%;
+  border-radius: 14px;
+  background: linear-gradient(170deg, rgba(43, 101, 245, 0.30), rgba(6, 9, 17, 0.96));
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 7px;
+  padding: 10px 8px;
+  overflow: hidden;
+}
+.sh-phone__notch {
+  width: 42%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.22);
+  margin: 0 auto 2px;
+}
+.sh-phone__head {
+  height: 16px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--gis-grad), rgba(56, 221, 242, 0.7));
+}
+.sh-phone__tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; align-content: start; }
+.sh-phone__tiles i {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(127, 166, 255, 0.16);
+}
+.sh-phone__bar {
+  align-self: end;
+  height: 22px;
+  border-radius: 8px;
+  background: rgba(56, 221, 242, 0.16);
+  border: 1px solid rgba(56, 221, 242, 0.3);
+}
+
+.sh-lines { position: absolute; inset: 0; pointer-events: none; }
+.sh-lines svg { width: 100%; height: 100%; overflow: visible; }
+.sh-lines path {
+  fill: none;
+  stroke: rgba(127, 166, 255, 0.34);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 9;
+  animation: shDash 14s linear infinite;
+}
+
+.sh-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px 9px 9px;
+  border-radius: 14px;
+  border: 1px solid rgba(127, 166, 255, 0.26);
+  background: rgba(11, 16, 32, 0.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
+  transform: translateZ(var(--z, 0px));
+  animation: shFloat 8s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  z-index: 3;
+}
+.sh-node__ico {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(140deg, rgba(43, 101, 245, 0.30), rgba(56, 221, 242, 0.16));
+  border: 1px solid rgba(127, 166, 255, 0.28);
+  font-size: 0.9rem;
+  color: var(--gis-cyan);
+  flex: 0 0 auto;
+}
+.sh-node span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--gis-ink);
+  white-space: nowrap;
+}
+.sh-node[data-node="Flutter"]   { left: 4%;  top: 14%; --z: 90px; }
+.sh-node[data-node="Web"]       { left: 20%; top: 4%;  --z: 130px; --delay: -1s; }
+.sh-node[data-node="AI"]        { right: 8%; top: 6%;  --z: 150px; --delay: -2s; }
+.sh-node[data-node="UI/UX"]     { right: 2%; top: 30%; --z: 60px;  --delay: -3s; }
+.sh-node[data-node="Database"]  { left: 2%;  top: 42%; --z: 40px;  --delay: -4s; }
+.sh-node[data-node="API"]       { left: 12%; bottom: 12%; --z: 110px; --delay: -5s; }
+.sh-node[data-node="Cloud"]     { right: 16%; bottom: 4%; --z: 100px; --delay: -2.5s; }
+.sh-node[data-node="Mobile"]    { left: 32%; bottom: 2%; --z: 70px;  --delay: -1.5s; }
+.sh-node[data-node="Backend"]   { right: 26%; top: 44%; --z: 170px; --delay: -6s; }
+.sh-node[data-node="Testing"]   { right: 34%; bottom: 24%; --z: 120px; --delay: -3.5s; }
+
+.sh-stage__caption {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 166, 255, 0.24);
+  background: rgba(5, 7, 13, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gis-text);
+  white-space: nowrap;
+}
+.sh-stage__caption b { color: var(--gis-cyan); font-weight: 700; }
+
+@keyframes shFloat {
+  0%, 100% { transform: translateZ(var(--z, 0px)) translateY(0); }
+  50% { transform: translateZ(var(--z, 0px)) translateY(-13px); }
+}
+@keyframes shFloatPhone {
+  0%, 100% { transform: translateZ(140px) rotateY(-12deg) rotateZ(4deg) translateY(0); }
+  50% { transform: translateZ(140px) rotateY(-12deg) rotateZ(4deg) translateY(-15px); }
+}
+@keyframes shBar {
+  from { transform: scaleY(0.55); opacity: 0.7; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes shDash {
+  to { stroke-dashoffset: -280; }
+}
+
+/* --------------------------------------------------------------------------
+   Two paths — kept visually distinct so nobody confuses the two journeys
+   -------------------------------------------------------------------------- */
+.sh-paths {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 76px;
+}
+.sh-path {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 32px 32px;
+  border-radius: 26px;
+  border: 1px solid var(--gis-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(11, 16, 32, 0.86);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.sh-path::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(127, 166, 255, 0.5), transparent 45%, rgba(56, 221, 242, 0.32));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.sh-path:hover { transform: translateY(-7px); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.52); }
+.sh-path:hover::before { opacity: 1; }
+
+.sh-path--build::before {
+  background: linear-gradient(140deg, rgba(56, 221, 242, 0.55), transparent 45%, rgba(168, 85, 247, 0.4));
+}
+
+.sh-path__tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.sh-path--free .sh-path__tag {
+  background: rgba(56, 221, 242, 0.14);
+  border: 1px solid rgba(56, 221, 242, 0.42);
+  color: #7fe9f8;
+}
+.sh-path--build .sh-path__tag {
+  background: rgba(43, 101, 245, 0.16);
+  border: 1px solid rgba(127, 166, 255, 0.44);
+  color: var(--gis-accent-text);
+}
+
+.sh-path__ico {
+  width: 62px;
+  height: 62px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, rgba(43, 101, 245, 0.24), rgba(56, 221, 242, 0.10));
+  border: 1px solid rgba(127, 166, 255, 0.26);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+}
+.sh-path__ico i { font-size: 1.5rem; color: var(--gis-cyan); }
+
+.sh-path h3 {
+  font-family: var(--gis-display);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.sh-path > p {
+  color: var(--gis-text);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin-bottom: 22px;
+}
+.sh-path__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: grid;
+  gap: 11px;
+  flex: 1;
+}
+.sh-path__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--gis-text);
+  line-height: 1.5;
+}
+.sh-path__list li::before {
+  content: "\f00c";
+  font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free", "Font Awesome 6 Pro", "Font Awesome 6 Free", sans-serif;
+  font-weight: 900;
+  color: var(--gis-cyan);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+.sh-path__cta { align-self: flex-start; }
+.sh-path__meta {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--gis-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Five-step journey
+   -------------------------------------------------------------------------- */
+.sh-journey { position: relative; margin-bottom: 76px; }
+.sh-journey__head { max-width: 660px; margin-bottom: 40px; }
+.sh-journey__head h3 {
+  font-family: var(--gis-display);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  margin-bottom: 12px;
+}
+.sh-journey__head p { color: var(--gis-text); margin: 0; line-height: 1.7; }
+
+.sh-steps {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  padding-left: 78px;
+}
+.sh-steps__rail {
+  position: absolute;
+  left: 30px;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 3px;
+  background: rgba(127, 166, 255, 0.14);
+  overflow: hidden;
+}
+.sh-steps__rail span {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0%;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--gis-cyan), var(--gis-accent));
+  box-shadow: 0 0 18px rgba(56, 221, 242, 0.6);
+  transition: height 0.25s linear;
+}
+
+.sh-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 22px 26px;
+  border-radius: 20px;
+  border: 1px solid var(--gis-border);
+  background: rgba(11, 16, 32, 0.74);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  opacity: 0.42;
+  transform: translateX(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.sh-step.is-in { opacity: 1; transform: none; }
+.sh-step:hover {
+  border-color: rgba(127, 166, 255, 0.45);
+  background: rgba(16, 22, 42, 0.86);
+  transform: translateX(6px) scale(1.008);
+}
+.sh-step__num {
+  position: absolute;
+  left: -78px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(127, 166, 255, 0.3);
+  background: radial-gradient(circle at 30% 25%, rgba(43, 101, 245, 0.42), rgba(6, 9, 17, 0.95));
+  font-family: var(--gis-display);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--gis-ink);
+  box-shadow: 0 0 0 6px rgba(5, 7, 13, 0.9);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.sh-step.is-in .sh-step__num {
+  border-color: rgba(56, 221, 242, 0.65);
+  box-shadow: 0 0 0 6px rgba(5, 7, 13, 0.9), 0 0 26px rgba(56, 221, 242, 0.35);
+}
+.sh-step__ico {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, rgba(43, 101, 245, 0.2), rgba(56, 221, 242, 0.08));
+  border: 1px solid rgba(127, 166, 255, 0.22);
+}
+.sh-step__ico i { font-size: 1.15rem; color: var(--gis-cyan); }
+.sh-step__body h4 {
+  font-family: var(--gis-display);
+  font-size: 1.16rem;
+  margin-bottom: 7px;
+}
+.sh-step__body p {
+  margin: 0;
+  color: var(--gis-text);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   "More than just a project"
+   -------------------------------------------------------------------------- */
+.sh-more { margin-bottom: 76px; }
+.sh-more__head { max-width: 760px; margin-bottom: 40px; }
+.sh-more__head h3 {
+  font-family: var(--gis-display);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  margin-bottom: 14px;
+}
+.sh-more__head p { color: var(--gis-text); line-height: 1.75; margin: 0; }
+
+.sh-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+.sh-benefit {
+  position: relative;
+  padding: 26px 22px 24px;
+  border-radius: 20px;
+  border: 1px solid var(--gis-border);
+  background: rgba(11, 16, 32, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, background 0.3s ease;
+}
+.sh-benefit::after {
+  content: "";
+  position: absolute;
+  inset: auto -40% -60% -40%;
+  height: 120px;
+  background: radial-gradient(closest-side, rgba(56, 221, 242, 0.16), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.sh-benefit:hover {
+  transform: translateY(-6px) rotateX(4deg);
+  border-color: rgba(127, 166, 255, 0.42);
+  background: rgba(16, 22, 42, 0.86);
+}
+.sh-benefit:hover::after { opacity: 1; }
+.sh-benefit__ico {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, rgba(43, 101, 245, 0.22), rgba(56, 221, 242, 0.08));
+  border: 1px solid rgba(127, 166, 255, 0.24);
+}
+.sh-benefit__ico i { font-size: 1.2rem; color: var(--gis-cyan); }
+.sh-benefit h4 {
+  font-family: var(--gis-display);
+  font-size: 1.04rem;
+  margin-bottom: 9px;
+}
+.sh-benefit p { margin: 0; font-size: 0.88rem; line-height: 1.62; color: var(--gis-text); }
+
+/* --------------------------------------------------------------------------
+   Showcase — genuine Gopang work, same cards as the Case Studies section
+   -------------------------------------------------------------------------- */
+.sh-showcase { margin-bottom: 66px; }
+.sh-showcase__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+.sh-showcase__head h3 {
+  font-family: var(--gis-display);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  margin-bottom: 10px;
+}
+.sh-showcase__head p { color: var(--gis-text); margin: 0; }
+.sh-showcase__filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.sh-showcase__filter {
+  padding: 8px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--gis-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--gis-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+.sh-showcase__filter:hover { border-color: rgba(127, 166, 255, 0.5); color: var(--gis-ink); }
+.sh-showcase__filter[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--gis-grad);
+  color: #fff;
+}
+.sh-showcase__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.sh-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--gis-border);
+  background: rgba(11, 16, 32, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+.sh-card:hover { transform: translateY(-6px); border-color: rgba(127, 166, 255, 0.42); }
+.sh-card__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #070b16; }
+.sh-card__media img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sh-card:hover .sh-card__media img { transform: scale(1.06); }
+.sh-card__cat {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(5, 7, 13, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(127, 166, 255, 0.3);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gis-accent-text);
+}
+.sh-card__body { padding: 20px 20px 22px; display: flex; flex-direction: column; flex: 1; }
+.sh-card__body h4 { font-family: var(--gis-display); font-size: 1.08rem; margin-bottom: 9px; }
+.sh-card__body p { color: var(--gis-text); font-size: 0.88rem; line-height: 1.6; margin-bottom: 14px; flex: 1; }
+.sh-card__tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.sh-card__tech span {
+  padding: 4px 10px;
+  border-radius: 7px;
+  background: rgba(127, 166, 255, 0.1);
+  border: 1px solid rgba(127, 166, 255, 0.18);
+  font-size: 0.72rem;
+  color: var(--gis-accent-text);
+}
+.sh-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--gis-cyan);
+}
+.sh-card__cta:hover { gap: 12px; }
+.sh-card__cta i { transition: transform 0.25s ease; }
+.sh-card__cta:hover i { transform: translateX(3px); }
+
+/* --------------------------------------------------------------------------
+   Closing band
+   -------------------------------------------------------------------------- */
+.sh-cta {
+  position: relative;
+  text-align: center;
+  padding: 52px 32px;
+  border-radius: 28px;
+  border: 1px solid rgba(127, 166, 255, 0.26);
+  background:
+    radial-gradient(700px 320px at 50% 0%, rgba(43, 101, 245, 0.22), transparent 70%),
+    rgba(11, 16, 32, 0.86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+.sh-cta h3 {
+  font-family: var(--gis-display);
+  font-size: clamp(1.5rem, 2.3vw, 2.05rem);
+  margin-bottom: 12px;
+}
+.sh-cta p { color: var(--gis-text); max-width: 620px; margin: 0 auto 26px; line-height: 1.7; }
+.sh-cta__actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.sh-cta__note {
+  margin: 22px auto 0;
+  max-width: 640px;
+  font-size: 0.8rem;
+  color: var(--gis-muted);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar Student Project Hub CTA + FAQ-adjacent CTA band
+   -------------------------------------------------------------------------- */
+.gis-student-cta {
+  border-color: rgba(56, 221, 242, 0.45) !important;
+  color: #7fe9f8 !important;
+  white-space: nowrap;
+}
+.gis-student-cta:hover {
+  background: rgba(56, 221, 242, 0.12) !important;
+  border-color: var(--gis-cyan) !important;
+}
+
+.gis-faq-student-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: 34px;
+  padding: 30px 34px;
+  border-radius: 24px;
+  border: 1px solid rgba(127, 166, 255, 0.26);
+  background:
+    radial-gradient(600px 260px at 12% 0%, rgba(43, 101, 245, 0.22), transparent 70%),
+    rgba(11, 16, 32, 0.8);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.gis-faq-student-cta h3 {
+  font-family: var(--gis-display);
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  margin-bottom: 8px;
+}
+.gis-faq-student-cta p { color: var(--gis-text); margin: 0; line-height: 1.65; }
+.gis-faq-student-cta__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* --------------------------------------------------------------------------
+   Responsive — on mobile the hub comes first, then consultation, then
+   development, which is the order the brief asks for.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199.98px) {
+  .sh-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sh-showcase__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 991.98px) {
+  .sh-hub { padding: 72px 0 78px; }
+  .sh-paths { grid-template-columns: minmax(0, 1fr); }
+  .sh-stage { min-height: 420px; }
+  .sh-node[data-node="UI/UX"],
+  .sh-node[data-node="Backend"],
+  .sh-node[data-node="Testing"],
+  .sh-node[data-node="Database"] { display: none; }
+  .sh-steps { padding-left: 62px; }
+  .sh-step__num { left: -62px; width: 50px; height: 50px; font-size: 0.98rem; }
+  .sh-steps__rail { left: 24px; }
+}
+
+@media (max-width: 767.98px) {
+  .sh-hub { padding: 60px 0 66px; }
+  .sh-stage { min-height: 340px; margin-bottom: 44px; }
+  .sh-node { padding: 7px 11px 7px 7px; border-radius: 12px; }
+  .sh-node span { font-size: 0.72rem; }
+  .sh-node__ico { width: 28px; height: 28px; font-size: 0.78rem; }
+  .sh-node[data-node="Web"],
+  .sh-node[data-node="Cloud"],
+  .sh-node[data-node="Mobile"],
+  .sh-node[data-node="API"] { display: none; }
+  .sh-path { padding: 26px 22px 24px; }
+  .sh-path h3 { font-size: 1.38rem; }
+  .sh-benefits,
+  .sh-showcase__grid { grid-template-columns: minmax(0, 1fr); }
+  .sh-steps { padding-left: 0; }
+  .sh-steps__rail { display: none; }
+  .sh-step { flex-direction: column; gap: 14px; padding: 20px; }
+  .sh-step__num {
+    position: static;
+    transform: none;
+    width: 44px;
+    height: 44px;
+    font-size: 0.9rem;
+    box-shadow: none;
+  }
+  .sh-step:hover { transform: none; }
+  .sh-cta { padding: 38px 22px; }
+  .sh-cta__actions .theme-btn,
+  .sh-cta__actions .theme-btn-outline { width: 100%; }
+  .gis-faq-student-cta { padding: 24px 20px; }
+  .gis-faq-student-cta__actions { width: 100%; }
+  .gis-faq-student-cta__actions .theme-btn,
+  .gis-faq-student-cta__actions .theme-btn-outline { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-device,
+  .sh-phone,
+  .sh-node,
+  .sh-dash__bars i,
+  .sh-lines path { animation: none; }
+  .sh-step { opacity: 1; transform: none; }
+  .sh-path,
+  .sh-benefit,
+  .sh-card,
+  .sh-card__media img,
+  .sh-stage__scene { transition: none; }
+  .sh-step:hover,
+  .sh-path:hover,
+  .sh-benefit:hover,
+  .sh-card:hover { transform: none; }
+}

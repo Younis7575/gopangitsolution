@@ -32,12 +32,10 @@ ANCHORS = [
     re.compile(r'(?P<i>[ \t]*)</nav>'),
 ]
 
+# Only the Overview page lights up the sidebar parent; the four sub-pages mark
+# their own entry in the in-page sub-navigation instead.
 ACTIVE_PAGES = {
     "admin-student-projects/overview.html": True,
-    "admin-student-projects/consultations.html": True,
-    "admin-student-projects/projects.html": True,
-    "admin-student-projects/showcase.html": True,
-    "admin-student-projects/settings.html": True,
 }
 
 

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/custom/site.css?v=2">
     <link rel="stylesheet" href="/assets/css/premium.css?v=13">
     <link rel="stylesheet" href="/assets/css/admin/admin-jobs.css?v=2">
-    <link rel="stylesheet" href="/assets/css/admin/admin-student-projects.css?v=1">
+    <link rel="stylesheet" href="/assets/css/admin/admin-student-projects.css?v=2">
     <link rel="stylesheet" href="/assets/css/gis-experience.css?v=4">
     <script>
         if (localStorage.getItem("isAdminLoggedIn") !== "true") {
@@ -44,11 +44,10 @@
             <a href="/admin-dashboard"><i class="fal fa-chart-pie" aria-hidden="true"></i> Dashboard</a>
             <a href="/admin-apply"><i class="fal fa-layer-group" aria-hidden="true"></i> Opportunities</a>
             <a href="/admin-applicants"><i class="fal fa-file-user" aria-hidden="true"></i> Applicants</a>
-            <a href="/admin-student-projects" class="active"><i class="fal fa-graduation-cap" aria-hidden="true"></i> Student Projects</a>
             <a href="/admin-news"><i class="fal fa-newspaper" aria-hidden="true"></i> News</a>
             <a href="/admin-solutions"><i class="fal fa-lightbulb" aria-hidden="true"></i> Solutions</a>
             <a href="/admin-projects"><i class="fal fa-gavel" aria-hidden="true"></i> Bid Projects</a>
-            <a href="/admin-student-projects" class="active gis-admin-student-nav"><i class="fal fa-graduation-cap" aria-hidden="true"></i> Student Projects</a>
+            <a href="/admin-student-projects" class="gis-admin-student-nav"><i class="fal fa-graduation-cap" aria-hidden="true"></i> Student Projects</a>
             <a href="/admin-analytics"><i class="fal fa-chart-line" aria-hidden="true"></i> Analytics</a>
         </nav>
     </aside>
@@ -65,7 +64,7 @@
                     <a href="/admin-student-projects/consultations"><i class="fal fa-calendar-check" aria-hidden="true"></i> Consultations</a>
                     <a href="/admin-student-projects/projects"><i class="fal fa-file-signature" aria-hidden="true"></i> Project Requests</a>
                     <a href="/admin-student-projects/showcase"><i class="fal fa-layer-group" aria-hidden="true"></i> Showcase</a>
-                    <a href="/admin-student-projects/settings" class="active"><i class="fal fa-sliders" aria-hidden="true"></i> Settings</a>
+                    <a href="/admin-student-projects/availability" class="active"><i class="fal fa-calendar-clock" aria-hidden="true"></i> Availability</a>
                 </nav>
             </div>
         </section>
@@ -84,11 +83,27 @@
                         </div>
 
                         <p class="sp-settings-note">
-                            Slots are generated on a fixed grid between the start and end time, then filtered against everything already booked.
-                            A slot inside the notice window is never offered, and blocked dates are removed entirely.
+                            Slots are generated on a fixed grid between the start and end time on the working days you choose, then filtered against
+                            everything already booked. A slot inside the notice window is never offered, and blocked dates and holidays are removed
+                            entirely. Default consultation length is 30 minutes.
                         </p>
 
                         <form id="sp-settings-form" class="admin-form">
+                            <div class="sp-field wide" data-field="slot_working_days">
+                                <label id="st-days-label">Working days</label>
+                                <div class="sp-day-picker" role="group" aria-labelledby="st-days-label">
+                                    <label><input type="checkbox" data-working-day="1"><span>Mon</span></label>
+                                    <label><input type="checkbox" data-working-day="2"><span>Tue</span></label>
+                                    <label><input type="checkbox" data-working-day="3"><span>Wed</span></label>
+                                    <label><input type="checkbox" data-working-day="4"><span>Thu</span></label>
+                                    <label><input type="checkbox" data-working-day="5"><span>Fri</span></label>
+                                    <label><input type="checkbox" data-working-day="6"><span>Sat</span></label>
+                                    <label><input type="checkbox" data-working-day="7"><span>Sun</span></label>
+                                </div>
+                                <span class="hint">Consultations are only offered on the days ticked here.</span>
+                                <span class="sp-field-msg"></span>
+                            </div>
+
                             <div class="sp-form-grid">
                                 <div class="sp-field" data-field="slot_duration_minutes">
                                     <label for="st-duration">Slot length</label>
@@ -122,19 +137,32 @@
                                     <span class="hint">Slots starting sooner than this are hidden.</span>
                                     <span class="sp-field-msg"></span>
                                 </div>
+                                <div class="sp-field wide" data-field="slot_holidays">
+                                    <label for="st-holidays">Holidays</label>
+                                    <input type="text" id="st-holidays" name="slot_holidays" placeholder="2026-12-25, 2027-01-01">
+                                    <span class="hint">Comma separated YYYY-MM-DD public holidays.</span>
+                                    <span class="sp-field-msg"></span>
+                                </div>
                                 <div class="sp-field wide" data-field="slot_blocked_dates">
-                                    <label for="st-blocked">Blocked dates</label>
-                                    <input type="text" id="st-blocked" name="slot_blocked_dates" placeholder="2026-12-24, 2026-12-25">
-                                    <span class="hint">Comma separated YYYY-MM-DD dates — holidays, team days, anything you do not want to be booked.</span>
+                                    <label for="st-blocked">Blocked / custom unavailable dates</label>
+                                    <input type="text" id="st-blocked" name="slot_blocked_dates" placeholder="2026-11-12, 2026-11-13">
+                                    <span class="hint">Ad-hoc closures on top of the working week — team days, conferences, anything you do not want to be booked.</span>
                                     <span class="sp-field-msg"></span>
                                 </div>
                             </div>
 
                             <div class="sp-settings-actions">
-                                <button type="submit" class="theme-btn">Save settings</button>
+                                <button type="submit" class="theme-btn">Save availability</button>
                                 <span id="sp-limits" style="font-size:0.84rem;color:var(--gis-muted);"></span>
                             </div>
                         </form>
+
+                        <div class="sp-availability-preview">
+                            <h3>Next two weeks</h3>
+                            <div id="sp-avail-grid" class="sp-avail-grid"><p class="admin-empty" style="margin:0;">Loading availability…</p></div>
+                            <h3 class="mt-4">Upcoming bookings</h3>
+                            <div id="sp-avail-booked"><p class="admin-empty" style="margin:0;">Loading bookings…</p></div>
+                        </div>
                     </section>
 
                     <section class="admin-panel" aria-labelledby="notif-title">
@@ -171,7 +199,7 @@
         </section>
     </main>
 
-    <script src="/assets/js/admin/admin-student-projects.js?v=1"></script>
+    <script src="/assets/js/admin/admin-student-projects.js?v=3"></script>
     <script src="/assets/js/gis-experience.js?v=3" defer></script>
 </body>
 

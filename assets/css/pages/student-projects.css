@@ -719,6 +719,111 @@
 .sp-consent input { margin-top: 3px; flex: 0 0 auto; width: 17px; height: 17px; accent-color: #4a7dff; }
 .sp-consent a { text-decoration: underline; }
 
+/* ---------------------------------------------------------------------------
+   Grouped form sections — the long project brief reads as a numbered
+   checklist rather than one wall of fields.
+   ------------------------------------------------------------------------ */
+.sp-fieldset {
+  border: 1px solid var(--gis-border);
+  border-radius: 18px;
+  padding: 22px 22px 6px;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(43, 101, 245, 0.06), rgba(43, 101, 245, 0) 42%),
+    rgba(255, 255, 255, 0.02);
+  min-width: 0;
+}
+.sp-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--gis-display);
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  color: var(--gis-ink);
+  padding: 0 10px 0 0;
+  margin: 0 0 4px;
+  width: auto;
+  float: none;
+}
+.sp-legend-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--gis-grad);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-family: var(--gis-body);
+}
+.sp-legend .sp-optional { margin-left: auto; }
+
+/* Yes / No / Partially pills */
+.sp-choice-set { display: flex; flex-wrap: wrap; gap: 10px; }
+.sp-choice-set .sp-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--gis-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--gis-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.sp-choice-set .sp-choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.sp-choice-set .sp-choice:hover { border-color: rgba(127, 166, 255, 0.55); transform: translateY(-1px); }
+.sp-choice-set .sp-choice:has(input:checked) {
+  border-color: transparent;
+  background: var(--gis-grad);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(43, 101, 245, 0.28);
+}
+.sp-choice-set .sp-choice:has(input:focus-visible) { outline: 2px solid var(--gis-accent-text); outline-offset: 3px; }
+
+/* "Looking for someone to build it instead?" cross-link on the booking page */
+.sp-choice-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 18px;
+  margin-bottom: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 221, 242, 0.28);
+  background: rgba(56, 221, 242, 0.07);
+  font-size: 0.87rem;
+  color: var(--gis-text);
+}
+.sp-choice-inline a { font-weight: 700; color: var(--gis-cyan); white-space: nowrap; }
+.sp-choice-inline a:hover { text-decoration: underline; }
+
+/* Responsible-use note shown on both student forms */
+.sp-note {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--gis-cyan);
+  border-radius: 0 12px 12px 0;
+  background: rgba(56, 221, 242, 0.06);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--gis-text);
+}
+
 .sp-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
 .sp-form-status { font-size: 0.85rem; color: var(--gis-muted); }
 
@@ -891,7 +996,16 @@
   .sp-step,
   .sp-showcase-card,
   .sp-advantage,
-  .sp-transform-card { transition: none; }
+  .sp-transform-card,
+  .sp-choice-set .sp-choice { transition: none; }
+}
+
+@media (max-width: 575.98px) {
+  .sp-fieldset { padding: 18px 16px 4px; border-radius: 16px; }
+  .sp-legend { font-size: 0.94rem; }
+  .sp-choice-set { gap: 8px; }
+  /* Comfortably above the 44px touch-target minimum. */
+  .sp-choice-set .sp-choice { padding: 12px 16px; font-size: 0.85rem; }
 }
 
 @media print {

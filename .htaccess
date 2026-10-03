@@ -41,7 +41,7 @@ DirectoryIndex home.html index.html
     # Student Project Hub admin (Overview, Consultations, Project Requests,
     # Showcase, Settings) — same auth model as the rest of the panel.
     RewriteRule ^admin-student-projects/?$ admin-student-projects/overview.html [L]
-    RewriteRule ^admin-student-projects/(overview|consultations|projects|showcase|settings)/?$ admin-student-projects/$1.html [L]
+    RewriteRule ^admin-student-projects/(overview|consultations|projects|showcase|settings|availability)/?$ admin-student-projects/$1.html [L]
     RewriteRule ^apply-job/?$ jobs [R=301,L]
     RewriteRule ^apply-partner/?$ partnerships [R=301,L]
     RewriteRule ^apply-project/?$ projects [R=301,L]
@@ -71,11 +71,15 @@ DirectoryIndex home.html index.html
     # preserves automatically.
     RewriteRule ^student-projects/?$ student-projects/index.html [L]
     RewriteRule ^student-projects/consultation/?$ student-projects/consultation.html [L]
+    RewriteRule ^student-projects/project-request/?$ student-projects/project-request.html [L]
+    # SEO cluster pages — each one covers a genuinely different search intent.
+    RewriteRule ^student-projects/(mobile-app|web-development|flutter|ai-ml|ui-ux)/?$ student-projects/$1.html [L]
     RewriteRule ^student-projects/admin/?$ admin-student-projects/overview.html [L]
     RewriteRule ^student-projects/admin/consultations/?$ admin-student-projects/consultations.html [L]
     RewriteRule ^student-projects/admin/projects/?$ admin-student-projects/projects.html [L]
     RewriteRule ^student-projects/admin/showcase/?$ admin-student-projects/showcase.html [L]
     RewriteRule ^student-projects/admin/settings/?$ admin-student-projects/settings.html [L]
+    RewriteRule ^student-projects/admin/availability/?$ admin-student-projects/settings.html [L]
 
     # Service detail pages (each lives at <slug>/index.html)
     RewriteRule ^mobile-app-development/?$ mobile-app-development/index.html [L]
