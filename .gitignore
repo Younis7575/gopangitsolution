@@ -12,3 +12,8 @@ api/uploads/*
 !api/uploads/.htaccess
 !api/data/.htaccess
 
+
+# Social ad build artefacts (see ads/student-fyp/README.md)
+ads/student-fyp/.venv/
+ads/student-fyp/build/
+ads/student-fyp/output/
