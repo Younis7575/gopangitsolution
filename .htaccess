@@ -18,6 +18,10 @@ DirectoryIndex home.html index.html
     # (^(jobs|internships|partnerships|projects|project-based-hiring)/?...), so the
     # portfolio page is served at /portfolio. Do not move it back to /projects
     # without also changing the Apply routing and the /apply-project 301.
+    # The rule sits above every other rule and the Apply rule below explicitly
+    # refuses "portfolio", so /portfolio can never fall through to the Apply
+    # page again (it did in production on 2026-10-04: /portfolio returned
+    # apply/opportunities.html and the page then 404'd on /api/portfolio).
     RewriteRule ^portfolio/?$ projects/projects.html [L]
 
     # Policy / transparency pages (each lives at <slug>/index.html)
@@ -45,7 +49,9 @@ DirectoryIndex home.html index.html
     RewriteRule ^apply-job/?$ jobs [R=301,L]
     RewriteRule ^apply-partner/?$ partnerships [R=301,L]
     RewriteRule ^apply-project/?$ projects [R=301,L]
-    RewriteRule ^(jobs|internships|partnerships|projects|project-based-hiring)/?([^/]*)/?$ apply/opportunities.html [L]
+    # The negative lookahead keeps the portfolio URL out of the Apply flow even
+    # if this rule is ever moved above the portfolio rule above.
+    RewriteRule ^(?!portfolio/?$)(jobs|internships|partnerships|projects|project-based-hiring)/?([^/]*)/?$ apply/opportunities.html [L]
     RewriteRule ^contact/?$ contact/contact.html [L]
     RewriteRule ^faq/?$ faq/faq.html [L]
     RewriteRule ^index-2/?$ index-2/home-variant-two.html [L]

@@ -1300,3 +1300,85 @@ table {
     padding: 30px 20px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Header fit (logo overlap / clipped CTA fix)
+
+   The desktop header is one row: logo (col-lg-2) + nav + two CTAs (col-lg-10).
+   The nav column is justify-content-end, so when the row is wider than the
+   column the overflow spills to the LEFT and lands on top of the logo, while
+   the CTAs get squeezed until their labels clip ("A Proje..."). Measured need
+   was ~1316px of row against a ~963px column inside the 1180px .container.
+
+   Three changes fix it:
+   1. The logo column shrinks to the logo's own width and the nav column takes
+      everything left over, so nothing can spill leftwards any more.
+   2. Both CTAs are flex-shrink: 0 + nowrap, so they can never be squashed.
+   3. Graded sizing: below 1600px "Start a Project" (a duplicate of the Contact
+      nav item) is dropped, and the menu tightens as space runs out. The wide
+      container at >=1600px is what lets both CTAs stay.
+   -------------------------------------------------------------------------- */
+@media (min-width: 992px) {
+  header.header-1.gis-main-header .row > .col-lg-2 {
+    flex: 0 0 auto;
+    width: auto;
+  }
+  header.header-1.gis-main-header .row > .col-lg-10 {
+    flex: 1 1 0%;
+    width: auto;
+    max-width: none;
+  }
+  header.header-1.gis-main-header .main-menu {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  header.header-1.gis-main-header .main-menu > ul > li {
+    flex: 0 0 auto;
+  }
+  header.header-1.gis-main-header .gis-nav-cta,
+  header.header-1.gis-main-header .gis-student-cta {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+/* 1200-1599px: menu + the Student Project Hub CTA only. */
+@media (min-width: 1200px) and (max-width: 1599.98px) {
+  header.header-1.gis-main-header .gis-nav-cta {
+    display: none !important;
+  }
+  header.header-1.gis-main-header .main-menu > ul > li > a {
+    font-size: 0.88rem;
+    padding: 10px 7px;
+  }
+  header.header-1.gis-main-header .gis-student-cta {
+    font-size: 0.86rem;
+    margin-left: 10px !important;
+    padding: 12px 18px;
+  }
+}
+
+/* >=1600px: wider header bar so all nine links and both CTAs fit. */
+@media (min-width: 1600px) {
+  header.header-1.gis-main-header > .container {
+    max-width: 1560px;
+  }
+  header.header-1.gis-main-header .main-menu > ul > li > a {
+    padding: 10px 12px;
+  }
+}
+
+/* 992-1199px: no room for a CTA next to nine links, tighten the menu. */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  header.header-1.gis-main-header .gis-nav-cta,
+  header.header-1.gis-main-header .gis-student-cta {
+    display: none !important;
+  }
+  header.header-1.gis-main-header .main-menu > ul > li > a {
+    font-size: 0.85rem;
+    padding: 10px 7px;
+  }
+  header.header-1.gis-main-header .logo img {
+    height: 38px;
+  }
+}
