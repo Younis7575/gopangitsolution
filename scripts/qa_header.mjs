@@ -24,6 +24,10 @@ const SHOTS = arg('--shots', '')
 const WIDTHS = arg('--widths', '1920,1600,1512,1440,1366,1280,1152,1024,991,900,768,414,360')
   .split(',')
   .map(Number)
+// Blocking the web fonts reproduces the fallback-metric case: a visitor on a
+// slow connection sees the menu before Plus Jakarta Sans arrives, and any
+// header that only just fits will overlap once the fallback font is used.
+const NO_FONTS = argv.includes('--no-fonts')
 
 const require = createRequire(path.join(process.cwd(), 'scripts/'))
 let puppeteer
@@ -116,8 +120,29 @@ if (SHOTS) mkdirSync(SHOTS, { recursive: true })
 
 for (const width of WIDTHS) {
   const page = await browser.newPage()
+  if (NO_FONTS) {
+    await page.setRequestInterception(true)
+    page.on('request', (req) => {
+      const url = req.url()
+      if (/fonts\.(googleapis|gstatic)\.com/.test(url)) req.abort()
+      else req.continue()
+    })
+  }
   await page.setViewport({ width, height: 900, deviceScaleFactor: 1 })
-  await page.goto(BASE + PAGE, { waitUntil: 'domcontentloaded', timeout: 45000 })
+  await page.goto(BASE + PAGE, { waitUntil: 'load', timeout: 45000 })
+  // Wait until premium.css is actually in effect. Measuring earlier produced
+  // false failures: before the stylesheet lands the carousel track is still
+  // unconstrained and the document reports a bogus 2818px width.
+  await page
+    .waitForFunction(
+      () => {
+        const h = document.querySelector('header.gis-main-header')
+        if (!h) return true
+        return getComputedStyle(h).paddingTop === '6px'
+      },
+      { timeout: 20000, polling: 100 },
+    )
+    .catch(() => console.log('        warn: premium.css never applied - measurement may be bogus'))
   await page.evaluate(() => new Promise((r) => (document.fonts ? document.fonts.ready.then(r) : r())))
   await new Promise((r) => setTimeout(r, 700))
 
