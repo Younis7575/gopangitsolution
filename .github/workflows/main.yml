@@ -45,16 +45,18 @@ jobs:
           set ftp:passive-mode on
           set cmd:fail-exit yes
           set xfer:clobber yes
-          set net:max-retries 5
-          set net:timeout 60
+          set net:max-retries 10
+          set net:timeout 120
           set net:reconnect-interval-base 2
+          set net:reconnect-interval-max 30
 
           cd /
 
           mirror -R \
             --verbose \
+            --continue \
             --delete \
-            --parallel=1 \
+            --parallel=4 \
             --ignore-time \
             --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
@@ -103,7 +105,7 @@ jobs:
             return "$problems"
           }
 
-          for attempt in 1 2; do
+          for attempt in 1 2 3; do
             echo "===== MIRROR ATTEMPT $attempt ====="
             deploy || echo "::warning::mirror command reported a non-zero exit"
             echo "===== VERIFY ATTEMPT $attempt ====="
@@ -112,8 +114,8 @@ jobs:
               exit 0
             fi
             echo "===== VERIFY FAILED ON ATTEMPT $attempt ====="
-            [ "$attempt" = "2" ] || sleep 20
+            [ "$attempt" = "3" ] || sleep 30
           done
 
-          echo "::error::deployment did not reach the server after 2 attempts - see the errors above"
+          echo "::error::deployment did not reach the server after 3 attempts - see the errors above"
           exit 1
