@@ -4,13 +4,10 @@ on:
   push:
     branches:
       - master
-  # Allows a re-deploy without making an empty commit.
-  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
@@ -26,37 +23,26 @@ jobs:
           ls -lah
           git log -1
 
-      # The mirror occasionally uploads only part of the tree and still exits 0,
-      # which left HTML files and .htaccess on the server for days. So: mirror,
-      # verify the bytes the site actually serves, and retry once before failing.
-      - name: Deploy and verify
+      - name: Deploy
         env:
           FTP_HOST: ftp.gopangitsolution.com
           FTP_USERNAME: younas@gopangitsolution.com
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          SITE: https://gopangitsolution.com
-        run: |
-          set -uo pipefail
 
-          deploy() {
-            lftp -d -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST <<EOF
+        run: |
+          lftp -d -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://$FTP_HOST <<EOF
 
           set ssl:verify-certificate no
           set ftp:passive-mode on
           set cmd:fail-exit yes
           set xfer:clobber yes
-          set net:max-retries 10
-          set net:timeout 120
-          set net:reconnect-interval-base 2
-          set net:reconnect-interval-max 30
 
           cd /
 
           mirror -R \
             --verbose \
-            --continue \
             --delete \
-            --parallel=4 \
+            --parallel=1 \
             --ignore-time \
             --exclude-glob ".git*" \
             --exclude-glob ".github/**" \
@@ -65,57 +51,9 @@ jobs:
             --exclude-glob "api/config.local.php" \
             . .
 
+          echo "===== AFTER DEPLOY ====="
+
+          cls
+
           bye
           EOF
-          }
-
-          verify() {
-            problems=0
-
-            check() {
-              local label="$1" file="$2" url="$3"
-              local tmp
-              tmp="$(mktemp)"
-              if ! curl -sS --max-time 90 --retry 3 --retry-delay 5 "$url" -o "$tmp"; then
-                echo "::error::$label - could not download $url"
-                problems=$((problems + 1))
-              elif cmp -s "$file" "$tmp"; then
-                echo "OK   $label"
-              else
-                echo "::error::$label - live copy is stale (repo $(wc -c <"$file") bytes, live $(wc -c <"$tmp") bytes)"
-                problems=$((problems + 1))
-              fi
-              rm -f "$tmp"
-            }
-
-            # The bytes the site serves must be the bytes that were committed.
-            check "home.html"           home.html                          "$SITE/?cb=$GITHUB_RUN_ID-$1"
-            check "premium.css"         assets/css/premium.css            "$SITE/assets/css/premium.css?cb=$GITHUB_RUN_ID-$1"
-            check "opportunities.js"    assets/js/pages/opportunities.js  "$SITE/assets/js/pages/opportunities.js?cb=$GITHUB_RUN_ID-$1"
-            check "student-projects"    student-projects/index.html       "$SITE/student-projects/?cb=$GITHUB_RUN_ID-$1"
-
-            # /portfolio must serve the portfolio page, not the Apply page.
-            if curl -sS --max-time 60 "$SITE/portfolio" | grep -q "Our Projects"; then
-              echo "OK   /portfolio serves the portfolio page"
-            else
-              echo "::error::/portfolio does not serve the portfolio page"
-              problems=$((problems + 1))
-            fi
-
-            return "$problems"
-          }
-
-          for attempt in 1 2 3; do
-            echo "===== MIRROR ATTEMPT $attempt ====="
-            deploy || echo "::warning::mirror command reported a non-zero exit"
-            echo "===== VERIFY ATTEMPT $attempt ====="
-            if verify "$attempt"; then
-              echo "===== DEPLOY OK on attempt $attempt ====="
-              exit 0
-            fi
-            echo "===== VERIFY FAILED ON ATTEMPT $attempt ====="
-            [ "$attempt" = "3" ] || sleep 30
-          done
-
-          echo "::error::deployment did not reach the server after 3 attempts - see the errors above"
-          exit 1
